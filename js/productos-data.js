@@ -49,8 +49,9 @@ const PRODUCTS = [
     resumen: '12 cajones y 3 bauleras.',
     specs: ['12 cajones: 4 de cada lado y 4 al pie', '3 bauleras: 1 central grande y 2 en la cabecera', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones de 48 × 40 × 15 cm', 'Baulera central de 102 × 50 × 40 cm', 'Melamina de 15 mm, blanca por dentro y por fuera', 'Soporta hasta 800 kg', 'Corredera telescópica reforzada'] },
   { n: 'Modelo 18 Vip', cat: '2-plazas', medida: '140 × 190 cm', img: 'assets/productos/18-VIP.jpg', price: 815000,
+    clientPhotos: ['assets/producto-fotos/18-vip-1.jpg','assets/producto-fotos/18-vip-2.jpg','assets/producto-fotos/18-vip-3.jpg','assets/producto-fotos/18-vip-4.jpg'],
     resumen: '18 cajones y 3 bauleras.',
-    specs: ['18 cajones: 6 laterales y 6 frontales', '3 bauleras: 1 central grande y 2 en la cabecera', 'Medida total: 193 × 143 cm · Altura: 55 cm (el colchón comienza a los 52 cm)', 'Cajones de 48 × 40 × 15 cm', 'Melamina de 15 mm, blanca por dentro y por fuera', 'Soporta hasta 800 kg', 'Corredera telescópica reforzada'] },
+    specs: ['18 cajones: 6 laterales y 6 frontales', '3 bauleras: 1 central grande y 2 en la cabecera', 'Medida total: 193 × 143 cm · Altura: 55 cm (el colchón comienza a los 52 cm)', 'Cajones de 48 × 40 × 12 cm', 'Melamina de 15 mm, blanca por dentro y por fuera', 'Soporta hasta 800 kg', 'Corredera telescópica reforzada'] },
 
   // Queen
   { n: 'Modelo 4 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/1-4-VIP.jpg', price: 510000,
@@ -77,8 +78,9 @@ const PRODUCTS = [
     resumen: '6 cajones, 3 bauleras y estantes en los pies.',
     specs: ['6 cajones laterales, blancos por dentro y por fuera', '3 bauleras: 1 central grande y 2 en la cabecera', '6 estantes en los pies', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones de 48 × 40 × 30 cm', 'Melamina de 15 mm', 'Soporta hasta 800 kg', 'Correderas telescópicas reforzadas'] },
   { n: 'Modelo 18 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/18-VIP.jpg', price: 865000,
+    clientPhotos: ['assets/producto-fotos/18-vip-1.jpg','assets/producto-fotos/18-vip-2.jpg','assets/producto-fotos/18-vip-3.jpg','assets/producto-fotos/18-vip-4.jpg'],
     resumen: '18 cajones y 3 bauleras.',
-    specs: ['18 cajones: 6 laterales y 6 frontales', '3 bauleras: 1 central grande y 2 en la cabecera', 'Medida total: 203 × 163 cm · Altura: 55 cm (el colchón comienza a los 52 cm)', 'Cajones de 48 × 40 × 15 cm', 'Melamina de 15 mm, blanca por dentro y por fuera', 'Soporta hasta 800 kg', 'Corredera telescópica reforzada'] },
+    specs: ['18 cajones: 6 laterales y 6 frontales', '3 bauleras: 1 central grande y 2 en la cabecera', 'Medida total: 203 × 163 cm · Altura: 55 cm (el colchón comienza a los 52 cm)', 'Cajones de 48 × 40 × 12 cm', 'Melamina de 15 mm, blanca por dentro y por fuera', 'Soporta hasta 800 kg', 'Corredera telescópica reforzada'] },
 
   // King 180x200
   { n: '8 Vip King', cat: 'king', subcat: 'king-180', medida: 'King 180 × 200 cm', img: 'assets/productos/1-King-8.jpg', price: 720000,
