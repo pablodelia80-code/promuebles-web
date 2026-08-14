@@ -111,10 +111,25 @@
     });
   }
 
-  function addMessage(role, text) {
+  function addMessage(role, text, images) {
     const div = document.createElement('div');
     div.className = 'pm-msg pm-msg-' + (role === 'user' ? 'user' : 'bot');
     div.innerHTML = linkify(escapeHtml(text).replace(/\n/g, '<br>'));
+
+    if (images && images.length) {
+      const gallery = document.createElement('div');
+      gallery.className = 'pm-msg-gallery';
+      images.forEach((src) => {
+        const a = document.createElement('a');
+        a.href = src;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerHTML = `<img src="${src}" loading="lazy" alt="Foto real de cliente ProMuebles">`;
+        gallery.appendChild(a);
+      });
+      div.appendChild(gallery);
+    }
+
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
@@ -139,7 +154,7 @@
       addMessage('model', `¡Hola! Soy ${nombre}, de ProMuebles 👋 ¿En qué te puedo ayudar? Preguntame por medidas, precios, colores o envío.`);
       return;
     }
-    history.forEach((h) => addMessage(h.role, h.text));
+    history.forEach((h) => addMessage(h.role, h.text, h.images));
   }
 
   toggleBtn.addEventListener('click', () => {
@@ -184,8 +199,8 @@
       if (data.error) {
         addMessage('model', 'Uy, tuve un problema para responder. ¿Podés escribirnos por WhatsApp mientras lo resolvemos? https://wa.me/5491168767075');
       } else {
-        addMessage('model', data.reply);
-        history.push({ role: 'model', text: data.reply });
+        addMessage('model', data.reply, data.images);
+        history.push({ role: 'model', text: data.reply, images: data.images || [] });
       }
       saveHistory(history);
     } catch (err) {

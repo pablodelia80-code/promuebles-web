@@ -37,6 +37,7 @@ REGLAS DURAS (no las rompas):
 3. Si el cliente pide explícitamente hablar con una persona / con Pedro, respondé con calidez y pasale este link de WhatsApp: ${NEGOCIO.whatsapp}
 4. No uses markdown (nada de **negrita**, títulos con #, ni listas con guiones). Es un chat de texto plano — si querés destacar algo, hacelo con las palabras, no con símbolos.
 5. Cuando le confirmes a un cliente un modelo puntual del catálogo (porque preguntó por él o porque se lo recomendaste), usá la ACCIÓN "ver_producto" para pasarle el link directo a esa ficha, en vez de solo describirlo en texto.
+6. Si te preguntan algo técnico específico que el resumen corto del catálogo no alcanza para responder con seguridad (ej: comparar el detalle de dos modelos, dónde va cada cajón, medidas exactas de un compartimento), NO inventes ni asumas — usá la ACCIÓN "ver_specs" para pedir la ficha técnica completa de ese/esos modelos antes de responder.
 
 CATÁLOGO (nombre, medida, precio, resumen):
 ${catalogoTexto}
@@ -52,6 +53,7 @@ ENVÍO: ${NEGOCIO.envio.resumen}
 ACCIONES DISPONIBLES — cuando necesites una, respondé ÚNICA Y EXCLUSIVAMENTE con el JSON correspondiente (nada de texto antes o después, nada de markdown, nada de explicar que estás usando una acción). Vas a recibir el resultado real y ahí sí le contestás al cliente con naturalidad:
 - Costo de envío a una localidad concreta: {"accion":"calcular_envio","localidad":"<la localidad que dijo el cliente>"}
 - Link directo a la ficha de un modelo del catálogo: {"accion":"ver_producto","producto":"<nombre EXACTO del catálogo de arriba>"}
+- Ficha técnica completa de uno o más modelos (para comparar o responder algo puntual): {"accion":"ver_specs","productos":["<nombre EXACTO 1>","<nombre EXACTO 2 si aplica>"]}
 
 CONTACTO SI HACE FALTA: WhatsApp ${NEGOCIO.whatsapp} · ${NEGOCIO.email}`;
 }
@@ -83,6 +85,7 @@ function tryParseAccion(text) {
     const obj = JSON.parse(trimmed);
     if (obj.accion === 'calcular_envio' && obj.localidad) return obj;
     if (obj.accion === 'ver_producto' && obj.producto) return obj;
+    if (obj.accion === 'ver_specs' && Array.isArray(obj.productos) && obj.productos.length) return obj;
   } catch (e) {
     return null;
   }
@@ -107,28 +110,64 @@ function formatearResultadoEnvio(resultado) {
   return `Envío: $${resultado.precio.toLocaleString('es-AR')} — el lugar está a ${resultado.km_caba}km de CABA. ${NOTA_ARMADO}`;
 }
 
-function formatearResultadoProducto(nombreBuscado) {
+function fotosAleatorias(arr, n) {
+  const copia = [...arr];
+  const elegidas = [];
+  while (copia.length && elegidas.length < n) {
+    const i = Math.floor(Math.random() * copia.length);
+    elegidas.push(copia.splice(i, 1)[0]);
+  }
+  return elegidas;
+}
+
+function buscarProducto(nombreBuscado) {
   const { products } = loadCatalog();
-  const buscado = nombreBuscado.trim().toLowerCase();
-  const match = products.find((p) => p.n.toLowerCase() === buscado)
+  const buscado = nombreBuscado.trim().toLowerCase().replace(/\s*\([^)]*\)\s*/g, '').trim();
+  return products.find((p) => p.n.toLowerCase() === buscado)
     || products.find((p) => p.n.toLowerCase().includes(buscado) || buscado.includes(p.n.toLowerCase()));
+}
+
+function formatearResultadoSpecs(nombresBuscados) {
+  const bloques = nombresBuscados.map((nombre) => {
+    const match = buscarProducto(nombre);
+    if (!match) return `"${nombre}": no encontrado en el catálogo, no inventes su ficha.`;
+    return `${match.n} (${match.medida}):\n- ${match.specs.join('\n- ')}`;
+  });
+  return { nota: `Ficha técnica completa:\n\n${bloques.join('\n\n')}\n\nUsá esto para responder con precisión (comparar, ubicar compartimentos, medidas exactas, etc.), sin mostrar la lista cruda — explicalo con tus palabras.`, images: [] };
+}
+
+function formatearResultadoProducto(nombreBuscado) {
+  const match = buscarProducto(nombreBuscado);
 
   if (!match) {
-    return `No encontré ese modelo exacto en el catálogo ("${nombreBuscado}"). No le pases ningún link — describíselo solo con lo que sabés del catálogo, o preguntale más detalles.`;
+    return { nota: `No encontré ese modelo exacto en el catálogo ("${nombreBuscado}"). No le pases ningún link — describíselo solo con lo que sabés del catálogo, o preguntale más detalles.`, images: [] };
   }
-  return `Acá tenés el link real a la ficha de "${match.n}": ${linkProducto(match)} — pasáselo al cliente tal cual, integrado naturalmente en la respuesta.`;
+
+  const images = match.clientPhotos && match.clientPhotos.length
+    ? fotosAleatorias(match.clientPhotos, 3)
+    : [match.img];
+
+  return {
+    nota: `Acá tenés el link real a la ficha de "${match.n}": ${linkProducto(match)} — pasáselo al cliente tal cual, integrado naturalmente en la respuesta. Además le vas a mandar ${images.length} foto(s) real(es) del modelo junto con tu mensaje (eso lo maneja el sistema aparte, vos no tenés que mencionar ni describir las fotos en el texto, ya se ven solas en el chat).`,
+    images,
+  };
 }
 
 async function resolverAccion(accion) {
   if (accion.accion === 'calcular_envio') {
     const resultado = await calcularEnvio(accion.localidad);
-    return formatearResultadoEnvio(resultado);
+    return { nota: formatearResultadoEnvio(resultado), images: [] };
   }
   if (accion.accion === 'ver_producto') {
     return formatearResultadoProducto(accion.producto);
   }
-  return null;
+  if (accion.accion === 'ver_specs') {
+    return formatearResultadoSpecs(accion.productos);
+  }
+  return { nota: null, images: [] };
 }
+
+const MAX_ACCIONES_POR_TURNO = 4;
 
 // history: [{role: 'user'|'model', text: string}]
 async function chat(history, userMessage, nombreBot, apiKey) {
@@ -138,10 +177,14 @@ async function chat(history, userMessage, nombreBot, apiKey) {
   contents.push({ role: 'user', parts: [{ text: userMessage }] });
 
   let text = await callGemini(contents, systemPrompt, apiKey);
-  const accion = tryParseAccion(text);
+  let images = [];
 
-  if (accion) {
-    const nota = await resolverAccion(accion);
+  for (let i = 0; i < MAX_ACCIONES_POR_TURNO; i++) {
+    const accion = tryParseAccion(text);
+    if (!accion) break;
+
+    const { nota, images: imgs } = await resolverAccion(accion);
+    if (imgs && imgs.length) images = imgs;
 
     contents.push({ role: 'model', parts: [{ text }] });
     contents.push({
@@ -152,7 +195,7 @@ async function chat(history, userMessage, nombreBot, apiKey) {
     text = await callGemini(contents, systemPrompt, apiKey);
   }
 
-  return text;
+  return { text, images };
 }
 
 module.exports = { chat };

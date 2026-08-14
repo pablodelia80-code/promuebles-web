@@ -14,11 +14,11 @@ exports.handler = async (event) => {
   try {
     const { history, message, sessionName } = JSON.parse(event.body || '{}');
     const nombreBot = NOMBRES_BOT.includes(sessionName) ? sessionName : NOMBRES_BOT[0];
-    const reply = await chat(history || [], message, nombreBot, apiKey);
+    const { text, images } = await chat(history || [], message, nombreBot, apiKey);
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reply }),
+      body: JSON.stringify({ reply: text, images }),
     };
   } catch (err) {
     console.error(err);
