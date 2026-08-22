@@ -106,14 +106,18 @@
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-arrow lightbox-prev" onclick="event.stopPropagation();prevPhoto()" aria-label="Anterior">&#8249;</button>
   <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-arrow lightbox-next" onclick="event.stopPropagation();nextPhoto()" aria-label="Siguiente">&#8250;</button>
 </div>
 
 <!-- VIDEO MODAL -->
 <div class="video-modal" id="video-modal" onclick="closeVideo(event)">
   <div class="video-modal-box" onclick="event.stopPropagation()">
     <button class="video-modal-close" onclick="closeVideo(event)">&#10005;</button>
+    <button class="video-modal-arrow video-modal-prev" onclick="prevVideo()" aria-label="Anterior">&#8249;</button>
     <video id="video-modal-player" controls playsinline></video>
+    <button class="video-modal-arrow video-modal-next" onclick="nextVideo()" aria-label="Siguiente">&#8250;</button>
   </div>
 </div>
 
@@ -131,33 +135,45 @@
   ];
 
   const galleryGrid = document.getElementById('gallery-grid');
-  CLIENT_PHOTOS.forEach(src => {
+  CLIENT_PHOTOS.forEach((src, i) => {
     const div = document.createElement('div');
     div.className = 'gallery-photo';
-    div.onclick = () => openLightbox(src);
+    div.onclick = () => openLightbox(i);
     div.innerHTML = `<img src="${src}" alt="Cliente ProMuebles" loading="lazy">`;
     galleryGrid.appendChild(div);
   });
 
   const videoTrack = document.getElementById('video-track');
-  CLIENT_VIDEOS.forEach(src => {
+  CLIENT_VIDEOS.forEach((src, i) => {
     const div = document.createElement('div');
     div.className = 'video-card';
-    div.onclick = () => openVideo(src);
+    div.onclick = () => openVideo(i);
     div.innerHTML = `<div class="video-thumb"><video muted playsinline preload="metadata" src="${src}#t=0.5"></video><span class="video-play">&#9658;</span></div>`;
     videoTrack.appendChild(div);
   });
 
-  function openLightbox(src) {
-    document.getElementById('lightbox-img').src = src;
+  let photoIndex = 0;
+  function openLightbox(i) {
+    photoIndex = i;
+    document.getElementById('lightbox-img').src = CLIENT_PHOTOS[photoIndex];
     document.getElementById('lightbox').classList.add('open');
   }
   function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+  function prevPhoto() {
+    photoIndex = (photoIndex - 1 + CLIENT_PHOTOS.length) % CLIENT_PHOTOS.length;
+    document.getElementById('lightbox-img').src = CLIENT_PHOTOS[photoIndex];
+  }
+  function nextPhoto() {
+    photoIndex = (photoIndex + 1) % CLIENT_PHOTOS.length;
+    document.getElementById('lightbox-img').src = CLIENT_PHOTOS[photoIndex];
+  }
 
-  function openVideo(src) {
+  let videoIndex = 0;
+  function openVideo(i) {
+    videoIndex = i;
     const modal = document.getElementById('video-modal');
     const player = document.getElementById('video-modal-player');
-    player.src = src;
+    player.src = CLIENT_VIDEOS[videoIndex];
     modal.classList.add('open');
     player.play();
   }
@@ -167,6 +183,18 @@
     const player = document.getElementById('video-modal-player');
     player.pause();
     modal.classList.remove('open');
+  }
+  function prevVideo() {
+    videoIndex = (videoIndex - 1 + CLIENT_VIDEOS.length) % CLIENT_VIDEOS.length;
+    const player = document.getElementById('video-modal-player');
+    player.src = CLIENT_VIDEOS[videoIndex];
+    player.play();
+  }
+  function nextVideo() {
+    videoIndex = (videoIndex + 1) % CLIENT_VIDEOS.length;
+    const player = document.getElementById('video-modal-player');
+    player.src = CLIENT_VIDEOS[videoIndex];
+    player.play();
   }
 </script>
 <script src="js/chat-widget.js"></script>
