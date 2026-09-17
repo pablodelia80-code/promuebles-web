@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="skills-slides — A Claude Code skill that generates stunning HTML presentations with 50,000+ unique design combinations.">
+    <meta property="og:title" content="skills-slides">
+    <meta property="og:description" content="50,000+ unique presentation designs. Zero dependencies. Anti-AI-slop.">
+    <meta property="og:type" content="website">
+    <title>skills-slides — 50,000+ Presentation Designs</title>
+
+    <!-- Fonts: Clash Display + Satoshi from Fontshare -->
+    @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap');
+
+    <style>
+        /* ── 1. Viewport Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow-x: hidden; overscroll-behavior: none; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; font-display: optional; }
+
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always;
+            display: flex; flex-direction: column; position: relative; user-select: none;
+        }
+        .slide-content, .slide-content * { user-select: text; }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            max-height: 100%; overflow: hidden;
+            padding: var(--slide-padding); gap: var(--content-gap);
+            contain: layout style; position: relative; z-index: 2;
+        }
+
+        :root {
+            --title-size:  clamp(1.5rem, 5vw, 4rem);
+            --h2-size:     clamp(1.25rem, 3.5vw, 2.5rem);
+            --h3-size:     clamp(1rem, 2.5vw, 1.75rem);
+            --body-size:   clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size:  clamp(0.65rem, 1vw, 0.875rem);
+            --label-size:  clamp(0.6rem, 0.9vw, 0.75rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap:   clamp(0.5rem, 2vw, 2rem);
+            --element-gap:   clamp(0.25rem, 1vw, 1rem);
+            --card-padding:  clamp(0.75rem, 2vw, 2rem);
+            --radius-sm:  clamp(4px, 0.5vw, 8px);
+            --radius-md:  clamp(8px, 1vw, 16px);
+            --radius-lg:  clamp(12px, 1.5vw, 24px);
+            --radius-xl:  clamp(16px, 2vw, 32px);
+            --border-width: clamp(1px, 0.1vw, 2px);
+            --transition-fast:   0.15s ease;
+            --transition-base:   0.3s ease;
+            --transition-slow:   0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* ── 2. Midnight Aurora palette ── */
+            --bg:         #0a0f1c;
+            --surface:    #0d1529;
+            --surface-2:  #111d3a;
+            --border:     rgba(0, 212, 255, 0.1);
+            --text:       #e8f4fd;
+            --text-muted: #94a3b8;
+            --accent:     #00d4ff;
+            --accent-2:   #ff2d78;
+            --glow:       rgba(0, 212, 255, 0.4);
+            --glow-2:     rgba(255, 45, 120, 0.3);
+
+            /* Typography */
+            --font-display: 'Clash Display', sans-serif;
+            --font-body:    'Satoshi', sans-serif;
+
+            /* Shadows */
+            --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-md:  0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
+            --shadow-lg:  0 12px 40px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.3);
+            --shadow-glow: 0 0 30px var(--glow);
+        }
+
+        h1, .title      { font-size: var(--title-size); line-height: 1.1; letter-spacing: -0.02em; }
+        h2, .heading     { font-size: var(--h2-size);    line-height: 1.2; letter-spacing: -0.01em; }
+        h3, .subheading  { font-size: var(--h3-size);    line-height: 1.3; }
+        p, li, .body     { font-size: var(--body-size);  line-height: 1.55; }
+        small, .small    { font-size: var(--small-size); line-height: 1.4; }
+        .label           { font-size: var(--label-size); letter-spacing: 0.15em; text-transform: uppercase; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+        }
+        h1, h2, h3 { font-family: var(--font-display); font-weight: 600; }
+
+        /* ── 3. Navigation ── */
+        .nav-dots {
+            position: fixed; right: clamp(0.75rem, 2vw, 1.5rem); top: 50%;
+            transform: translateY(-50%); display: flex; flex-direction: column;
+            gap: 0.5rem; z-index: 100;
+        }
+        .nav-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent); opacity: 0.3; cursor: pointer;
+            transition: var(--transition-base); border: none; padding: 0;
+        }
+        .nav-dot.active, .nav-dot:hover { opacity: 1; transform: scale(1.3); }
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width var(--transition-base); z-index: 101;
+        }
+        .keyboard-hint {
+            position: fixed; bottom: clamp(0.5rem, 1.5vh, 1rem); left: 50%;
+            transform: translateX(-50%); font-size: var(--small-size);
+            opacity: 0.3; pointer-events: none; z-index: 99; white-space: nowrap;
+            color: var(--text-muted);
+        }
+
+        /* ── 4. Entrance Animations ── */
+        [class*="enter-"] {
+            animation-fill-mode: both; animation-duration: 0.7s;
+            animation-delay: var(--delay, 0s);
+            animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(clamp(16px, 3vh, 32px)); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .enter-fade-up { animation-name: fadeUp; }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.88); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .enter-scale-in { animation-name: scaleIn; }
+
+        @keyframes blurIn {
+            from { opacity: 0; filter: blur(clamp(8px, 1.5vw, 20px)); transform: scale(1.03); }
+            to   { opacity: 1; filter: blur(0); transform: scale(1); }
+        }
+        .enter-blur-in { animation-name: blurIn; }
+
+        .stagger-list > * { animation-name: fadeUp; animation-fill-mode: both; animation-duration: 0.6s; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+        .stagger-list > *:nth-child(1) { animation-delay: 0.05s; }
+        .stagger-list > *:nth-child(2) { animation-delay: 0.15s; }
+        .stagger-list > *:nth-child(3) { animation-delay: 0.25s; }
+        .stagger-list > *:nth-child(4) { animation-delay: 0.35s; }
+        .stagger-list > *:nth-child(5) { animation-delay: 0.45s; }
+        .stagger-list > *:nth-child(6) { animation-delay: 0.55s; }
+
+        /* ── 5. Background Effects ── */
+        .gradient-mesh {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 30%, rgba(0, 212, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 70%, rgba(255, 45, 120, 0.2) 0%, transparent 55%),
+                radial-gradient(ellipse 100% 100% at 50% 50%, var(--surface) 0%, transparent 100%);
+            animation: meshShift 12s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+        @keyframes meshShift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(25deg); } }
+
+        .particle-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+        .particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--accent); border-radius: 50%;
+            animation: drift var(--duration, 8s) linear infinite; opacity: 0;
+        }
+        @keyframes drift {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-20px) translateX(var(--drift, 40px)); opacity: 0; }
+        }
+
+        .bg-noise::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            background-size: 300px 300px; mix-blend-mode: overlay; z-index: 1;
+        }
+
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+            background-size: clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px);
+        }
+
+        /* ── 6. Slide-Specific Styles ── */
+
+        /* Title slide */
+        .slide-title .slide-content {
+            align-items: center; text-align: center;
+            padding-top: clamp(3rem, 10vh, 8rem);
+            padding-bottom: clamp(3rem, 10vh, 8rem);
+        }
+        .slide-title h1 {
+            font-size: clamp(2rem, 7vw, 5.5rem); font-weight: 700;
+            background: linear-gradient(135deg, var(--accent) 0%, #ffffff 40%, var(--accent-2) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .slide-title .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.4rem);
+            color: var(--text-muted); max-width: 600px;
+        }
+        .slide-title .label { color: var(--accent); margin-bottom: var(--element-gap); }
+
+        .slide-footer {
+            display: flex; gap: 0.75em; font-size: var(--small-size);
+            color: var(--text-muted); margin-top: auto; padding-top: var(--content-gap);
+        }
+
+        /* Big number stat */
+        .big-number {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(3rem, 10vw, 8rem); line-height: 1;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            color: var(--text-muted); margin-top: 0.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: var(--border-width) solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--card-padding);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-spring), box-shadow var(--transition-base);
+            max-width: none; max-height: none; overflow: visible;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), 0 0 20px var(--glow);
+        }
+        .card-icon {
+            font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 0.5rem;
+            display: block;
+        }
+        .card-title {
+            font-family: var(--font-display); font-weight: 600;
+            font-size: var(--h3-size); margin-bottom: 0.4rem; color: var(--text);
+        }
+        .card-body { color: var(--text-muted); font-size: var(--body-size); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: clamp(0.75rem, 2vw, 1.5rem); width: 100%;
+        }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 768px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+        /* Bullet list */
+        .bullet-list {
+            display: flex; flex-direction: column;
+            gap: clamp(0.5rem, 1.2vh, 1rem); list-style: none;
+        }
+        .bullet-list li {
+            font-size: var(--body-size); line-height: 1.5;
+            display: flex; align-items: flex-start; gap: 0.6em;
+        }
+        .bullet-icon { color: var(--accent); flex-shrink: 0; font-weight: 700; }
+
+        /* Code window */
+        .code-window {
+            background: var(--surface); border: var(--border-width) solid var(--border);
+            border-radius: var(--radius-md); overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        .code-titlebar {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1rem; background: rgba(0,0,0,0.3);
+            border-bottom: var(--border-width) solid var(--border);
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red    { background: #ff5f57; }
+        .dot-yellow { background: #febc2e; }
+        .dot-green  { background: #28c840; }
+        .code-filename { margin-left: auto; font-size: var(--small-size); color: var(--text-muted); }
+        .code-block {
+            display: block; padding: clamp(0.75rem, 2vw, 1.5rem);
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: clamp(0.65rem, 1.2vw, 0.95rem); line-height: 1.6;
+            color: var(--text); white-space: pre; overflow-x: auto;
+        }
+        .code-comment { color: #546e7a; }
+        .code-keyword { color: var(--accent); }
+        .code-string  { color: var(--accent-2); }
+        .code-number  { color: #f7c59f; }
+
+        /* CTA */
+        .cta-button {
+            display: inline-flex; align-items: center; gap: 0.5em;
+            padding: clamp(0.6rem, 1.5vw, 1rem) clamp(1.2rem, 3vw, 2rem);
+            background: linear-gradient(135deg, var(--accent), color-mix(in oklch, var(--accent) 70%, var(--accent-2)));
+            color: var(--bg); font-family: var(--font-display); font-weight: 600;
+            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+            border-radius: var(--radius-lg); text-decoration: none;
+            box-shadow: var(--shadow-glow);
+            transition: transform var(--transition-spring), box-shadow var(--transition-base);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 50px var(--glow);
+        }
+        .cta-secondary {
+            background: transparent;
+            border: var(--border-width) solid var(--accent);
+            color: var(--accent); box-shadow: none;
+        }
+        .cta-secondary:hover { box-shadow: 0 0 20px var(--glow); }
+
+        /* Centered content slides */
+        .slide-centered .slide-content { align-items: center; text-align: center; }
+
+        /* Quote */
+        .quote-text {
+            font-family: var(--font-display); font-weight: 500;
+            font-size: clamp(1.1rem, 3vw, 2rem); font-style: italic;
+            color: var(--text); max-width: 700px; line-height: 1.4;
+        }
+        .quote-text::before { content: '"'; color: var(--accent); }
+        .quote-text::after  { content: '"'; color: var(--accent); }
+        .quote-attribution { color: var(--text-muted); font-size: var(--body-size); margin-top: 1rem; }
+
+        /* Checklist */
+        .checklist { list-style: none; display: flex; flex-direction: column; gap: clamp(0.4rem, 1vh, 0.8rem); }
+        .checklist li {
+            display: flex; align-items: center; gap: 0.6em;
+            font-size: clamp(0.8rem, 1.6vw, 1.15rem); color: var(--text);
+        }
+        .check { color: var(--accent); flex-shrink: 0; font-size: 1.2em; }
+        .fail  { color: var(--accent-2); flex-shrink: 0; font-size: 1.2em; }
+
+        /* Formula bar */
+        .formula {
+            display: flex; align-items: center; gap: clamp(0.3rem, 1vw, 0.8rem);
+            flex-wrap: wrap; justify-content: center;
+        }
+        .formula-token {
+            background: var(--surface); border: var(--border-width) solid var(--border);
+            border-radius: var(--radius-sm); padding: 0.3em 0.7em;
+            font-family: var(--font-display); font-weight: 600;
+            font-size: clamp(0.8rem, 1.8vw, 1.3rem); color: var(--accent);
+        }
+        .formula-op {
+            font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-muted); font-weight: 300;
+        }
+        .formula-result {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(1rem, 2.2vw, 1.6rem);
+        }
+
+        /* ── Responsive ── */
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(0.75rem,3vw,2rem); --content-gap: clamp(0.4rem,1.5vw,1rem); --title-size: clamp(1.25rem,4.5vw,2.5rem); --h2-size: clamp(1rem,3vw,1.75rem); }
+        }
+        @media (max-height: 600px) {
+            :root { --slide-padding: clamp(0.5rem,2.5vw,1.5rem); --content-gap: clamp(0.3rem,1vw,0.75rem); --title-size: clamp(1.1rem,4vw,2rem); --body-size: clamp(0.7rem,1.2vw,0.95rem); }
+            .nav-dots, .keyboard-hint { display: none; }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem,7vw,2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { .border-hairline { border-width: 0.5px; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                transition-duration: 0.2s !important; scroll-behavior: auto !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+        @media print {
+            html { scroll-snap-type: none; }
+            .slide { height: 100vh; page-break-after: always; break-after: page; }
+            .nav-dots, .progress-bar, .keyboard-hint { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Presentation progress"></div>
+
+    <!-- Navigation dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- Keyboard hint -->
+    <p class="keyboard-hint" aria-hidden="true">↑↓ or Space to navigate · F for fullscreen</p>
+
+    <!-- ═══════════════ SLIDES ═══════════════ -->
+
+    <!-- SLIDE 1: Title -->
+    <section class="slide slide-title bg-noise" id="slide-1" role="region" aria-label="Slide 1: Title" data-slide-index="0">
+        <div class="gradient-mesh" aria-hidden="true"></div>
+        <div class="particle-bg" id="particles-1" aria-hidden="true"></div>
+        <div class="slide-content">
+            <div class="enter-blur-in">
+                <p class="label">Claude Code Skill</p>
+                <h1>skills-slides</h1>
+                <p class="subtitle" style="--delay:0.2s">50,000+ unique presentation designs. Zero dependencies. Anti-AI-slop.</p>
+            </div>
+            <footer class="slide-footer enter-fade-up" style="--delay:0.5s">
+                <span>github.com/nghiahsgs/skills-slides</span>
+                <span style="color:var(--text-muted)">·</span>
+                <span>Open Source · MIT License</span>
+            </footer>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: The Problem -->
+    <section class="slide bg-noise" id="slide-2" role="region" aria-label="Slide 2: The Problem" data-slide-index="1">
+        <div class="gradient-mesh" aria-hidden="true" style="opacity:0.5"></div>
+        <div class="slide-content slide-centered" style="align-items:center;text-align:center;">
+            <p class="label enter-fade-up" style="color:var(--accent-2)">The Problem</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s; font-size:clamp(1.5rem, 4.5vw, 3rem);">AI slides all look the same.</h2>
+            <ul class="checklist enter-fade-up" style="--delay:0.25s; text-align:left; max-width:550px;">
+                <li><span class="fail">✗</span> Purple gradient on white background</li>
+                <li><span class="fail">✗</span> Inter font on everything</li>
+                <li><span class="fail">✗</span> Identical shadows everywhere</li>
+                <li><span class="fail">✗</span> Flat solid backgrounds</li>
+                <li><span class="fail">✗</span> No visual hierarchy</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: The Solution / Big Number -->
+    <section class="slide slide-centered bg-noise" id="slide-3" role="region" aria-label="Slide 3: 50K Combinations" data-slide-index="2">
+        <div class="gradient-mesh" aria-hidden="true"></div>
+        <div class="slide-content" style="align-items:center;text-align:center;">
+            <p class="label enter-fade-up" style="color:var(--accent)">The Solution</p>
+            <div class="big-number enter-scale-in" style="--delay:0.15s">50,000+</div>
+            <p class="stat-label enter-fade-up" style="--delay:0.3s">unique design combinations</p>
+            <div class="formula enter-fade-up" style="--delay:0.45s; margin-top:clamp(1rem,3vh,2rem);">
+                <span class="formula-token">50 aesthetics</span>
+                <span class="formula-op">×</span>
+                <span class="formula-token">20 palettes</span>
+                <span class="formula-op">×</span>
+                <span class="formula-token">10 fonts</span>
+                <span class="formula-op">×</span>
+                <span class="formula-token">5 layouts</span>
+                <span class="formula-op">×</span>
+                <span class="formula-token">30+ effects</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: How It Works -->
+    <section class="slide bg-noise bg-grid" id="slide-4" role="region" aria-label="Slide 4: How It Works" data-slide-index="3">
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent)">How It Works</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">Token-Based Design System</h2>
+            <ul class="bullet-list stagger-list" role="list" style="max-width:700px;">
+                <li><span class="bullet-icon">→</span>Describe your vibe: "dark techy startup energy"</li>
+                <li><span class="bullet-icon">→</span>Search engine matches aesthetics, palettes, fonts, effects</li>
+                <li><span class="bullet-icon">→</span>Pick from 3 visual directions — or mix elements</li>
+                <li><span class="bullet-icon">→</span>Get a single .html file — zero dependencies</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: Code Example -->
+    <section class="slide bg-noise" id="slide-5" role="region" aria-label="Slide 5: Code example" data-slide-index="4">
+        <div class="gradient-mesh" aria-hidden="true" style="opacity:0.4"></div>
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent)">Search Tokens</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">Find your style in seconds</h2>
+            <div class="code-window enter-scale-in" style="--delay:0.2s; max-width:720px;">
+                <div class="code-titlebar" aria-hidden="true">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span class="code-filename">terminal</span>
+                </div>
+                <pre><code class="code-block"><span class="code-comment"># Find aesthetics by vibe</span>
+$ python search.py <span class="code-string">"dark futuristic"</span> --domain aesthetic
+
+<span class="code-comment"># Get the full compatible design system</span>
+$ python search.py --compatible <span class="code-string">startup-pitch</span>
+
+<span class="code-comment"># Fetch a specific token</span>
+$ python search.py --get palette <span class="code-string">midnight-aurora</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: Feature Grid -->
+    <section class="slide bg-noise" id="slide-6" role="region" aria-label="Slide 6: Features" data-slide-index="5">
+        <div class="gradient-mesh" aria-hidden="true" style="opacity:0.3"></div>
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent)">Features</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">Everything you need</h2>
+            <div class="grid grid-3" role="list" style="margin-top:var(--element-gap);">
+                <article class="card enter-scale-in" style="--delay:0.1s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">📄</span>
+                    <h3 class="card-title">Single File</h3>
+                    <p class="card-body">One .html file. No build step, no npm. Double-click to present.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.2s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">⌨️</span>
+                    <h3 class="card-title">Keyboard Nav</h3>
+                    <p class="card-body">Arrow keys, space, escape for overview. Touch and wheel supported.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.3s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">📱</span>
+                    <h3 class="card-title">Responsive</h3>
+                    <p class="card-body">Viewport-fit with clamp() sizing. Works on any screen, any projector.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.4s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">♿</span>
+                    <h3 class="card-title">Accessible</h3>
+                    <p class="card-body">ARIA labels, semantic HTML, reduced-motion support, WCAG AA contrast.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.5s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">✏️</span>
+                    <h3 class="card-title">Editable</h3>
+                    <p class="card-body">Optional contenteditable mode. Double-click any text to edit live.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.6s" role="listitem">
+                    <span class="card-icon" aria-hidden="true">🔄</span>
+                    <h3 class="card-title">PPTX Convert</h3>
+                    <p class="card-body">Import existing decks. Keep your content, get a new design system.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 7: Anti-Slop Checklist -->
+    <section class="slide bg-noise bg-grid" id="slide-7" role="region" aria-label="Slide 7: Anti-Slop Checklist" data-slide-index="6">
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent-2)">Quality Gate</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">10-Point Anti-Slop Checklist</h2>
+            <div class="grid grid-2" style="margin-top:var(--element-gap);">
+                <ul class="checklist stagger-list">
+                    <li><span class="check">✓</span> No generic display fonts</li>
+                    <li><span class="check">✓</span> No purple-on-white gradient</li>
+                    <li><span class="check">✓</span> Shadow hierarchy (sm/md/lg)</li>
+                    <li><span class="check">✓</span> All colors via CSS variables</li>
+                    <li><span class="check">✓</span> All font sizes use clamp()</li>
+                </ul>
+                <ul class="checklist stagger-list">
+                    <li><span class="check">✓</span> Signature visual effect</li>
+                    <li><span class="check">✓</span> Background has depth</li>
+                    <li><span class="check">✓</span> 3+ distinct text sizes</li>
+                    <li><span class="check">✓</span> WCAG AA 4.5:1 contrast</li>
+                    <li><span class="check">✓</span> prefers-reduced-motion</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 8: Design System Overview -->
+    <section class="slide bg-noise" id="slide-8" role="region" aria-label="Slide 8: Design Tokens" data-slide-index="7">
+        <div class="gradient-mesh" aria-hidden="true" style="opacity:0.35"></div>
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent)">Token Library</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">Curated, not random</h2>
+            <div class="grid grid-2" role="list" style="margin-top:var(--element-gap);">
+                <article class="card enter-scale-in" style="--delay:0.15s" role="listitem">
+                    <h3 class="card-title" style="color:var(--accent)">50 Aesthetics</h3>
+                    <p class="card-body">startup-pitch · neon-cyber · editorial-minimal · luxury-noir · terminal-hacker · consulting-swiss · vaporwave</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.25s" role="listitem">
+                    <h3 class="card-title" style="color:var(--accent)">20 Color Systems</h3>
+                    <p class="card-body">Full palettes with bg, surface, text, accents, borders, glow — all with WCAG contrast ratios verified.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.35s" role="listitem">
+                    <h3 class="card-title" style="color:var(--accent)">10 Font Pairings</h3>
+                    <p class="card-body">Curated display + body pairs from Google Fonts & Fontshare. No Inter. No Roboto. No system-ui.</p>
+                </article>
+                <article class="card enter-scale-in" style="--delay:0.45s" role="listitem">
+                    <h3 class="card-title" style="color:var(--accent)">30+ Effects</h3>
+                    <p class="card-body">Particles · aurora · gradient mesh · glassmorphism · grid overlay · magnetic cursor · 3D tilt — full CSS/JS snippets.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 9: Quick Start -->
+    <section class="slide bg-noise" id="slide-9" role="region" aria-label="Slide 9: Quick Start" data-slide-index="8">
+        <div class="gradient-mesh" aria-hidden="true" style="opacity:0.4"></div>
+        <div class="slide-content">
+            <p class="label enter-fade-up" style="color:var(--accent)">Get Started</p>
+            <h2 class="enter-fade-up" style="--delay:0.1s">Two commands. That's it.</h2>
+            <div class="code-window enter-scale-in" style="--delay:0.2s; max-width:680px;">
+                <div class="code-titlebar" aria-hidden="true">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span class="code-filename">terminal</span>
+                </div>
+                <pre><code class="code-block"><span class="code-comment"># Clone into Claude Code skills</span>
+$ git clone https://github.com/nghiahsgs/skills-slides.git \
+    ~/.claude/skills/slides
+
+<span class="code-comment"># Then just ask Claude Code:</span>
+<span class="code-string">"Make me a 10-slide pitch deck.</span>
+<span class="code-string"> Dark, techy, high energy."</span></code></pre>
+            </div>
+            <p class="enter-fade-up" style="--delay:0.4s; color:var(--text-muted); font-size:var(--body-size); max-width:600px; margin-top:var(--element-gap);">
+                Claude searches tokens matching your vibe, shows you 3 directions, and generates a single .html file with full animations and keyboard navigation.
+            </p>
+        </div>
+    </section>
+
+    <!-- SLIDE 10: CTA / Closing -->
+    <section class="slide slide-title bg-noise" id="slide-10" role="region" aria-label="Slide 10: Call to Action" data-slide-index="9">
+        <div class="gradient-mesh" aria-hidden="true"></div>
+        <div class="particle-bg" id="particles-10" aria-hidden="true"></div>
+        <div class="slide-content" style="align-items:center;text-align:center;">
+            <div class="enter-blur-in">
+                <h2 style="font-size:clamp(1.6rem, 5vw, 3.2rem); font-weight:700; color:var(--text);">Stop making slides that look like AI made them.</h2>
+                <p style="color:var(--text-muted); font-size:clamp(0.9rem, 2vw, 1.3rem); margin-top:1rem; max-width:500px;">
+                    Star the repo. Clone the skill. Make something that doesn't suck.
+                </p>
+            </div>
+            <div class="enter-fade-up" style="--delay:0.3s; display:flex; gap:1rem; margin-top:clamp(1.5rem,4vh,3rem); flex-wrap:wrap; justify-content:center;">
+                <a href="https://github.com/nghiahsgs/skills-slides" class="cta-button">★ Star on GitHub</a>
+                <a href="https://github.com/nghiahsgs/skills-slides" class="cta-button cta-secondary">View Source →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ JS ════════════ -->
+    <script>
+    /* ── Particle System ── */
+    function createParticles(containerId, count = 80) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) return;
+
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.setProperty('--duration', (Math.random() * 7 + 5) + 's');
+            p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+            p.style.animationDelay = Math.random() * 10 + 's';
+            if (Math.random() > 0.6) p.style.background = 'var(--accent-2)';
+            container.appendChild(p);
+        }
+    }
+
+    /* ── 3D Tilt ── */
+    function enableTilt(selector = '.card', maxTilt = 8) {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) return;
+        document.querySelectorAll(selector).forEach(el => {
+            el.style.transformStyle = 'preserve-3d';
+            el.style.transition = 'transform 0.1s ease';
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = (e.clientX - cx) / (rect.width / 2);
+                const dy = (e.clientY - cy) / (rect.height / 2);
+                el.style.transform = `perspective(800px) rotateX(${-dy * maxTilt}deg) rotateY(${dx * maxTilt}deg) translateY(-4px)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)';
+                el.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)';
+            });
+            el.addEventListener('mouseenter', () => { el.style.transition = 'transform 0.1s ease'; });
+        });
+    }
+
+    /* ── SlidePresentation ── */
+    class SlidePresentation {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            this.current = 0;
+            this.init();
+        }
+        init() {
+            if (!this.slides.length) return;
+            this.buildNavDots();
+            this.buildProgressBar();
+            this.bindKeyboard();
+            this.bindTouch();
+            this.bindWheel();
+            this.bindHash();
+            this.observeSlides();
+            this.goTo(this.getInitialSlide(), false);
+        }
+        buildNavDots() {
+            const nav = document.getElementById('navDots');
+            if (!nav) return;
+            this.slides.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-dot';
+                btn.dataset.index = i;
+                btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                btn.addEventListener('click', () => this.goTo(i));
+                nav.appendChild(btn);
+            });
+            this.dots = Array.from(nav.querySelectorAll('.nav-dot'));
+        }
+        buildProgressBar() { this.progressBar = document.getElementById('progressBar'); }
+        updateProgress() {
+            if (!this.progressBar) return;
+            const pct = this.slides.length > 1 ? (this.current / (this.slides.length - 1)) * 100 : 100;
+            this.progressBar.style.width = `${pct}%`;
+            this.progressBar.setAttribute('aria-valuenow', Math.round(pct));
+            if (this.dots) this.dots.forEach((d, i) => d.classList.toggle('active', i === this.current));
+        }
+        goTo(index, animate = true) {
+            const target = Math.max(0, Math.min(index, this.slides.length - 1));
+            if (target === this.current && animate) return;
+            this.current = target;
+            const slide = this.slides[target];
+            slide.scrollIntoView({ behavior: animate ? 'smooth' : 'instant' });
+            this.updateProgress();
+            this.triggerEntranceAnimations(slide);
+            history.replaceState(null, '', `#slide-${target + 1}`);
+        }
+        next() { this.goTo(this.current + 1); }
+        prev() { this.goTo(this.current - 1); }
+        getInitialSlide() {
+            const match = window.location.hash.match(/#slide-(\d+)/);
+            return match ? parseInt(match[1], 10) - 1 : 0;
+        }
+        bindKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.matches('[contenteditable], input, textarea')) return;
+                switch (e.key) {
+                    case 'ArrowDown': case 'ArrowRight': case ' ': case 'PageDown':
+                        e.preventDefault(); this.next(); break;
+                    case 'ArrowUp': case 'ArrowLeft': case 'PageUp':
+                        e.preventDefault(); this.prev(); break;
+                    case 'Home': e.preventDefault(); this.goTo(0); break;
+                    case 'End': e.preventDefault(); this.goTo(this.slides.length - 1); break;
+                    case 'f': case 'F':
+                        if (!e.ctrlKey && !e.metaKey) this.toggleFullscreen(); break;
+                }
+            });
+        }
+        bindTouch() {
+            let startY = 0, startX = 0;
+            document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+            document.addEventListener('touchend', (e) => {
+                const dy = startY - e.changedTouches[0].clientY;
+                const dx = startX - e.changedTouches[0].clientX;
+                if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) { dy > 0 ? this.next() : this.prev(); }
+            }, { passive: true });
+        }
+        bindWheel() {
+            let t;
+            document.addEventListener('wheel', (e) => {
+                e.preventDefault(); clearTimeout(t);
+                t = setTimeout(() => { e.deltaY > 0 ? this.next() : this.prev(); }, 50);
+            }, { passive: false });
+        }
+        observeSlides() {
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const idx = this.slides.indexOf(entry.target);
+                        if (idx !== -1 && idx !== this.current) {
+                            this.current = idx; this.updateProgress();
+                            this.triggerEntranceAnimations(entry.target);
+                        }
+                    }
+                });
+            }, { threshold: 0.6 });
+            this.slides.forEach(s => obs.observe(s));
+        }
+        triggerEntranceAnimations(slide) {
+            slide.querySelectorAll('[class*="enter-"]').forEach(el => {
+                el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+            });
+            slide.querySelectorAll('.stagger-list > *').forEach(el => {
+                el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+            });
+        }
+        bindHash() { window.addEventListener('hashchange', () => this.goTo(this.getInitialSlide())); }
+        toggleFullscreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+            else document.exitFullscreen?.();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        createParticles('particles-1', 80);
+        createParticles('particles-10', 60);
+        enableTilt('.card');
+        window.presentation = new SlidePresentation();
+    });
+    </script>
+</body>
+</html>
