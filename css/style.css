@@ -331,3 +331,27 @@ footer.site{background:var(--espresso);color:var(--cream)}
   .pm-chat-pill{display:none}
   .pm-chat-panel{right:16px;bottom:158px;width:calc(100vw - 32px)}
 }
+
+/* SONG BUTTON (bottom-left, opposite WhatsApp) */
+@keyframes pmSongBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes pmSongRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes pmSongBar{0%,100%{height:6px}50%{height:22px}}
+.pm-song{position:fixed;left:22px;bottom:22px;z-index:200;display:flex;align-items:center;gap:10px;pointer-events:none}
+.pm-song-btn{pointer-events:auto;position:relative;width:60px;height:60px;border-radius:50%;border:0;padding:0;background:var(--espresso);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28);animation:pmSongBob 3s ease-in-out infinite;transition:background .3s ease}
+.pm-song-btn:hover{background:var(--nogal)}
+.pm-song-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.pm-song-btn::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);animation:pmSongRing 2.4s ease-out infinite}
+.pm-song.playing .pm-song-btn::before{animation:none;opacity:0}
+.pm-song-play{width:26px;height:26px;margin-left:4px;fill:var(--gold)}
+.pm-song.playing .pm-song-play{display:none}
+.pm-song-bars{display:none;align-items:flex-end;gap:3px;height:22px}
+.pm-song.playing .pm-song-bars{display:flex}
+.pm-song-bars span{width:4px;height:6px;border-radius:2px;background:var(--gold);animation:pmSongBar 1.1s ease-in-out infinite}
+.pm-song-bars span:nth-child(2){animation-delay:.25s}
+.pm-song-bars span:nth-child(3){animation-delay:.5s}
+.pm-song-bars span:nth-child(4){animation-delay:.15s}
+.pm-song.playing .pm-song-bars span{animation-duration:.45s}
+.pm-song-label{background:var(--espresso);color:#fff;border:1px solid rgba(201,162,39,.45);padding:11px 16px;border-radius:999px;font-family:'Manrope',sans-serif;font-size:13.5px;font-weight:700;white-space:nowrap;box-shadow:0 8px 22px rgba(0,0,0,.22);opacity:0;transform:translateX(-8px);transition:opacity .4s ease,transform .4s ease}
+.pm-song.label-on .pm-song-label{opacity:1;transform:none;pointer-events:auto;cursor:pointer}
+@media (max-width:480px){.pm-song-label{padding:10px 13px;font-size:13px}}
+@media (prefers-reduced-motion:reduce){.pm-song-btn,.pm-song-btn::before,.pm-song-bars span{animation:none}}

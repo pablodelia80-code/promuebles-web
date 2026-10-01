@@ -1,0 +1,13 @@
+# Redirect (antes manejado por netlify.toml)
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/famosos\.html$ [NC]
+RewriteRule ^ /testimonios.html [R=301,L]
+
+# Security headers (antes manejados por _headers)
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+  Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
