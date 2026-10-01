@@ -86,7 +86,7 @@ function renderGrid(items) {
   items.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'prod-card';
-    card.onclick = () => openModal(p);
+    card.onclick = () => irAFicha(p);
     card.innerHTML = `
       <div class="prod-media">
         ${p.oferta ? '<span class="badge-oferta">Oferta</span>' : ''}
@@ -106,6 +106,14 @@ function renderGrid(items) {
 
 // ===== MODAL =====
 const modalOverlay = document.getElementById('modal-overlay');
+// Al elegir un producto se abre su página completa (con el dibujo, las medidas y el configurador). El pop-up queda solo de respaldo.
+function irAFicha(p) {
+  const idx = PRODUCTS.indexOf(p);
+  const mod = (window.PM && idx >= 0) ? PM.MODELOS.filter(x => x.idx === idx)[0] : null;
+  if (mod) location.href = 'camas-box/' + mod.slug + '/';
+  else openModal(p);
+}
+
 function openModal(p) {
   document.getElementById('modal-nombre').textContent = p.n;
   document.getElementById('modal-medida').textContent = p.medida;
@@ -250,5 +258,5 @@ if (initialProducto) {
     (!initialKing || p.subcat === initialKing) &&
     slugify(p.n) === initialProducto
   );
-  if (match) setTimeout(() => openModal(match), 250);
+  if (match) setTimeout(() => irAFicha(match), 250);
 }
