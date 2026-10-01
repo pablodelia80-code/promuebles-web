@@ -1,5 +1,5 @@
 // Páginas de las herramientas del comprador. Las genera generar-sitio.js; la lógica está en js/comparar.js, calculadora.js, elegir.js y configurar.js.
-const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261009"></script>\n<script src="/js/modelos.js?v=20261009"></script>\n<script src="/js/${n}.js?v=20261009"></script>`;
+const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261010"></script>\n<script src="/js/modelos.js?v=20261010"></script>\n<script src="/js/${n}.js?v=20261010"></script>`;
 
 module.exports = {
   'comparar.html': ({ cabecera, pie }) => cabecera('Comparar camas box lado a lado | ProMuebles',
@@ -25,24 +25,32 @@ module.exports = {
     <h1>¿Entra la cama en tu cuarto?</h1>
     <p class="m-lead" style="max-width:60ch">Poné cuánto mide tu habitación y mirá, en un plano a escala, si la cama entra y si los cajones se pueden abrir.</p>
     <div class="h-grid2">
-      <form class="h-form" id="k-form" onsubmit="return false">
-        <label>Modelo de cama<select id="k-modelo"></select></label>
-        <div class="h-dos">
-          <label>Largo del cuarto (cm)<input id="k-largo" type="number" inputmode="numeric" min="150" max="1000" value="340"></label>
-          <label>Ancho del cuarto (cm)<input id="k-ancho" type="number" inputmode="numeric" min="150" max="1000" value="300"></label>
-        </div>
-        <label>¿Dónde va la cama?
-          <select id="k-pos">
-            <option value="centro">Centrada en la pared del fondo</option>
-            <option value="izq">Pegada a la pared izquierda</option>
-            <option value="der">Pegada a la pared derecha</option>
-          </select>
-        </label>
-        <p class="h-nota">La cabecera va contra la pared del fondo (arriba en el plano). No se tienen en cuenta puertas ni otros muebles.</p>
-      </form>
+      <div class="k-izq">
+        <form class="h-form" id="k-form" onsubmit="return false">
+          <label>Modelo de cama<select id="k-modelo"></select></label>
+          <div class="h-dos">
+            <label>Largo del cuarto (cm)<input id="k-largo" type="number" inputmode="numeric" min="150" max="1000" value="340"></label>
+            <label>Ancho del cuarto (cm)<input id="k-ancho" type="number" inputmode="numeric" min="150" max="1000" value="300"></label>
+          </div>
+          <label>¿Dónde va la cama?
+            <select id="k-pos">
+              <option value="centro">Centrada en la pared del fondo</option>
+              <option value="izq">Pegada a la pared izquierda</option>
+              <option value="der">Pegada a la pared derecha</option>
+            </select>
+          </label>
+          <p class="h-nota">La cabecera va contra la pared del fondo (arriba en el plano). No se tienen en cuenta puertas ni otros muebles.</p>
+        </form>
+        <div id="k-estado" class="k-estado" aria-live="polite"></div>
+        <ul class="h-veredicto" id="k-ver"></ul>
+      </div>
       <div class="h-out">
         <div class="h-svgwrap"><svg id="k-svg" viewBox="0 0 400 400" role="img" aria-label="Plano a escala del cuarto con la cama"></svg></div>
-        <ul class="h-veredicto" id="k-ver"></ul>
+        <ul class="k-leyenda" aria-label="Referencias del plano">
+          <li><i class="k-cama"></i> La cama</li>
+          <li><i class="k-ok"></i> Lugar que ocupan los cajones al abrirse (salen 40 cm). En verde: alcanza</li>
+          <li><i class="k-no"></i> En rojo: falta lugar para abrirlos completos</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -108,5 +116,5 @@ module.exports = {
     </div>
   </div>
 </main>
-` + pie('<script src="/js/productos-data.js?v=20261009"></script>\n<script src="/js/modelos.js?v=20261009"></script>\n<script src="/js/configurar.js?v=20261009"></script>')
+` + pie('<script src="/js/productos-data.js?v=20261010"></script>\n<script src="/js/modelos.js?v=20261010"></script>\n<script src="/js/configurar.js?v=20261010"></script>')
 };

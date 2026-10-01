@@ -18,8 +18,8 @@
   function calcular() {
     var m = M.filter(function (x) { return x.slug === selM.value; })[0];
     var L = +inL.value, A = +inA.value, svg = document.getElementById('k-svg'), ver = document.getElementById('k-ver');
-    svg.innerHTML = ''; ver.innerHTML = '';
-    if (!(L >= 100 && A >= 100)) { ver.innerHTML = li('no', 'Poné el largo y el ancho de tu cuarto en centímetros.'); return; }
+    var est = document.getElementById('k-estado'); svg.innerHTML = ''; ver.innerHTML = '';
+    if (!(L >= 100 && A >= 100)) { est.className = 'k-estado'; est.textContent = ''; ver.innerHTML = li('no', 'Poné el largo y el ancho de tu cuarto en centímetros.'); return; }
 
     var bedL = m.largoTotal, bedA = m.anchoTotal;
     var libreIzq, libreDer;
@@ -47,6 +47,7 @@
     svg.appendChild(txt(200, Math.round(L * s + 44), 'Cuarto de ' + (A / 100).toFixed(2).replace('.', ',') + ' × ' + (L / 100).toFixed(2).replace('.', ',') + ' m', { 'font-size': 11 }));
 
     // Veredicto
+    est.className = 'k-estado ' + (entra ? 'ok' : 'no'); est.textContent = entra ? 'La cama entra en tu cuarto' : 'La cama no entra en tu cuarto';
     if (!entra) {
       ver.innerHTML = li('no', '<b>La cama no entra.</b> Mide ' + bedL + ' × ' + bedA + ' cm y el cuarto tiene ' + L + ' × ' + A + ' cm.' +
         (bedA > A ? ' Probá con un modelo más angosto.' : '') + '');

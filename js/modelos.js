@@ -23,8 +23,8 @@
   var BAULERAS = {
     '2-plazas': { central: [{ dim: [102, 50, 40], n: 1 }], cabecera: [[68, 38, 40], [68, 38, 40]] },
     'queen':    { central: [{ dim: [102, 70, 40], n: 1 }], cabecera: [[78, 44, 40], [78, 44, 40]] },
-    'king-180': { central: [{ dim: [102, 45, 40], n: 2 }], cabecera: [[70, 43, 40], [70, 43, 40], [43, 43, 40]] },
-    'king-200': { central: [{ dim: [102, 55, 40], n: 2 }], cabecera: [[70, 43, 40], [70, 43, 40], [63, 43, 40]] }
+    'king-180': { central: [{ dim: [102, 45, 40], n: 2 }], cabecera: [[70, 43, 40], [43, 43, 40], [70, 43, 40]] },
+    'king-200': { central: [{ dim: [102, 55, 40], n: 2 }], cabecera: [[70, 43, 40], [63, 43, 40], [70, 43, 40]] }
   };
 
   function m(o) { return o; }
@@ -84,7 +84,7 @@
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 4, dim: [65, 40, 15] }, { n: 2, dim: [38, 40, 15] }], bauleras: BAULERAS['king-180'], cajones: 14 }),
     m({ slug: '21-vip-king-180', linea: 'king-180', cat: 'king', nombre: '21 Vip King', corto: '21 Vip King 180', idx: 20, alto: 52,
         laterales: { izq: 6, der: 6, dim: [48, 40, 12] }, frontales: [{ n: 6, dim: [65, 40, 12] }, { n: 3, dim: [38, 40, 12] }],
-        bauleras: { central: [{ dim: [102, 45, 50], n: 2 }], cabecera: [[70, 43, 50], [70, 43, 50], [43, 43, 50]] }, cajones: 21 }),
+        bauleras: { central: [{ dim: [102, 45, 50], n: 2 }], cabecera: [[70, 43, 50], [43, 43, 50], [70, 43, 50]] }, cajones: 21 }),
     // ---------- KING 200 ----------
     m({ slug: '8-vip-king-200', linea: 'king-200', cat: 'king', nombre: '8 Vip King', corto: '8 Vip King 200', idx: 21, alto: 42,
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, zapateros: ZAPATEROS['king-200'], zapateroPares: 6, bauleras: BAULERAS['king-200'], cajones: 8 }),
@@ -92,7 +92,7 @@
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 4, dim: [65, 40, 15] }, { n: 2, dim: [58, 40, 15] }], bauleras: BAULERAS['king-200'], cajones: 14 }),
     m({ slug: '21-vip-king-200', linea: 'king-200', cat: 'king', nombre: '21 Vip King', corto: '21 Vip King 200', idx: 23, alto: 52,
         laterales: { izq: 6, der: 6, dim: [48, 40, 12] }, frontales: [{ n: 6, dim: [65, 40, 12] }, { n: 3, dim: [58, 40, 12] }],
-        bauleras: { central: [{ dim: [102, 55, 50], n: 2 }], cabecera: [[70, 43, 50], [70, 43, 50], [63, 43, 50]] }, cajones: 21 })
+        bauleras: { central: [{ dim: [102, 55, 50], n: 2 }], cabecera: [[70, 43, 50], [63, 43, 50], [70, 43, 50]] }, cajones: 21 })
   ];
 
   // Cajones apilados: en una cama de 42 cm entran 2 cajones de 15 (o 1 de 30); en la de 52, 3 de 15 o 3 de 12.

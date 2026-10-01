@@ -154,3 +154,16 @@
 .h-tabla thead th select{display:block;width:100%;margin:4px 0 10px;padding:10px 12px;border:1.5px solid var(--arena);border-radius:12px;font:inherit;font-size:15px;font-weight:600;color:var(--espresso);background:var(--cream)}
 .h-tabla thead .c-etq{display:block;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--madera)}
 .h-tabla thead th{width:36%}.h-tabla thead th:first-child{width:28%}
+
+/* Calculadora: resultado arriba y leyenda */
+.k-izq{display:grid;gap:16px;min-width:0}
+.k-estado{display:none;padding:16px 18px;border-radius:16px;font:800 20px 'Poppins',sans-serif;letter-spacing:-.01em}
+.k-estado.ok{display:block;background:#e3f4e9;color:#14532d;border:1.5px solid #9bd3ae}
+.k-estado.no{display:block;background:#fbe4df;color:#7a1f12;border:1.5px solid #e8b3a9}
+.k-leyenda{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;font-size:14px;color:var(--espresso)}
+.k-leyenda li{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.k-leyenda i{flex:0 0 18px;height:18px;border-radius:4px;margin-top:2px}
+.k-cama{background:#C9AD8F;border:2px solid #4A3222}
+.k-ok{background:rgba(37,150,80,.25);border:2px dashed #259650}
+.k-no{background:rgba(200,60,40,.25);border:2px dashed #c83c28}
+@media (min-width:901px){.k-izq{position:sticky;top:84px}}
