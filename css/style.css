@@ -364,3 +364,17 @@ footer.site{background:var(--espresso);color:var(--cream)}
 /* Acceso destacado al configurador en el menú */
 .nav-links a.nav-destacado{background:var(--gold);color:var(--espresso);font-weight:800;border-radius:999px;padding:8px 16px}
 .nav-links a.nav-destacado:hover{color:var(--espresso);text-shadow:none;box-shadow:0 0 18px rgba(201,162,39,.6)}
+
+/* Menú en una sola línea en pantallas anchas (con el botón "Armá tu cama" ya no entraba) */
+@media (min-width:1041px){
+  .nav{max-width:1440px;flex-wrap:nowrap;gap:12px 20px}
+  .nav-links{flex:1 1 auto;flex-wrap:nowrap}
+  .nav-links a{padding:8px 10px;white-space:nowrap}
+  .nav-links a.nav-destacado{padding:8px 16px}
+  .nav-contact{flex:0 0 auto;gap:12px;flex-wrap:nowrap}
+  .nav-contact a{white-space:nowrap}
+}
+@media (min-width:1041px) and (max-width:1380px){
+  .nav-contact a[href^="mailto"]{font-size:0;gap:0}
+  .nav-contact a[href^="mailto"] svg{width:18px;height:18px}
+}
