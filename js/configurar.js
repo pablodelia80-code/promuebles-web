@@ -263,11 +263,11 @@
     ORDEN.forEach(function (k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'f-chip' + (k === st.linea ? ' on' : '');
       b.innerHTML = '<b>' + PM.LINEAS[k].nombre + '</b><span>' + PM.LINEAS[k].colchon + '</span>';
-      b.addEventListener('click', function () { reiniciar(M.filter(function (m) { return m.linea === k; })[0].slug); todo(); });
+      b.addEventListener('click', function () { reiniciar(PM.porPrecio(M.filter(function (m) { return m.linea === k; }))[0].slug); todo(); });
       chips.appendChild(b);
     });
     var lista = el('cz-modelo'); lista.innerHTML = '';
-    M.filter(function (m) { return m.linea === st.linea; }).forEach(function (m) {
+    PM.porPrecio(M.filter(function (m) { return m.linea === st.linea; })).forEach(function (m) {
       var v = PM.venta(m), nB = PM.totalBauleras(m), b = document.createElement('button'); b.type = 'button'; b.className = 'f-modelo' + (m.slug === st.slug ? ' on' : '');
       b.innerHTML = '<img src="' + PM.webp(v.img, 's') + '" alt="" width="200" height="267" loading="lazy"><span><b>' + m.corto + '</b><small>' + m.cajones + ' cajones' + (nB ? ' · ' + nB + (nB === 1 ? ' baulera' : ' bauleras') : '') + '</small></span><em>' + PM.pesos(v.precio) + '</em>';
       b.addEventListener('click', function () { reiniciar(m.slug); todo(); });

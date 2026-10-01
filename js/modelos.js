@@ -190,7 +190,16 @@
   // Datos de venta (precio, foto) desde productos-data.js, que es la fuente de precios.
   function venta(m) { var p = (typeof PRODUCTS !== 'undefined') ? PRODUCTS[m.idx] : null; return p ? { precio: p.price, viejo: p.priceOld || null, img: p.img, oferta: !!p.oferta } : null; }
 
-  var api = { webp: webp, pesos: pesos, venta: venta, fmt: fmt, especificaciones: especificaciones, textoCajones: textoCajones, textoZapateros: textoZapateros, textoBauleras: textoBauleras, totalBauleras: totalBauleras, lateralesTotal: lateralesTotal, frontalesTotal: frontalesTotal, agrupar: agrupar,  MODELOS: MODELOS, LINEAS: LINEAS, CIERRE_SUAVE_POR_CAJON: CIERRE_SUAVE_POR_CAJON, COLOR_ADICIONAL: COLOR_ADICIONAL };
+  // Orden lógico de las camas: por medida y, dentro de cada una, de menor a mayor precio (4, 6, 8, 10, 12, 18...).
+  var ORDEN_LINEAS = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
+  function porPrecio(arr) {
+    return arr.slice().sort(function (a, b) {
+      var va = venta(a), vb = venta(b);
+      return ORDEN_LINEAS.indexOf(a.linea) - ORDEN_LINEAS.indexOf(b.linea) || ((va && vb) ? va.precio - vb.precio : 0) || a.cajones - b.cajones || a.idx - b.idx;
+    });
+  }
+
+  var api = { porPrecio: porPrecio, webp: webp, pesos: pesos, venta: venta, fmt: fmt, especificaciones: especificaciones, textoCajones: textoCajones, textoZapateros: textoZapateros, textoBauleras: textoBauleras, totalBauleras: totalBauleras, lateralesTotal: lateralesTotal, frontalesTotal: frontalesTotal, agrupar: agrupar,  MODELOS: MODELOS, LINEAS: LINEAS, CIERRE_SUAVE_POR_CAJON: CIERRE_SUAVE_POR_CAJON, COLOR_ADICIONAL: COLOR_ADICIONAL };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PM = api;
 })(typeof window !== 'undefined' ? window : this);

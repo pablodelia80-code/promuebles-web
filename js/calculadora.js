@@ -4,7 +4,7 @@
   var q = new URLSearchParams(location.search);
   var selM = document.getElementById('k-modelo'), inL = document.getElementById('k-largo'), inA = document.getElementById('k-ancho'), pos = document.getElementById('k-pos');
   var grupos = {};
-  M.forEach(function (m) {
+  PM.porPrecio(M).forEach(function (m) {
     var g = grupos[m.lineaNombre];
     if (!g) { g = grupos[m.lineaNombre] = document.createElement('optgroup'); g.label = m.lineaNombre; selM.appendChild(g); }
     var o = document.createElement('option'); o.value = m.slug; o.textContent = m.corto; g.appendChild(o);

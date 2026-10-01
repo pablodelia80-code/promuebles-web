@@ -82,7 +82,7 @@ function renderKingSubnav() {
 function renderGrid(items) {
   prodGrid.innerHTML = '';
   prodGrid.style.display = 'grid';
-  items.sort((a, b) => (b.oferta ? 1 : 0) - (a.oferta ? 1 : 0) || a.price - b.price);
+  items.sort((a, b) => a.price - b.price);
   items.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'prod-card';

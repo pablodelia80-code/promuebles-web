@@ -38,9 +38,9 @@ ${extra && extra.og ? `<meta property="og:image" content="${SITIO}${extra.og}">`
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="/css/style.css?v=20261006">
-<link rel="stylesheet" href="/css/modelo.css?v=20261006">
-<link rel="stylesheet" href="/css/herramientas.css?v=20261006">
+<link rel="stylesheet" href="/css/style.css?v=20261008">
+<link rel="stylesheet" href="/css/modelo.css?v=20261008">
+<link rel="stylesheet" href="/css/herramientas.css?v=20261008">
 ${extra && extra.jsonld ? extra.jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n') : ''}
 <script src="/js/analytics.js" defer></script>
 </head>
@@ -99,7 +99,7 @@ function pie(scripts) {
   <div class="wrap foot-bottom">&copy; 2026 ProMuebles</div>
 </footer>
 <a class="wa-float" href="https://wa.me/5491168767075" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_SVG}</a>
-<script src="/js/script.js?v=20261006"></script>
+<script src="/js/script.js?v=20261008"></script>
 ${scripts || ''}
 </body>
 </html>
@@ -113,6 +113,7 @@ const ORG = {
 
 // ---------- páginas de modelo ----------
 const CAT_NOMBRE = { '1-plaza': '1 Plaza', '1-plaza-y-media': '1 Plaza y Media', '2-plazas': '2 Plazas', queen: 'Queen', king: 'King' };
+const ORDEN_LIN = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
 const ORDEN_CAT = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king'];
 
 function pagina(m) {
@@ -122,7 +123,7 @@ function pagina(m) {
     .concat((p.clientPhotos || []).map((f, i) => ({ rel: f, alt: m.titulo + ' armada en el hogar de un cliente, foto ' + (i + 1) })));
   const specs = PM.especificaciones(m);
   const nBau = PM.totalBauleras(m);
-  const mismos = D.PRODUCTS.map((q, i) => PM.MODELOS[i]).filter(x => x.linea === m.linea && x.slug !== m.slug);
+  const mismos = PM.MODELOS.filter(x => x.linea === m.linea && x.slug !== m.slug).sort((a, b) => D.PRODUCTS[a.idx].price - D.PRODUCTS[b.idx].price || a.cajones - b.cajones);
   const descripcion = `${m.titulo}: ${PM.textoCajones(m)}${nBau ? ' y ' + nBau + (nBau === 1 ? ' baulera' : ' bauleras') : ''}. Melamina Egger 15 mm, correderas Eurohard, soporta hasta ${m.carga} kg y 10 años de garantía. ${pesos(p.price)}.`;
 
   const jsonld = [
@@ -314,7 +315,7 @@ function pagina(m) {
   </div>
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
-` + pie('<script src="/js/modelos.js?v=20261006"></script>\n<script src="/js/zonas-envio.js?v=20261006"></script>\n<script src="/js/plano.js?v=20261006"></script>\n<script src="/js/modelo.js?v=20261006"></script>\n<script src="/js/carrusel.js?v=20261006"></script>');
+` + pie('<script src="/js/modelos.js?v=20261008"></script>\n<script src="/js/zonas-envio.js?v=20261008"></script>\n<script src="/js/plano.js?v=20261008"></script>\n<script src="/js/modelo.js?v=20261008"></script>\n<script src="/js/carrusel.js?v=20261008"></script>');
 }
 
 // ---------- catálogo ----------
@@ -328,7 +329,7 @@ function resumenCorto(m) {
 
 function catalogo() {
   const grupos = ORDEN_CAT.map(c => {
-    const lista = PM.MODELOS.filter(m => m.cat === c);
+    const lista = PM.MODELOS.filter(m => m.cat === c).sort((a, b) => ORDEN_LIN.indexOf(a.linea) - ORDEN_LIN.indexOf(b.linea) || D.PRODUCTS[a.idx].price - D.PRODUCTS[b.idx].price || a.cajones - b.cajones);
     return `<section class="cat-grupo" id="${c}"><h2>${esc(CAT_NOMBRE[c])}</h2><div class="cat-grid">${lista.map(m => {
       const p = D.PRODUCTS[m.idx];
       return `<a class="cat-card" href="/camas-box/${m.slug}/">
@@ -364,7 +365,7 @@ function catalogo() {
     ${contenido.resenasHTML(esc)}
   </div>
 </main>
-` + pie('<script src="/js/carrusel.js?v=20261006"></script>');
+` + pie('<script src="/js/carrusel.js?v=20261008"></script>');
 }
 
 // ---------- ejecutar ----------

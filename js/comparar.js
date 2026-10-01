@@ -14,7 +14,7 @@
     var s = document.createElement('select');
     var vacio = document.createElement('option'); vacio.value = ''; vacio.textContent = i < 2 ? 'Elegí un modelo' : 'Sin tercer modelo'; s.appendChild(vacio);
     var grupos = {};
-    M.forEach(function (m) {
+    PM.porPrecio(M).forEach(function (m) {
       var g = grupos[m.lineaNombre];
       if (!g) { g = grupos[m.lineaNombre] = document.createElement('optgroup'); g.label = m.lineaNombre; s.appendChild(g); }
       var o = document.createElement('option'); o.value = m.slug; o.textContent = m.corto; g.appendChild(o);
