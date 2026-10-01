@@ -124,6 +124,10 @@ function openModal(p) {
     row.innerHTML = `<span class="dot">&middot;</span><span>${s}</span>`;
     specsEl.appendChild(row);
   });
+  const ficha = document.getElementById('modal-ficha');
+  const idx = PRODUCTS.indexOf(p);
+  const mod = (window.PM && idx >= 0) ? PM.MODELOS.filter(x => x.idx === idx)[0] : null;
+  if (mod) { ficha.href = 'camas-box/' + mod.slug + '/'; ficha.style.display = ''; } else { ficha.style.display = 'none'; }
   document.getElementById('modal-wa').href = waLink('Hola! Me interesa el modelo ' + p.n + ' (' + p.medida + '). ¿Me pasás más información?');
 
   const thumbs = document.getElementById('modal-thumbs');

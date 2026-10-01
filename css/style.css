@@ -355,3 +355,8 @@ footer.site{background:var(--espresso);color:var(--cream)}
 .pm-song.label-on .pm-song-label{opacity:1;transform:none;pointer-events:auto;cursor:pointer}
 @media (max-width:480px){.pm-song-label{padding:10px 13px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){.pm-song-btn,.pm-song-btn::before,.pm-song-bars span{animation:none}}
+
+/* Productos en celular: la barra de categorías hace scroll interno y no ensancha la página */
+.prod-sidebar{min-width:0}
+.cat-nav{max-width:100%}
+.prod-landing{width:100%;max-width:100%}

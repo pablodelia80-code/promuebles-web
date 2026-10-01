@@ -1,3 +1,10 @@
 .DS_Store
 Thumbs.db
 node_modules/
+herramientas/cache-zonas/
+vista-previa/
+herramientas/zonas-calculadas.json
+assets/audio/*.csv
+.claude/
+# analytics.js: medición (GA4 + Clarity) pendiente de decisión de Pablo; nunca se subió
+js/analytics.js

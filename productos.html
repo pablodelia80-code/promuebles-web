@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20261005">
+<link rel="stylesheet" href="css/modelo.css?v=20261003">
 <script src="js/analytics.js" defer></script>
 </head>
 <body>
@@ -38,6 +39,17 @@
     <div class="wrap">
       <span class="eyebrow">Productos</span>
       <h1 style="margin:10px 0 0;font-size:clamp(30px,4.2vw,48px);line-height:1.03;letter-spacing:-.025em;color:var(--nogal)">Camas box a medida</h1>
+    </div>
+  </section>
+
+  <section class="section tight" style="padding-top:0;padding-bottom:0">
+    <div class="wrap">
+      <div class="m-tools-grid" style="margin-top:0">
+        <a href="elegir-cama.html"><b>No sé cuál elegir</b><span>Respondé 4 preguntas y te recomendamos modelos.</span></a>
+        <a href="comparar.html"><b>Comparar modelos</b><span>Poné 2 o 3 camas lado a lado.</span></a>
+        <a href="calculadora-espacio.html"><b>¿Entra en tu cuarto?</b><span>Probá la cama en el plano de tu habitación.</span></a>
+      </div>
+      <p style="margin:14px 0 22px;font-size:14.5px"><a href="camas-box/" style="font-weight:700;text-decoration:underline">Ver todas las fichas completas de las camas &rarr;</a></p>
     </div>
   </section>
 
@@ -152,6 +164,7 @@
       </div>
       <p id="modal-resumen" style="margin:0;font-size:15.5px;line-height:1.6;color:var(--espresso);opacity:.85"></p>
       <div class="modal-specs" id="modal-specs"></div>
+      <a class="btn btn-ghost" id="modal-ficha" href="#" style="text-align:center">Ver la ficha completa</a>
       <a class="btn-whatsapp" id="modal-wa" href="#" target="_blank" rel="noopener" style="margin-top:8px;justify-content:center">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.6 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1-1.4-1-2.7s.6-1.9.9-2.1c.2-.2.5-.3.7-.3h.5c.2 0 .4-.1.7.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
         Consultar este modelo
@@ -167,9 +180,10 @@
   <button class="lightbox-arrow lightbox-next" onclick="event.stopPropagation();lightboxNext()" aria-label="Siguiente">&#8250;</button>
 </div>
 
-<script src="js/script.js"></script>
-<script src="js/productos-data.js"></script>
-<script src="js/productos.js"></script>
+<script src="js/script.js?v=20261003"></script>
+<script src="js/productos-data.js?v=20261003"></script>
+<script src="js/modelos.js?v=20261003"></script>
+<script src="js/productos.js?v=20261003"></script>
 <script src="js/chat-widget.js"></script>
 </body>
 </html>

@@ -1,0 +1,1426 @@
+{
+ "actualizado": "2026-10-01",
+ "moneda": "ARS",
+ "modelos": [
+  {
+   "id": "1-plaza-vip",
+   "nombre": "Cama box 1 Plaza Vip (80 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/1-plaza-vip/",
+   "linea": "1 Plaza",
+   "colchon": "80 × 190 cm",
+   "precio_ars": 380000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 83,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 6,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    40,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    75
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       145,
+       35,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": []
+   },
+   "carga_maxima_kg": 600,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "plaza-y-media-esquinero",
+   "nombre": "Cama box Plaza y Media Esquinero (100 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/plaza-y-media-esquinero/",
+   "linea": "1 Plaza y Media",
+   "colchon": "100 × 190 cm",
+   "precio_ars": 440000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 103,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 6,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    45,
+    45
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       145,
+       58,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": []
+   },
+   "carga_maxima_kg": 800,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "8-vip-plaza-y-media",
+   "nombre": "Cama box 8 Vip Plaza y Media (100 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/8-vip-plaza-y-media/",
+   "linea": "1 Plaza y Media",
+   "colchon": "100 × 190 cm",
+   "precio_ars": 460000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 103,
+    "alto": 42
+   },
+   "cajones": 8,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    45,
+    45
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [],
+    "cabecera_cm": [
+     [
+      51,
+      38,
+      40
+     ],
+     [
+      51,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 800,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 8
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "12-vip-plaza-y-media",
+   "nombre": "Cama box 12 Vip Plaza y Media (100 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/12-vip-plaza-y-media/",
+   "linea": "1 Plaza y Media",
+   "colchon": "100 × 190 cm",
+   "precio_ars": 480000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 103,
+    "alto": 42
+   },
+   "cajones": 12,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 4,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [],
+    "cabecera_cm": [
+     [
+      51,
+      38,
+      40
+     ],
+     [
+      51,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 800,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 12
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "8-vip-2-plazas",
+   "nombre": "Cama box 8 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/8-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 499000,
+   "precio_anterior_ars": 530000,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 8,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    65,
+    65
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 8
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "4-vip-2-plazas",
+   "nombre": "Cama box 4 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/4-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 470000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 4,
+   "cajones_laterales": 4,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [
+    65,
+    65
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 4
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "6-vip-2-plazas",
+   "nombre": "Cama box 6 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/6-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 490000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 4,
+   "cajones_al_pie": 2,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "estantes-vip-2-plazas",
+   "nombre": "Cama box Estantes Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/estantes-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 490000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 6,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": {
+    "cantidad": 6,
+    "ancho_cm": 70,
+    "alto_cm": 19,
+    "profundidad_cm": 45
+   },
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "10-vip-2-plazas",
+   "nombre": "Cama box 10 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/10-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 550000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 10,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 2,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 10
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "12-vip-2-plazas",
+   "nombre": "Cama box 12 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/12-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 570000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 42
+   },
+   "cajones": 12,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 4,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       50,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      68,
+      38,
+      40
+     ],
+     [
+      68,
+      38,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 12
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "18-vip-2-plazas",
+   "nombre": "Cama box 18 Vip 2 Plazas (140 × 190 cm)",
+   "url": "https://promuebles.com.ar/camas-box/18-vip-2-plazas/",
+   "linea": "2 Plazas",
+   "colchon": "140 × 190 cm",
+   "precio_ars": 770000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 193,
+    "ancho": 143,
+    "alto": 52
+   },
+   "cajones": 18,
+   "cajones_laterales": 12,
+   "cajones_al_pie": 6,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": null,
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     null,
+     null
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 18
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "4-vip-queen",
+   "nombre": "Cama box 4 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/4-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 500000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 4,
+   "cajones_laterales": 4,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [
+    75,
+    75
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 4
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "6-vip-queen",
+   "nombre": "Cama box 6 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/6-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 520000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 4,
+   "cajones_al_pie": 2,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "8-vip-queen",
+   "nombre": "Cama box 8 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/8-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 530000,
+   "precio_anterior_ars": 560000,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 8,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    75,
+    75
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 8
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "10-vip-queen",
+   "nombre": "Cama box 10 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/10-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 580000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 10,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 2,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 10
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "12-vip-queen",
+   "nombre": "Cama box 12 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/12-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 600000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 12,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 4,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 12
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "estantes-vip-queen",
+   "nombre": "Cama box Estantes Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/estantes-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 520000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 42
+   },
+   "cajones": 6,
+   "cajones_laterales": 6,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    30
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": {
+    "cantidad": 6,
+    "ancho_cm": 80,
+    "alto_cm": 19,
+    "profundidad_cm": 45
+   },
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       70,
+       40
+      ],
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     [
+      78,
+      44,
+      40
+     ],
+     [
+      78,
+      44,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 6
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "18-vip-queen",
+   "nombre": "Cama box 18 Vip Queen (160 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/18-vip-queen/",
+   "linea": "Queen",
+   "colchon": "160 × 200 cm",
+   "precio_ars": 800000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 163,
+    "alto": 52
+   },
+   "cajones": 18,
+   "cajones_laterales": 12,
+   "cajones_al_pie": 6,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": null,
+      "n": 1
+     }
+    ],
+    "cabecera_cm": [
+     null,
+     null
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 18
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "8-vip-king-180",
+   "nombre": "Cama box 8 Vip King 180 (180 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/8-vip-king-180/",
+   "linea": "King 180",
+   "colchon": "180 × 200 cm",
+   "precio_ars": 680000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 183,
+    "alto": 42
+   },
+   "cajones": 8,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    65,
+    65,
+    45
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       45,
+       40
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      43,
+      43,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 8
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "14-vip-king-180",
+   "nombre": "Cama box 14 Vip King 180 (180 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/14-vip-king-180/",
+   "linea": "King 180",
+   "colchon": "180 × 200 cm",
+   "precio_ars": 730000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 183,
+    "alto": 42
+   },
+   "cajones": 14,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 6,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       45,
+       40
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      43,
+      43,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 14
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "21-vip-king-180",
+   "nombre": "Cama box 21 Vip King 180 (180 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/21-vip-king-180/",
+   "linea": "King 180",
+   "colchon": "180 × 200 cm",
+   "precio_ars": 880000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 183,
+    "alto": 52
+   },
+   "cajones": 21,
+   "cajones_laterales": 12,
+   "cajones_al_pie": 9,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    12
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       45,
+       50
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      50
+     ],
+     [
+      70,
+      43,
+      50
+     ],
+     [
+      43,
+      43,
+      50
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 21
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "8-vip-king-200",
+   "nombre": "Cama box 8 Vip King 200 (200 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/8-vip-king-200/",
+   "linea": "King 200",
+   "colchon": "200 × 200 cm",
+   "precio_ars": 700000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 203,
+    "alto": 42
+   },
+   "cajones": 8,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 0,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [
+    65,
+    65,
+    55
+   ],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       55,
+       40
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      63,
+      43,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 8
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "14-vip-king-200",
+   "nombre": "Cama box 14 Vip King 200 (200 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/14-vip-king-200/",
+   "linea": "King 200",
+   "colchon": "200 × 200 cm",
+   "precio_ars": 750000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 203,
+    "alto": 42
+   },
+   "cajones": 14,
+   "cajones_laterales": 8,
+   "cajones_al_pie": 6,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    15
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       55,
+       40
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      70,
+      43,
+      40
+     ],
+     [
+      63,
+      43,
+      40
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 14
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  },
+  {
+   "id": "21-vip-king-200",
+   "nombre": "Cama box 21 Vip King 200 (200 × 200 cm)",
+   "url": "https://promuebles.com.ar/camas-box/21-vip-king-200/",
+   "linea": "King 200",
+   "colchon": "200 × 200 cm",
+   "precio_ars": 900000,
+   "precio_anterior_ars": null,
+   "medida_total_cm": {
+    "largo": 203,
+    "ancho": 203,
+    "alto": 52
+   },
+   "cajones": 21,
+   "cajones_laterales": 12,
+   "cajones_al_pie": 9,
+   "medida_cajon_lateral_cm": [
+    48,
+    40,
+    12
+   ],
+   "zapateros_ancho_cm": [],
+   "estantes": null,
+   "bauleras": {
+    "centrales": [
+     {
+      "dim": [
+       102,
+       55,
+       50
+      ],
+      "n": 2
+     }
+    ],
+    "cabecera_cm": [
+     [
+      70,
+      43,
+      50
+     ],
+     [
+      70,
+      43,
+      50
+     ],
+     [
+      63,
+      43,
+      50
+     ]
+    ]
+   },
+   "carga_maxima_kg": 1000,
+   "material": "Melamina Egger 15 mm, cantos ABS termofusionados",
+   "correderas": "Telescópicas reforzadas Eurohard, extensión 40 cm",
+   "cierre_suave": {
+    "disponible": true,
+    "adicional_por_cajon_ars": 10000,
+    "cajones_con_cierre_suave": 21
+   },
+   "garantia_anios": 10,
+   "plazo_dias": "5 a 10",
+   "fabricante": "ProMuebles, Moisés Lebensohn 1068, Boulogne, Buenos Aires, Argentina"
+  }
+ ]
+}

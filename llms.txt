@@ -1,0 +1,7 @@
+# ProMuebles
+> Fábrica de camas box con cajones y bauleras en Boulogne, Buenos Aires, Argentina. Fabricación propia, melamina Egger de 15 mm, correderas Eurohard, 10 años de garantía.
+
+- [Catálogo de camas box](https://promuebles.com.ar/camas-box/): los 24 modelos, de 1 plaza a King
+- [Datos técnicos de todos los modelos (JSON)](https://promuebles.com.ar/datos/modelos.json): medidas, cajones, bauleras, carga y precios
+- [Comparar modelos](https://promuebles.com.ar/comparar.html)
+- [Contacto](https://promuebles.com.ar/contacto.html): WhatsApp +54 9 11 6876-7075

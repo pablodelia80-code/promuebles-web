@@ -1,0 +1,5 @@
+# ProMuebles — todo el sitio es público. Buscadores y asistentes de IA pueden leerlo.
+User-agent: *
+Allow: /
+
+Sitemap: https://promuebles.com.ar/sitemap.xml
