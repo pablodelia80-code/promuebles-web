@@ -360,3 +360,7 @@ footer.site{background:var(--espresso);color:var(--cream)}
 .prod-sidebar{min-width:0}
 .cat-nav{max-width:100%}
 .prod-landing{width:100%;max-width:100%}
+
+/* Acceso destacado al configurador en el menú */
+.nav-links a.nav-destacado{background:var(--gold);color:var(--espresso);font-weight:800;border-radius:999px;padding:8px 16px}
+.nav-links a.nav-destacado:hover{color:var(--espresso);text-shadow:none;box-shadow:0 0 18px rgba(201,162,39,.6)}

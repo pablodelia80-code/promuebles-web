@@ -38,9 +38,9 @@ ${extra && extra.og ? `<meta property="og:image" content="${SITIO}${extra.og}">`
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="/css/style.css?v=20261010">
-<link rel="stylesheet" href="/css/modelo.css?v=20261010">
-<link rel="stylesheet" href="/css/herramientas.css?v=20261010">
+<link rel="stylesheet" href="/css/style.css?v=20261011">
+<link rel="stylesheet" href="/css/modelo.css?v=20261011">
+<link rel="stylesheet" href="/css/herramientas.css?v=20261011">
 ${extra && extra.jsonld ? extra.jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n') : ''}
 <script src="/js/analytics.js" defer></script>
 </head>
@@ -51,6 +51,7 @@ ${extra && extra.jsonld ? extra.jsonld.map(j => `<script type="application/ld+js
     <a class="logo" href="/index.html"><span class="pro">Pro</span><span class="muebles">Muebles</span></a>
     <ul class="nav-links">
       <li><a href="/productos.html">Productos</a></li>
+      <li><a href="/configurar.html" class="nav-destacado">Armá tu cama</a></li>
       <li><a href="/instalaciones.html">Instalaciones</a></li>
       <li><a href="/testimonios.html">Testimonios</a></li>
       <li><a href="/quienes-somos.html">Quiénes Somos</a></li>
@@ -99,7 +100,7 @@ function pie(scripts) {
   <div class="wrap foot-bottom">&copy; 2026 ProMuebles</div>
 </footer>
 <a class="wa-float" href="https://wa.me/5491168767075" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_SVG}</a>
-<script src="/js/script.js?v=20261010"></script>
+<script src="/js/script.js?v=20261011"></script>
 ${scripts || ''}
 </body>
 </html>
@@ -315,7 +316,7 @@ function pagina(m) {
   </div>
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
-` + pie('<script src="/js/modelos.js?v=20261010"></script>\n<script src="/js/zonas-envio.js?v=20261010"></script>\n<script src="/js/plano.js?v=20261010"></script>\n<script src="/js/modelo.js?v=20261010"></script>\n<script src="/js/carrusel.js?v=20261010"></script>');
+` + pie('<script src="/js/modelos.js?v=20261011"></script>\n<script src="/js/zonas-envio.js?v=20261011"></script>\n<script src="/js/plano.js?v=20261011"></script>\n<script src="/js/modelo.js?v=20261011"></script>\n<script src="/js/carrusel.js?v=20261011"></script>');
 }
 
 // ---------- catálogo ----------
@@ -353,11 +354,16 @@ function catalogo() {
     <span class="eyebrow">Fábrica propia en Boulogne</span>
     <h1>Camas box con cajones y bauleras</h1>
     <p class="m-lead" style="max-width:62ch">24 modelos de 1 plaza a King. Cada ficha tiene las medidas reales, los materiales, la carga que soporta y el precio final.</p>
+    <a class="cz-destacado" href="/configurar.html">
+      <span class="cz-d-etq">Nuevo</span>
+      <span class="cz-d-txt"><b>Armá tu cama como la querés</b><small>Elegí la medida, los cajones, el color y el cierre suave. Girala en 3D y enviános tu pedido por WhatsApp.</small></span>
+      <span class="cz-d-btn">Armar mi cama →</span>
+    </a>
     <nav class="cat-saltos" aria-label="Medidas">${ORDEN_CAT.map(c => `<a href="#${c}">${esc(CAT_NOMBRE[c])}</a>`).join('')}</nav>
     <section class="m-tools" style="margin:28px 0 8px">
       <div class="m-tools-grid">
         <a href="/elegir-cama.html"><b>No sé cuál elegir</b><span>Respondé 4 preguntas y te recomendamos modelos.</span></a>
-        <a href="/comparar.html"><b>Comparar modelos</b><span>Poné 2 o 3 camas lado a lado.</span></a>
+        <a href="/comparar.html"><b>Comparar modelos</b><span>Poné 2 camas lado a lado.</span></a>
         <a href="/calculadora-espacio.html"><b>¿Entra en tu cuarto?</b><span>Probá la cama en el plano de tu habitación.</span></a>
       </div>
     </section>
@@ -365,7 +371,7 @@ function catalogo() {
     ${contenido.resenasHTML(esc)}
   </div>
 </main>
-` + pie('<script src="/js/carrusel.js?v=20261010"></script>');
+` + pie('<script src="/js/carrusel.js?v=20261011"></script>');
 }
 
 // ---------- ejecutar ----------
