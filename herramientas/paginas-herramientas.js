@@ -1,16 +1,15 @@
 // Páginas de las herramientas del comprador. Las genera generar-sitio.js; la lógica está en js/comparar.js, calculadora.js, elegir.js y configurar.js.
-const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261008"></script>\n<script src="/js/modelos.js?v=20261008"></script>\n<script src="/js/${n}.js?v=20261008"></script>`;
+const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261009"></script>\n<script src="/js/modelos.js?v=20261009"></script>\n<script src="/js/${n}.js?v=20261009"></script>`;
 
 module.exports = {
   'comparar.html': ({ cabecera, pie }) => cabecera('Comparar camas box lado a lado | ProMuebles',
-    'Compará 2 o 3 camas box de ProMuebles: medidas, cajones, bauleras, carga que soportan y precio, lado a lado.', '/comparar.html') + `
+    'Compará 2 camas box de ProMuebles: medidas, cajones, bauleras, carga que soportan y precio, lado a lado.', '/comparar.html') + `
 <main class="modelo herr" id="contenido">
   <div class="wrap">
     <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Comparar</b></nav>
     <span class="eyebrow">Herramienta</span>
     <h1>Compará camas lado a lado</h1>
-    <p class="m-lead" style="max-width:60ch">Elegí hasta 3 modelos y mirá en qué se diferencian: cajones, bauleras, carga y precio.</p>
-    <div class="h-selects" id="c-selects"></div>
+    <p class="m-lead" style="max-width:60ch">Elegí 2 modelos y mirá en qué se diferencian: cajones, bauleras, carga y precio.</p>
     <label class="h-check"><input type="checkbox" id="c-soft"> Ver precios con correderas de cierre suave</label>
     <div class="h-tabla-wrap"><table class="h-tabla" id="c-tabla"></table></div>
   </div>
@@ -109,5 +108,5 @@ module.exports = {
     </div>
   </div>
 </main>
-` + pie('<script src="/js/productos-data.js?v=20261008"></script>\n<script src="/js/modelos.js?v=20261008"></script>\n<script src="/js/configurar.js?v=20261008"></script>')
+` + pie('<script src="/js/productos-data.js?v=20261009"></script>\n<script src="/js/modelos.js?v=20261009"></script>\n<script src="/js/configurar.js?v=20261009"></script>')
 };

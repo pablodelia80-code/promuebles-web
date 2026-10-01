@@ -1,33 +1,16 @@
-// Comparador de 2 o 3 modelos.
+// Comparador de 2 modelos: cada desplegable está arriba de su propia columna.
 (function () {
   var PM = window.PM, M = PM.MODELOS;
   var q = new URLSearchParams(location.search);
-  var sel = [q.get('a'), q.get('b'), q.get('c')].map(function (s) { return M.filter(function (m) { return m.slug === s; })[0] ? s : ''; });
-  if (!sel[0]) sel[0] = '12-vip-2-plazas';
-  if (!sel[1]) sel[1] = '8-vip-2-plazas';
+  var valido = function (s) { return M.filter(function (m) { return m.slug === s; })[0] ? s : ''; };
+  var sel = [valido(q.get('a')) || '4-vip-2-plazas', valido(q.get('b')) || '8-vip-2-plazas'];
   var soft = false;
 
-  var cont = document.getElementById('c-selects');
-  var selects = [0, 1, 2].map(function (i) {
-    var wrap = document.createElement('label');
-    wrap.textContent = i < 2 ? 'Modelo ' + (i + 1) : 'Modelo 3 (opcional)';
-    var s = document.createElement('select');
-    var vacio = document.createElement('option'); vacio.value = ''; vacio.textContent = i < 2 ? 'Elegí un modelo' : 'Sin tercer modelo'; s.appendChild(vacio);
-    var grupos = {};
-    PM.porPrecio(M).forEach(function (m) {
-      var g = grupos[m.lineaNombre];
-      if (!g) { g = grupos[m.lineaNombre] = document.createElement('optgroup'); g.label = m.lineaNombre; s.appendChild(g); }
-      var o = document.createElement('option'); o.value = m.slug; o.textContent = m.corto; g.appendChild(o);
-    });
-    s.value = sel[i] || '';
-    s.addEventListener('change', function () { sel[i] = s.value; pintar(); });
-    wrap.appendChild(s); cont.appendChild(wrap);
-    return s;
-  });
   document.getElementById('c-soft').addEventListener('change', function (e) { soft = e.target.checked; pintar(); });
 
   function precio(m) { var v = PM.venta(m); return v.precio + (soft ? m.cajones * PM.CIERRE_SUAVE_POR_CAJON : 0); }
   function nBau(m) { return PM.totalBauleras(m); }
+  function modelo(slug) { return M.filter(function (m) { return m.slug === slug; })[0]; }
 
   var FILAS = [
     ['Colchón', function (m) { return m.colchon; }],
@@ -42,15 +25,34 @@
     ['Precio', function (m) { return PM.pesos(precio(m)); }, precio, 'min']
   ];
 
+  function selector(i) {
+    var s = document.createElement('select');
+    s.setAttribute('aria-label', 'Modelo ' + (i + 1));
+    var grupos = {};
+    PM.porPrecio(M).forEach(function (m) {
+      var g = grupos[m.lineaNombre];
+      if (!g) { g = grupos[m.lineaNombre] = document.createElement('optgroup'); g.label = m.lineaNombre; s.appendChild(g); }
+      var o = document.createElement('option'); o.value = m.slug; o.textContent = m.corto; g.appendChild(o);
+    });
+    s.value = sel[i];
+    s.addEventListener('change', function () { sel[i] = s.value; pintar(); });
+    return s;
+  }
+
   function pintar() {
-    var ms = sel.filter(Boolean).map(function (s) { return M.filter(function (m) { return m.slug === s; })[0]; });
-    var t = document.getElementById('c-tabla');
+    var ms = sel.map(modelo), t = document.getElementById('c-tabla');
     t.innerHTML = '';
-    if (ms.length < 2) { t.innerHTML = '<tbody><tr><td style="padding:24px">Elegí al menos 2 modelos para compararlos.</td></tr></tbody>'; return; }
-    var head = '<thead><tr><th></th>' + ms.map(function (m) {
-      var v = PM.venta(m);
-      return '<th><a href="/camas-box/' + m.slug + '/"><img src="' + PM.webp(v.img, 'm') + '" alt="' + m.titulo + '" width="480" height="640"><b>' + m.corto + '</b><span>' + m.lineaNombre + '</span></a></th>';
-    }).join('') + '</tr></thead>';
+    var thead = document.createElement('thead'), tr = document.createElement('tr'), vacio = document.createElement('th');
+    tr.appendChild(vacio);
+    ms.forEach(function (m, i) {
+      var th = document.createElement('th'), v = PM.venta(m);
+      var et = document.createElement('span'); et.className = 'c-etq'; et.textContent = 'Modelo ' + (i + 1);
+      th.appendChild(et); th.appendChild(selector(i));
+      var a = document.createElement('a'); a.href = '/camas-box/' + m.slug + '/';
+      a.innerHTML = '<img src="' + PM.webp(v.img, 'm') + '" alt="' + m.titulo + '" width="480" height="640"><b>' + m.corto + '</b><span>' + m.lineaNombre + '</span>';
+      th.appendChild(a); tr.appendChild(th);
+    });
+    thead.appendChild(tr); t.appendChild(thead);
     var body = '<tbody>' + FILAS.map(function (f) {
       var vals = ms.map(function (m) { return f[2] ? f[2](m) : null; });
       var mejor = null;
@@ -60,8 +62,8 @@
       }).join('') + '</tr>';
     }).join('') +
       '<tr><th scope="row"></th>' + ms.map(function (m) { return '<td><a class="btn btn-nogal" href="/camas-box/' + m.slug + '/">Ver ficha</a></td>'; }).join('') + '</tr></tbody>';
-    t.innerHTML = head + body;
-    history.replaceState(null, '', '?' + ['a', 'b', 'c'].map(function (k, i) { return sel[i] ? k + '=' + sel[i] : ''; }).filter(Boolean).join('&'));
+    t.insertAdjacentHTML('beforeend', body);
+    history.replaceState(null, '', '?a=' + sel[0] + '&b=' + sel[1]);
   }
   pintar();
 })();

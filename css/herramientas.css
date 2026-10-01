@@ -149,3 +149,8 @@
 @media (prefers-reduced-motion:reduce){.cz-cama .cajon,.cz-cama .baul .cb,.cz-mundo.anim .cz-cama{transition:none}}
 
 .cz-cama .suelo{position:absolute;background:radial-gradient(ellipse at center,rgba(60,40,20,.28) 0%,rgba(60,40,20,.12) 45%,rgba(60,40,20,0) 70%);pointer-events:none}
+
+/* Comparador: el desplegable de cada modelo va arriba de su columna */
+.h-tabla thead th select{display:block;width:100%;margin:4px 0 10px;padding:10px 12px;border:1.5px solid var(--arena);border-radius:12px;font:inherit;font-size:15px;font-weight:600;color:var(--espresso);background:var(--cream)}
+.h-tabla thead .c-etq{display:block;font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--madera)}
+.h-tabla thead th{width:36%}.h-tabla thead th:first-child{width:28%}

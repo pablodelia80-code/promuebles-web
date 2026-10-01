@@ -174,7 +174,7 @@ function envios({ cabecera, pie }) {
     <section class="m-end"><h2>¿Dudas con tu zona?</h2><p>Escribinos y lo vemos.</p><a class="btn-whatsapp" href="https://wa.me/5491168767075" target="_blank" rel="noopener">Consultar por WhatsApp</a></section>
   </div>
 </main>
-` + pie('<script src="/js/zonas-envio.js?v=20261008"></script>\n<script>PM.zonas.montar({ input: document.getElementById("m-zona"), lista: document.getElementById("m-zona-lista"), resultado: document.getElementById("m-zona-res") });</script>');
+` + pie('<script src="/js/zonas-envio.js?v=20261009"></script>\n<script>PM.zonas.montar({ input: document.getElementById("m-zona"), lista: document.getElementById("m-zona-lista"), resultado: document.getElementById("m-zona-res") });</script>');
 }
 
 module.exports = { envios, faq, articulo, indiceArticulos, resenasHTML, ARTICULOS };
