@@ -365,10 +365,11 @@ function inyectarResenas(archivo) {
   let t = fs.readFileSync(f, 'utf8');
   const a = t.indexOf('<!--RESENAS-->'), b = t.indexOf('<!--/RESENAS-->');
   if (a < 0 || b < 0) throw new Error('Faltan los marcadores de reseñas en ' + archivo);
-  t = t.slice(0, a) + '<!--RESENAS-->\n  <section class="section"><div class="wrap">' + contenido.resenasHTML(esc) + '</div></section>\n  ' + t.slice(b);
+  const estilo = archivo === 'index.html' ? ' style="background:var(--cream);padding-top:0"' : '';
+  t = t.slice(0, a) + '<!--RESENAS-->\n  <section class="section"' + estilo + '><div class="wrap">' + contenido.resenasHTML(esc) + '</div></section>\n  ' + t.slice(b);
   fs.writeFileSync(f, t);
 }
-['productos.html', 'quienes-somos.html'].forEach(inyectarResenas);
+['index.html', 'productos.html', 'quienes-somos.html'].forEach(inyectarResenas);
 
 // sitemap, robots, datos abiertos
 const urls = ['/', '/productos.html', '/elegir-cama.html', '/comparar.html', '/calculadora-espacio.html', '/configurar.html', '/preguntas-frecuentes/', '/articulos/', '/articulos/como-elegir-una-cama-box/', '/articulos/espacio-para-abrir-los-cajones/', '/envios/',
