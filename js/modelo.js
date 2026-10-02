@@ -10,17 +10,39 @@
   function extra() { return cierreSuave ? m.cajones * PM.CIERRE_SUAVE_POR_CAJON : 0; }
 
   // ---------- Galería ----------
+  // Las fotos pasan solas cada 4 segundos. Con el mouse encima se detienen; al tocar una miniatura en el celular quedan quietas.
   var mainImg = document.getElementById('m-main-img');
   var thumbs = document.getElementById('m-thumbs');
+  var galeria = document.querySelector('.m-gallery');
   if (thumbs) {
+    var n = datos.fotos.length, actual = 0, reloj = null, quieta = false;
+    var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var mostrar = function (i) {
+      actual = i;
+      var f = datos.fotos[i];
+      mainImg.src = f.l; mainImg.alt = f.alt;
+      Array.prototype.forEach.call(thumbs.children, function (c, k) { c.classList.toggle('on', k === i); });
+      var b = thumbs.children[i];
+      if (b && thumbs.scrollWidth > thumbs.clientWidth) thumbs.scrollTo({ left: b.offsetLeft - (thumbs.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+      var sig = datos.fotos[(i + 1) % n]; if (sig) { var pre = new Image(); pre.src = sig.l; }
+    };
+    var frenar = function () { if (reloj) { clearInterval(reloj); reloj = null; } };
+    var arrancar = function () {
+      if (reloj || quieta || sinMovimiento || n < 2 || document.hidden) return;
+      reloj = setInterval(function () { mostrar((actual + 1) % n); }, 4000);
+    };
+    thumbs.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') { quieta = true; frenar(); } });
     thumbs.addEventListener('click', function (e) {
       var b = e.target.closest('button');
       if (!b) return;
-      var f = datos.fotos[+b.getAttribute('data-i')];
-      mainImg.src = f.l; mainImg.alt = f.alt;
-      Array.prototype.forEach.call(thumbs.children, function (c) { c.classList.remove('on'); });
-      b.classList.add('on');
+      mostrar(+b.getAttribute('data-i'));
     });
+    if (galeria) {
+      galeria.addEventListener('mouseenter', frenar);
+      galeria.addEventListener('mouseleave', arrancar);
+    }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) frenar(); else arrancar(); });
+    arrancar();
   }
 
   // ---------- Precio y cierre suave ----------
