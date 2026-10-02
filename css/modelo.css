@@ -280,3 +280,9 @@
 }
 .m-tools-grid a:active{transform:translateY(-1px);background-color:#efe3d1;border-color:var(--gold)}
 @media (max-width:560px){.m-tools-grid a::after{opacity:.55;transform:none}}
+
+/* Reseñas: la tarjeta se amplía apenas al pasar el mouse (no es un enlace) */
+.rs-track{padding:12px 14px 20px;scroll-padding:0 14px}
+.rs-card{cursor:default;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+@media (hover:hover){.rs-card:hover{transform:scale(1.035);border-color:var(--gold);box-shadow:0 14px 32px rgba(74,50,34,.16)}}
+.rs-wrap-video .rs-btn{top:46%}
