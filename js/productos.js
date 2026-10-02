@@ -77,11 +77,14 @@ function showInicio(sinUrl) {
 
 function renderKingSubnav() {
   kingSubnavButtons.innerHTML = '';
-  const subs = [{ id: 'king-180', nombre: 'King 180 × 200' }, { id: 'king-200', nombre: 'King 200 × 200' }];
+  kingSubnavButtons.className = 'med-grid king-grid';
+  const subs = [{ id: 'king-180', nombre: 'King 180', colchon: 'Colchón 180 × 200 cm' }, { id: 'king-200', nombre: 'King 200', colchon: 'Colchón 200 × 200 cm' }];
   subs.forEach(s => {
     const btn = document.createElement('button');
-    btn.textContent = s.nombre;
-    btn.className = currentKingSub === s.id ? 'active' : '';
+    btn.type = 'button';
+    btn.className = 'med-btn' + (currentKingSub === s.id ? ' activo' : '');
+    btn.setAttribute('aria-pressed', currentKingSub === s.id ? 'true' : 'false');
+    btn.innerHTML = '<b>' + s.nombre + '</b><span>' + s.colchon + '</span>';
     btn.onclick = () => {
       currentKingSub = s.id;
       renderKingSubnav();

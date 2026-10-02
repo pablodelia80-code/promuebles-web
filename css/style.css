@@ -406,3 +406,31 @@ footer.site{background:var(--espresso);color:var(--cream)}
   .med-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .med-btn{padding:18px 14px}
 }
+
+/* Botones de medida: efecto al pasar el mouse (fondo crema, flotan, sombra, flecha dorada) */
+.med-btn{position:relative;padding-right:48px;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease,background-color .3s ease}
+.med-btn::after{content:"\2192";position:absolute;right:20px;top:50%;margin-top:-14px;font:800 22px/28px 'Poppins',sans-serif;color:var(--gold);opacity:0;transform:translateX(-8px);transition:opacity .3s ease,transform .3s ease}
+@media (hover:hover){
+  .med-btn:hover{transform:translateY(-4px);background-color:#f6eee2;border-color:var(--gold);box-shadow:0 16px 32px rgba(74,50,34,.18)}
+  .med-btn:hover::after{opacity:1;transform:translateX(0)}
+}
+.med-btn:active{transform:translateY(-1px);background-color:#efe3d1;border-color:var(--gold)}
+.med-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (max-width:560px){.med-btn{padding-right:38px}.med-btn::after{right:12px;opacity:.55;transform:none}}
+
+/* Franja de herramientas en Productos */
+.herr-franja{background:var(--cream);padding:clamp(30px,4vw,48px) 0;margin-top:36px}
+.herr-franja h2{margin:0 0 22px;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.02em;color:var(--nogal)}
+.herr-grid{margin-top:0!important}
+.herr-grid a{position:relative;gap:8px;padding:22px 20px 20px!important;background:#fff}
+.herr-grid a::after{display:none!important}
+.herr-ico{width:48px;height:48px;border-radius:50%;background:var(--gold);display:grid;place-items:center;margin-bottom:4px;font-style:normal}
+.herr-ico svg{width:25px;height:25px;fill:none;stroke:var(--espresso);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.herr-gratis{position:absolute;top:20px;right:18px;padding:4px 10px;border-radius:999px;background:#e3f4e9;color:#14532d;font:800 11px 'Manrope',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.herr-go{margin-top:6px;font-style:normal;font-weight:800;font-size:15px;color:var(--nogal);transition:transform .3s ease}
+@media (hover:hover){.herr-grid a:hover .herr-go{transform:translateX(5px)}}
+
+/* King: elegir entre 180 y 200 con botones grandes */
+.king-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:26px}
+.med-btn.activo{border-color:var(--gold);background-color:#fbf4dc;box-shadow:0 8px 20px rgba(201,162,39,.2)}
+.med-btn.activo::after{content:"\2713";opacity:1;transform:none}
