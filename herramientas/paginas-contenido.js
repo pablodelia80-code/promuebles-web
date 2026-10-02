@@ -24,7 +24,7 @@ function faq({ cabecera, pie, esc }) {
   return cabecera('Preguntas frecuentes sobre camas box | ProMuebles', 'Respuestas claras sobre las camas box de ProMuebles: cajones, carga, correderas, cierre suave, materiales, envío, armado, garantía y pagos.', '/preguntas-frecuentes/', { jsonld }) + `
 <main class="modelo" id="contenido">
   <div class="wrap" style="max-width:860px">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Preguntas frecuentes</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>Preguntas frecuentes</b></nav>
     <span class="eyebrow">Ayuda</span>
     <h1>Preguntas frecuentes</h1>
     <p class="m-lead">Todo lo que nos preguntan antes de elegir una cama.</p>
@@ -43,7 +43,7 @@ function resenasHTML(esc) {
     <div class="rs-head">
       <span class="rs-sello">Opiniones reales de compradores</span>
       <h2 id="rs-t">Lo que dicen quienes ya tienen su cama</h2>
-      <p>Estas opiniones son de compras reales, publicadas por los propios compradores en Mercado Libre. Las copiamos tal cual, sin cambiarles una palabra.</p>
+      <p>Son opiniones de compras reales, escritas por los propios compradores en Mercado Libre. Las copiamos tal cual, sin cambiarles una palabra. <b>Podés comprobarlas vos mismo:</b> cada una lleva el enlace a la publicación donde fue escrita, y todas están en nuestra tienda de Mercado Libre.</p>
     </div>
     <div class="rs-wrap">
       <button class="rs-btn rs-prev" type="button" aria-label="Opiniones anteriores">‹</button>
@@ -52,7 +52,7 @@ function resenasHTML(esc) {
       </div>
       <button class="rs-btn rs-next" type="button" aria-label="Más opiniones">›</button>
     </div>
-    <p class="rs-ver"><a href="${TIENDA}" target="_blank" rel="noopener">Ver todas las opiniones en Mercado Libre →</a></p>
+    <p class="rs-ver"><a class="rs-ver-btn" href="${TIENDA}" target="_blank" rel="noopener">Ver todas las reseñas en Mercado Libre →</a></p>
   </section>`;
 }
 
@@ -122,7 +122,7 @@ function articulo(slug, { cabecera, pie }) {
     <span class="eyebrow">Guía</span>
     <h1>${a.titulo}</h1>
     ${a.cuerpo}
-    <section class="m-end"><h2>¿Querés ver las camas?</h2><p>Mirá todos los modelos con sus medidas y precios.</p><a class="btn-whatsapp" href="/camas-box/">Ver las camas box</a></section>
+    <section class="m-end"><h2>¿Querés ver las camas?</h2><p>Mirá todos los modelos con sus medidas y precios.</p><a class="btn-whatsapp" href="/productos.html">Ver las camas box</a></section>
   </article>
 </main>
 ` + pie();
@@ -152,7 +152,7 @@ function envios({ cabecera, pie }) {
   return cabecera('Envíos y entrega de camas box | ProMuebles', 'Consultá si llegamos a tu zona y cuánto cuesta el envío de tu cama box. Incluye envío, subida y armado. CABA sin cargo y plazo de entrega de 5 a 10 días.', '/envios/') + `
 <main class="modelo" id="contenido">
   <div class="wrap" style="max-width:860px">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Envíos</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>Envíos</b></nav>
     <span class="eyebrow">Entrega</span>
     <h1>Envíos y entrega</h1>
     <p class="m-lead">Fabricamos en Boulogne y entregamos nosotros. El valor incluye siempre el envío, la subida y el armado. El plazo es de 5 a 10 días.</p>
@@ -174,7 +174,7 @@ function envios({ cabecera, pie }) {
     <section class="m-end"><h2>¿Dudas con tu zona?</h2><p>Escribinos y lo vemos.</p><a class="btn-whatsapp" href="https://wa.me/5491168767075" target="_blank" rel="noopener">Consultar por WhatsApp</a></section>
   </div>
 </main>
-` + pie('<script src="/js/zonas-envio.js?v=20261012"></script>\n<script>PM.zonas.montar({ input: document.getElementById("m-zona"), lista: document.getElementById("m-zona-lista"), resultado: document.getElementById("m-zona-res") });</script>');
+` + pie('<script src="/js/zonas-envio.js?v=20261013"></script>\n<script>PM.zonas.montar({ input: document.getElementById("m-zona"), lista: document.getElementById("m-zona-lista"), resultado: document.getElementById("m-zona-res") });</script>');
 }
 
 module.exports = { envios, faq, articulo, indiceArticulos, resenasHTML, ARTICULOS };

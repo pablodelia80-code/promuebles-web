@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-01",
+ "actualizado": "2026-10-02",
  "moneda": "ARS",
  "modelos": [
   {
@@ -412,7 +412,7 @@
    ],
    "zapateros_ancho_cm": [],
    "estantes": {
-    "cantidad": 6,
+    "cantidad": 4,
     "ancho_cm": 70,
     "alto_cm": 19,
     "profundidad_cm": 45
@@ -942,7 +942,7 @@
    ],
    "zapateros_ancho_cm": [],
    "estantes": {
-    "cantidad": 6,
+    "cantidad": 4,
     "ancho_cm": 80,
     "alto_cm": 19,
     "profundidad_cm": 45

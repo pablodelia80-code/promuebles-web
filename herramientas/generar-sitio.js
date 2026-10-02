@@ -38,9 +38,9 @@ ${extra && extra.og ? `<meta property="og:image" content="${SITIO}${extra.og}">`
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="/css/style.css?v=20261012">
-<link rel="stylesheet" href="/css/modelo.css?v=20261012">
-<link rel="stylesheet" href="/css/herramientas.css?v=20261012">
+<link rel="stylesheet" href="/css/style.css?v=20261013">
+<link rel="stylesheet" href="/css/modelo.css?v=20261013">
+<link rel="stylesheet" href="/css/herramientas.css?v=20261013">
 ${extra && extra.jsonld ? extra.jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n') : ''}
 <script src="/js/analytics.js" defer></script>
 </head>
@@ -74,7 +74,7 @@ function pie(scripts) {
     </div>
     <div>
       <h5>Navegación</h5>
-      <a href="/camas-box/">Todas las camas</a>
+      <a href="/productos.html">Productos</a>
       <a href="/elegir-cama.html">Elegí tu cama</a>
       <a href="/comparar.html">Comparar modelos</a>
       <a href="/calculadora-espacio.html">¿Entra en tu cuarto?</a>
@@ -100,7 +100,7 @@ function pie(scripts) {
   <div class="wrap foot-bottom">&copy; 2026 ProMuebles</div>
 </footer>
 <a class="wa-float" href="https://wa.me/5491168767075" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_SVG}</a>
-<script src="/js/script.js?v=20261012"></script>
+<script src="/js/script.js?v=20261013"></script>
 ${scripts || ''}
 </body>
 </html>
@@ -116,6 +116,8 @@ const ORG = {
 const CAT_NOMBRE = { '1-plaza': '1 Plaza', '1-plaza-y-media': '1 Plaza y Media', '2-plazas': '2 Plazas', queen: 'Queen', king: 'King' };
 const ORDEN_LIN = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
 const ORDEN_CAT = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king'];
+// Dirección de Productos con la categoría ya elegida (para el botón "Volver" de cada ficha)
+const volverUrl = m => '/productos.html?cat=' + m.cat + (m.cat === 'king' ? '&king=' + m.linea : '');
 
 function pagina(m) {
   const p = D.PRODUCTS[m.idx];
@@ -146,8 +148,8 @@ function pagina(m) {
     },
     {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Camas box', item: SITIO + '/camas-box/' },
-        { '@type': 'ListItem', position: 2, name: m.lineaNombre, item: SITIO + '/camas-box/#' + m.cat },
+        { '@type': 'ListItem', position: 1, name: 'Productos', item: SITIO + '/productos.html' },
+        { '@type': 'ListItem', position: 2, name: m.lineaNombre, item: SITIO + volverUrl(m) },
         { '@type': 'ListItem', position: 3, name: m.corto, item: SITIO + url }
       ]
     }
@@ -167,8 +169,9 @@ function pagina(m) {
   return h + `
 <main class="modelo" id="contenido">
   <div class="wrap">
+    <a class="m-volver" href="${volverUrl(m)}">← Volver a ${esc(m.lineaNombre)}</a>
     <nav class="crumbs" aria-label="Ubicación">
-      <a href="/camas-box/">Camas box</a><span>›</span><a href="/camas-box/#${m.cat}">${esc(m.lineaNombre)}</a><span>›</span><b>${esc(m.corto)}</b>
+      <a href="/productos.html">Productos</a><span>›</span><a href="${volverUrl(m)}">${esc(m.lineaNombre)}</a><span>›</span><b>${esc(m.corto)}</b>
     </nav>
 
     <section class="m-hero">
@@ -222,6 +225,8 @@ function pagina(m) {
       <div><b>10 años</b><span>de garantía</span></div>
     </section>
 
+    ${contenido.resenasHTML(esc)}
+
     <section class="m-explore">
       <span class="eyebrow">Explorá la cama</span>
       <h2>Tocá la cama y mirá cómo es por dentro</h2>
@@ -256,13 +261,15 @@ function pagina(m) {
     <section class="m-specs">
       <span class="eyebrow">Ficha técnica</span>
       <h2>Todo lo que tenés que saber</h2>
-      <details class="m-acc" open>
-        <summary><span>Cuánto guarda</span><i></i></summary>
-        <div class="m-acc-body"><ul>${lista(guardado)}</ul></div>
-      </details>
-      <details class="m-acc">
-        <summary><span>De qué está hecha</span><i></i></summary>
-        <div class="m-acc-body">
+      <div class="m-tabs" role="tablist" aria-label="Ficha técnica">
+        <button type="button" class="m-tab" role="tab" id="tb-guardado" aria-controls="pn-guardado" aria-selected="true">Cuánto guarda</button>
+        <button type="button" class="m-tab" role="tab" id="tb-materiales" aria-controls="pn-materiales" aria-selected="false">Materiales</button>
+        <button type="button" class="m-tab" role="tab" id="tb-medidas" aria-controls="pn-medidas" aria-selected="false">Medidas</button>
+        <button type="button" class="m-tab" role="tab" id="tb-entrega" aria-controls="pn-entrega" aria-selected="false">Entrega y garantía</button>
+      </div>
+      <div class="m-panels">
+        <div class="m-panel" role="tabpanel" id="pn-guardado" aria-labelledby="tb-guardado"><ul>${lista(guardado)}</ul></div>
+        <div class="m-panel" role="tabpanel" id="pn-materiales" aria-labelledby="tb-materiales">
           <p><b>Tableros:</b> melamina Egger de primera calidad, 15 mm, blanca por dentro y por fuera.</p>
           <p><b>Cantos:</b> ABS termofusionados.</p>
           <p><b>Uniones:</b> tornillos con cola, más grampas y clavos, con refuerzos.</p>
@@ -271,28 +278,20 @@ function pagina(m) {
           <p><b>Colchón:</b> sirve cualquier tipo.</p>
           <p><b>Carga:</b> soporta hasta ${m.carga} kg. Se midió sumando peso hasta que cedió.</p>
         </div>
-      </details>
-      <details class="m-acc">
-        <summary><span>Medidas</span><i></i></summary>
-        <div class="m-acc-body">
+        <div class="m-panel" role="tabpanel" id="pn-medidas" aria-labelledby="tb-medidas">
           <p><b>Medida total:</b> ${m.largoTotal} × ${m.anchoTotal} cm.</p>
           <p><b>Altura:</b> ${m.alto} cm.</p>
           <p><b>Para colchón de:</b> ${esc(m.colchon)}.</p>
         </div>
-      </details>
-      <details class="m-acc">
-        <summary><span>Entrega, pagos y garantía</span><i></i></summary>
-        <div class="m-acc-body">
+        <div class="m-panel" role="tabpanel" id="pn-entrega" aria-labelledby="tb-entrega">
           <p><b>Plazo:</b> entre 5 y 10 días, según la situación. Trabajamos con stock y a pedido.</p>
           <p><b>Entrega:</b> CABA y alrededores sin cargo. Para otras zonas, consultanos.</p>
           <p><b>Pagos:</b> efectivo, transferencia y tarjeta.</p>
           <p><b>Cambios:</b> si algo no está bien, avisás y pasamos a cambiarla.</p>
           <p><b>Garantía de 10 años,</b> por escrito: el primer año con servicio a domicilio y del segundo al décimo con reparación en fábrica.</p>
         </div>
-      </details>
+      </div>
     </section>
-
-    ${contenido.resenasHTML(esc)}
 
     <section class="m-tools">
       <h2>Antes de decidir</h2>
@@ -316,7 +315,7 @@ function pagina(m) {
   </div>
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
-` + pie('<script src="/js/modelos.js?v=20261012"></script>\n<script src="/js/zonas-envio.js?v=20261012"></script>\n<script src="/js/plano.js?v=20261012"></script>\n<script src="/js/modelo.js?v=20261012"></script>\n<script src="/js/carrusel.js?v=20261012"></script>');
+` + pie('<script src="/js/modelos.js?v=20261013"></script>\n<script src="/js/zonas-envio.js?v=20261013"></script>\n<script src="/js/plano.js?v=20261013"></script>\n<script src="/js/modelo.js?v=20261013"></script>\n<script src="/js/carrusel.js?v=20261013"></script>\n<script src="/js/pestanas.js?v=20261013"></script>');
 }
 
 // ---------- catálogo ----------
@@ -328,50 +327,21 @@ function resumenCorto(m) {
   return (partes.length > 1 ? partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1] : partes[0]) + '.';
 }
 
-function catalogo() {
-  const grupos = ORDEN_CAT.map(c => {
-    const lista = PM.MODELOS.filter(m => m.cat === c).sort((a, b) => ORDEN_LIN.indexOf(a.linea) - ORDEN_LIN.indexOf(b.linea) || D.PRODUCTS[a.idx].price - D.PRODUCTS[b.idx].price || a.cajones - b.cajones);
-    return `<section class="cat-grupo" id="${c}"><h2>${esc(CAT_NOMBRE[c])}</h2><div class="cat-grid">${lista.map(m => {
-      const p = D.PRODUCTS[m.idx];
-      return `<a class="cat-card" href="/camas-box/${m.slug}/">
-        <span class="cat-img"><img src="${webp(p.img, 'm')}" alt="${esc(m.titulo)}" width="480" height="640" loading="lazy">${p.oferta ? '<i class="cat-oferta">Oferta</i>' : ''}</span>
-        <b>${esc(m.cat === 'king' ? m.corto : m.corto + ' · ' + m.lineaNombre)}</b>
-        <span class="cat-med">Colchón ${esc(m.colchon)}</span>
-        <span class="cat-res">${esc(resumenCorto(m))}</span>
-        <span class="cat-precio">${p.priceOld ? '<s>' + pesos(p.priceOld) + '</s> ' : ''}${pesos(p.price)}</span>
-      </a>`;
-    }).join('')}</div></section>`;
-  }).join('\n');
-
-  const jsonld = [{
-    '@context': 'https://schema.org', '@type': 'ItemList', name: 'Camas box ProMuebles',
-    itemListElement: PM.MODELOS.map((m, i) => ({ '@type': 'ListItem', position: i + 1, url: SITIO + '/camas-box/' + m.slug + '/', name: m.titulo }))
-  }];
-  return cabecera('Camas box con cajones y bauleras, de fábrica | ProMuebles', 'Los 24 modelos de camas box de ProMuebles, de 1 plaza a King: cajones, bauleras, zapateros, melamina Egger, correderas Eurohard y 10 años de garantía. Precios y medidas de cada una.', '/camas-box/', { og: webp(D.PRODUCTS[9].img, 'l'), jsonld }) + `
-<main class="modelo" id="contenido">
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Ubicación"><b>Camas box</b></nav>
-    <span class="eyebrow">Fábrica propia en Boulogne</span>
-    <h1>Camas box con cajones y bauleras</h1>
-    <p class="m-lead" style="max-width:62ch">24 modelos de 1 plaza a King. Cada ficha tiene las medidas reales, los materiales, la carga que soporta y el precio final.</p>
-    <a class="cz-destacado" href="/configurar.html">
-      <span class="cz-d-etq">Nuevo</span>
-      <span class="cz-d-txt"><b>Armá tu cama como la querés</b><small>Elegí la medida, los cajones, el color y el cierre suave. Girala en 3D y enviános tu pedido por WhatsApp.</small></span>
-      <span class="cz-d-btn">Armar mi cama →</span>
-    </a>
-    <nav class="cat-saltos" aria-label="Medidas">${ORDEN_CAT.map(c => `<a href="#${c}">${esc(CAT_NOMBRE[c])}</a>`).join('')}</nav>
-    <section class="m-tools" style="margin:28px 0 8px">
-      <div class="m-tools-grid">
-        <a href="/elegir-cama.html"><b>No sé cuál elegir</b><span>Respondé 4 preguntas y te recomendamos modelos.</span></a>
-        <a href="/comparar.html"><b>Comparar modelos</b><span>Poné 2 camas lado a lado.</span></a>
-        <a href="/calculadora-espacio.html"><b>¿Entra en tu cuarto?</b><span>Probá la cama en el plano de tu habitación.</span></a>
-      </div>
-    </section>
-    ${grupos}
-    ${contenido.resenasHTML(esc)}
-  </div>
-</main>
-` + pie('<script src="/js/carrusel.js?v=20261012"></script>');
+function catalogo() { // el catálogo aparte se eliminó: Productos es la única entrada
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camas box | ProMuebles</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="${SITIO}/productos.html">
+<meta http-equiv="refresh" content="0; url=/productos.html">
+<script>var h = location.hash.replace(/^#/, ''); location.replace('/productos.html' + (/^(1-plaza|1-plaza-y-media|2-plazas|queen|king)$/.test(h) ? '?cat=' + h : ''));</script>
+</head>
+<body><p>Esta página se mudó a <a href="/productos.html">Productos</a>.</p></body>
+</html>
+`;
 }
 
 // ---------- ejecutar ----------
@@ -389,8 +359,19 @@ Object.keys(contenido.ARTICULOS).forEach(sl => escribir('articulos/' + sl + '/in
 const hp = require('./paginas-herramientas.js');
 Object.keys(hp).forEach(k => escribir(k, hp[k]({ cabecera, pie, esc, pesos, webp, WA_SVG, SITIO })));
 
+// Reseñas reales dentro de páginas escritas a mano (entre los marcadores <!--RESENAS--> y <!--/RESENAS-->)
+function inyectarResenas(archivo) {
+  const f = path.join(raiz, archivo);
+  let t = fs.readFileSync(f, 'utf8');
+  const a = t.indexOf('<!--RESENAS-->'), b = t.indexOf('<!--/RESENAS-->');
+  if (a < 0 || b < 0) throw new Error('Faltan los marcadores de reseñas en ' + archivo);
+  t = t.slice(0, a) + '<!--RESENAS-->\n  <section class="section"><div class="wrap">' + contenido.resenasHTML(esc) + '</div></section>\n  ' + t.slice(b);
+  fs.writeFileSync(f, t);
+}
+['productos.html', 'quienes-somos.html'].forEach(inyectarResenas);
+
 // sitemap, robots, datos abiertos
-const urls = ['/', '/productos.html', '/camas-box/', '/elegir-cama.html', '/comparar.html', '/calculadora-espacio.html', '/configurar.html', '/preguntas-frecuentes/', '/articulos/', '/articulos/como-elegir-una-cama-box/', '/articulos/espacio-para-abrir-los-cajones/', '/envios/',
+const urls = ['/', '/productos.html', '/elegir-cama.html', '/comparar.html', '/calculadora-espacio.html', '/configurar.html', '/preguntas-frecuentes/', '/articulos/', '/articulos/como-elegir-una-cama-box/', '/articulos/espacio-para-abrir-los-cajones/', '/envios/',
   '/quienes-somos.html', '/instalaciones.html', '/testimonios.html', '/contacto.html']
   .concat(PM.MODELOS.map(m => '/camas-box/' + m.slug + '/'));
 escribir('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -420,7 +401,7 @@ escribir('datos/modelos.json', JSON.stringify({ actualizado: HOY, moneda: 'ARS',
 escribir('llms.txt', `# ProMuebles
 > Fábrica de camas box con cajones y bauleras en Boulogne, Buenos Aires, Argentina. Fabricación propia, melamina Egger de 15 mm, correderas Eurohard, 10 años de garantía.
 
-- [Catálogo de camas box](${SITIO}/camas-box/): los 24 modelos, de 1 plaza a King
+- [Productos: catálogo de camas box](${SITIO}/productos.html): los 24 modelos, de 1 plaza a King
 - [Datos técnicos de todos los modelos (JSON)](${SITIO}/datos/modelos.json): medidas, cajones, bauleras, carga y precios
 - [Comparar modelos](${SITIO}/comparar.html)
 - [Contacto](${SITIO}/contacto.html): WhatsApp +54 9 11 6876-7075

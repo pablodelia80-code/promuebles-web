@@ -1,66 +1,78 @@
-// Productos page logic: category filtering, King subcategories, product modal, color comparison slider
-
+// Productos: menú de medidas, una medida por vez y botón para volver.
 let currentCat = null;
 let currentKingSub = null;
 
-const catNav = document.getElementById('cat-nav');
+const medGrid = document.getElementById('med-grid');
+const prodInicio = document.getElementById('prod-inicio');
+const prodDetalle = document.getElementById('prod-detalle');
+const prodTitulo = document.getElementById('prod-titulo');
+const prodSub = document.getElementById('prod-sub');
 const kingSubnav = document.getElementById('king-subnav');
 const kingSubnavButtons = document.getElementById('king-subnav-buttons');
-const prodLanding = document.getElementById('prod-landing');
 const prodGrid = document.getElementById('prod-grid');
 const personalizacionWrap = document.getElementById('personalizacion-wrap');
 
+const COLCHON = {
+  '1-plaza': 'Colchón 80 × 190 cm', '1-plaza-y-media': 'Colchón 100 × 190 cm', '2-plazas': 'Colchón 140 × 190 cm',
+  'queen': 'Colchón 160 × 200 cm', 'king': 'Colchón 180 o 200 × 200 cm', 'personalizacion': 'Elegí el color de tu cama'
+};
+
 function fmt(n) { return '$ ' + n.toLocaleString('es-AR'); }
 
-function renderCatNav() {
-  catNav.innerHTML = '';
+function actualizarUrl(qs) {
+  try { history.replaceState(null, '', 'productos.html' + (qs || '')); } catch (e) {}
+}
+
+function irAlPrincipio() {
+  const hdr = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hdr'), 10) || 70;
+  const ancla = document.getElementById('prod-menu-ancla') || prodDetalle;
+  const y = (prodInicio.hidden ? prodDetalle : ancla).getBoundingClientRect().top + window.scrollY - hdr - 14;
+  window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+}
+
+function renderMedidas() {
+  medGrid.innerHTML = '';
   CATEGORIES.forEach(c => {
     const btn = document.createElement('button');
-    btn.textContent = c.nombre;
-    btn.className = currentCat === c.id ? 'active' : '';
-    btn.onclick = () => selectCat(c.id);
-    catNav.appendChild(btn);
+    btn.type = 'button';
+    btn.className = 'med-btn' + (c.id === 'personalizacion' ? ' med-pers' : '');
+    btn.innerHTML = '<b>' + c.nombre + '</b><span>' + (COLCHON[c.id] || '') + '</span>';
+    btn.onclick = () => { selectCat(c.id); irAlPrincipio(); };
+    medGrid.appendChild(btn);
   });
 }
 
 function selectCat(catId) {
   currentCat = catId;
   currentKingSub = null;
-  renderCatNav();
 
-  if (!catId) {
-    showLanding();
-    return;
-  }
+  if (!catId) { showInicio(); return; }
 
-  if (catId === 'king') {
-    prodLanding.style.display = 'none';
-    prodGrid.style.display = 'none';
-    personalizacionWrap.style.display = 'none';
-    kingSubnav.style.display = 'block';
-    renderKingSubnav();
-    return;
-  }
-
-  kingSubnav.style.display = 'none';
-
-  if (catId === 'personalizacion') {
-    prodLanding.style.display = 'none';
-    prodGrid.style.display = 'none';
-    personalizacionWrap.style.display = 'block';
-    return;
-  }
-
-  personalizacionWrap.style.display = 'none';
-  prodLanding.style.display = 'none';
-  renderGrid(PRODUCTS.filter(p => p.cat === catId));
-}
-
-function showLanding() {
+  prodInicio.hidden = true;
+  prodDetalle.hidden = false;
+  const cat = CATEGORIES.find(c => c.id === catId);
+  prodTitulo.textContent = cat ? cat.nombre : '';
+  prodSub.textContent = COLCHON[catId] || '';
   kingSubnav.style.display = 'none';
   prodGrid.style.display = 'none';
   personalizacionWrap.style.display = 'none';
-  prodLanding.style.display = 'block';
+  actualizarUrl('?cat=' + catId);
+
+  if (catId === 'king') {
+    kingSubnav.style.display = 'block';
+    renderKingSubnav();
+  } else if (catId === 'personalizacion') {
+    personalizacionWrap.style.display = 'block';
+  } else {
+    renderGrid(PRODUCTS.filter(p => p.cat === catId));
+  }
+}
+
+function showInicio(sinUrl) {
+  currentCat = null;
+  prodDetalle.hidden = true;
+  prodInicio.hidden = false;
+  if (!sinUrl) actualizarUrl('');
 }
 
 function renderKingSubnav() {
@@ -74,6 +86,7 @@ function renderKingSubnav() {
       currentKingSub = s.id;
       renderKingSubnav();
       renderGrid(PRODUCTS.filter(p => p.subcat === s.id));
+      actualizarUrl('?cat=king&king=' + s.id);
     };
     kingSubnavButtons.appendChild(btn);
   });
@@ -103,6 +116,8 @@ function renderGrid(items) {
     prodGrid.appendChild(card);
   });
 }
+
+document.getElementById('prod-volver').addEventListener('click', () => { showInicio(); irAlPrincipio(); });
 
 // ===== MODAL =====
 const modalOverlay = document.getElementById('modal-overlay');
@@ -230,26 +245,22 @@ function slugify(str) {
 }
 
 // ===== INIT =====
-renderCatNav();
-showLanding();
+renderMedidas();
+showInicio(true);
 
-// Lee ?cat=, ?king= y ?producto= de la URL (links desde home o desde el chat bot)
+// Lee ?cat=, ?king= y ?producto= de la URL (links desde home, desde cada ficha o desde el chat bot)
 const urlParams = new URLSearchParams(window.location.search);
 const initialCat = urlParams.get('cat');
 const initialKing = urlParams.get('king');
 const initialProducto = urlParams.get('producto');
 
-if (initialCat === 'king' && initialKing) {
-  currentCat = 'king';
-  currentKingSub = initialKing;
-  renderCatNav();
-  prodLanding.style.display = 'none';
-  personalizacionWrap.style.display = 'none';
-  kingSubnav.style.display = 'block';
-  renderKingSubnav();
-  renderGrid(PRODUCTS.filter((p) => p.subcat === initialKing));
-} else if (initialCat) {
+if (initialCat && CATEGORIES.some(c => c.id === initialCat)) {
   selectCat(initialCat);
+  if (initialCat === 'king' && initialKing) {
+    currentKingSub = initialKing;
+    renderKingSubnav();
+    renderGrid(PRODUCTS.filter((p) => p.subcat === initialKing));
+  }
 }
 
 if (initialProducto) {

@@ -9,7 +9,7 @@
       ['queen', 'Queen', 'Colchón 160 × 200 cm'], ['king-180', 'King 180', 'Colchón 180 × 200 cm'], ['king-200', 'King 200', 'Colchón 200 × 200 cm']] },
     { k: 'guardado', t: '¿Cuánto querés guardar?', ayuda: 'Pensá en lo que hoy tenés desparramado por el cuarto.', op: [
       ['poco', 'Poco', 'Ropa de cama, toallas y algún extra'], ['medio', 'Bastante', 'Ropa de temporada y calzado'], ['mucho', 'Muchísimo', 'Quiero reemplazar el placard']] },
-    { k: 'tope', t: '¿Hasta cuánto querés gastar?', ayuda: 'Es el precio final de la cama.', op: [
+    { k: 'tope', t: '¿Cuánto querés invertir en tu descanso?', ayuda: 'Es el precio final de la cama.', op: [
       ['500000', 'Hasta $500.000', ''], ['700000', 'Hasta $700.000', ''], ['900000', 'Hasta $900.000', ''], ['0', 'No tengo tope', 'Mostrame lo que mejor se ajuste']] },
     { k: 'soft', t: '¿Querés correderas con cierre suave?', ayuda: 'El cajón se frena solo y cierra sin golpe. Es opcional.', op: [
       ['si', 'Sí, con cierre suave', ''], ['no', 'No, las comunes', 'Correderas telescópicas reforzadas Eurohard'], ['no-se', 'Todavía no sé', 'Lo vemos después']] }

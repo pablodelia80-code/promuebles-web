@@ -1,12 +1,12 @@
 // Páginas de las herramientas del comprador. Las genera generar-sitio.js; la lógica está en js/comparar.js, calculadora.js, elegir.js y configurar.js.
-const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261012"></script>\n<script src="/js/modelos.js?v=20261012"></script>\n<script src="/js/${n}.js?v=20261012"></script>`;
+const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261013"></script>\n<script src="/js/modelos.js?v=20261013"></script>\n<script src="/js/${n}.js?v=20261013"></script>`;
 
 module.exports = {
   'comparar.html': ({ cabecera, pie }) => cabecera('Comparar camas box lado a lado | ProMuebles',
     'Compará 2 camas box de ProMuebles: medidas, cajones, bauleras, carga que soportan y precio, lado a lado.', '/comparar.html') + `
 <main class="modelo herr" id="contenido">
   <div class="wrap">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Comparar</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>Comparar</b></nav>
     <span class="eyebrow">Herramienta</span>
     <h1>Compará camas lado a lado</h1>
     <p class="m-lead" style="max-width:60ch">Elegí 2 modelos y mirá en qué se diferencian: cajones, bauleras, carga y precio.</p>
@@ -20,7 +20,7 @@ module.exports = {
     'Poné las medidas de tu habitación y mirá si la cama box entra y si los cajones se pueden abrir completos.', '/calculadora-espacio.html') + `
 <main class="modelo herr" id="contenido">
   <div class="wrap">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>¿Entra en tu cuarto?</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>¿Entra en tu cuarto?</b></nav>
     <span class="eyebrow">Herramienta</span>
     <h1>¿Entra la cama en tu cuarto?</h1>
     <p class="m-lead" style="max-width:60ch">Poné cuánto mide tu habitación y mirá, en un plano a escala, si la cama entra y si los cajones se pueden abrir.</p>
@@ -61,7 +61,7 @@ module.exports = {
     'Respondé 4 preguntas simples y te recomendamos las camas box de ProMuebles que mejor se ajustan a tu cuarto, tu guardado y tu presupuesto.', '/elegir-cama.html') + `
 <main class="modelo herr" id="contenido">
   <div class="wrap" style="max-width:860px">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Elegí tu cama</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>Elegí tu cama</b></nav>
     <span class="eyebrow">Asistente</span>
     <h1>Elegí tu cama en 4 preguntas</h1>
     <div class="e-progreso" id="e-prog" aria-hidden="true"></div>
@@ -74,7 +74,7 @@ module.exports = {
     'Armá tu cama box como la querés: elegí la medida, los cajones, el pie, el color y el cierre suave, girala en 3D y envianos tu solicitud por WhatsApp.', '/configurar.html') + `
 <main class="modelo herr" id="contenido">
   <div class="wrap">
-    <nav class="crumbs"><a href="/camas-box/">Camas box</a><span>›</span><b>Diseñá tu cama</b></nav>
+    <nav class="crumbs"><a href="/productos.html">Productos</a><span>›</span><b>Diseñá tu cama</b></nav>
     <span class="eyebrow">Configurador</span>
     <h1>Armá tu cama como la querés</h1>
     <p class="m-lead" style="max-width:64ch">Elegí cómo la querés, girala con el dedo o el mouse, tocá cada parte para ver sus medidas y envianos tu solicitud por WhatsApp. Revisamos que se pueda fabricar y te confirmamos precio y plazo.</p>
@@ -82,6 +82,7 @@ module.exports = {
       <div class="cz-izq">
         <div class="cz-escena" id="cz-escena" aria-label="Cama en 3D. Arrastrá para girarla y tocá una parte para ver su ficha.">
           <div class="cz-mundo" id="cz-mundo"><div class="cz-cama" id="cz-cama"></div></div>
+          <div class="cz-muestra" id="cz-muestra" aria-live="polite"></div>
           <div class="cz-ayuda" id="cz-ayuda">↔ Arrastrá para girar · tocá una parte para ver su ficha</div>
         </div>
         <div class="cz-botones">
@@ -116,5 +117,5 @@ module.exports = {
     </div>
   </div>
 </main>
-` + pie('<script src="/js/productos-data.js?v=20261012"></script>\n<script src="/js/modelos.js?v=20261012"></script>\n<script src="/js/configurar.js?v=20261012"></script>')
+` + pie('<script src="/js/productos-data.js?v=20261013"></script>\n<script src="/js/modelos.js?v=20261013"></script>\n<script src="/js/configurar.js?v=20261013"></script>')
 };

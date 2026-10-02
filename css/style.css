@@ -378,3 +378,31 @@ footer.site{background:var(--espresso);color:var(--cream)}
   .nav-contact a[href^="mailto"]{font-size:0;gap:0}
   .nav-contact a[href^="mailto"] svg{width:18px;height:18px}
 }
+
+/* ===== Cambios 02/10/2026 ===== */
+[hidden]{display:none!important}
+
+/* Menú del celular con más aire entre ítems */
+@media (max-width:860px){
+  .nav-links.open{gap:6px;padding:8px 0 16px}
+  .nav-links.open li{width:100%}
+  .nav-links.open a{display:block;padding:15px 16px;font-size:16.5px}
+  .nav-links.open a.nav-destacado{text-align:center;margin:6px 0}
+}
+
+/* Productos: menú de medidas */
+.prod-label{margin:0 0 12px;font-size:12.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--madera)}
+.med-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.med-btn{display:flex;flex-direction:column;gap:5px;align-items:flex-start;text-align:left;padding:22px 20px;border:1.5px solid var(--line);border-radius:18px;background:var(--white);cursor:pointer;font-family:inherit;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.med-btn b{font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(19px,2.2vw,23px);color:var(--nogal);letter-spacing:-.01em}
+.med-btn span{font-size:14.5px;color:var(--madera);font-weight:600}
+.med-btn:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 12px 28px rgba(74,50,34,.14)}
+.med-btn.med-pers{background:var(--cream)}
+.prod-foto{aspect-ratio:21/9;min-height:230px}
+.prod-cat-titulo{margin:4px 0 4px;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;color:var(--nogal)}
+.prod-cat-sub{margin:0 0 22px;font-size:15.5px;color:var(--madera);font-weight:600}
+.cat-nav button.active{background:var(--nogal);color:#fff}
+@media (max-width:560px){
+  .med-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .med-btn{padding:18px 14px}
+}

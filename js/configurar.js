@@ -6,7 +6,7 @@
   var q = new URLSearchParams(location.search);
   var inicial = M.filter(function (m) { return m.slug === q.get('m'); })[0] || M.filter(function (m) { return m.slug === '6-vip-2-plazas'; })[0];
   var st = { linea: inicial.linea, slug: inicial.slug, lat: null, pie: null, color: 0, soft: false, sel: null };
-  var vista = { rx: -24, ry: -38 }, S = 1.5, piezas = [], contador = 0;
+  var vista = { rx: -24, ry: -38 }, S = 1.5, piezas = [], contador = 0, modoArriba = false, animarCam = false;
   var el = function (id) { return document.getElementById(id); };
   var escena = el('cz-escena'), cama = el('cz-cama');
 
@@ -31,16 +31,38 @@
     var g = PM.agrupar(dims);
     return dims.length + ' cajones al pie (' + g.map(function (x) { return x.n + ' de ' + PM.fmt(x.dim); }).join(' y ') + ')';
   }
+  // Cajones al pie elegibles por lado en 2 Plazas y Queen: 'G' = 1 cajón grande (el de la 6 y la 10 Vip), 'N' = 2 cajones normales apilados (los de la 12 Vip).
+  var PIE_GRANDE = { '2-plazas': 65, 'queen': 75 };
+  function ladosDeModelo(m) {
+    if (!PIE_GRANDE[m.linea] || m.alto !== 42 || m.frontales.length !== 1) return null;
+    var f = m.frontales[0];
+    if (f.n === 2 && f.dim[2] === 30) return ['G', 'G'];
+    if (f.n === 4 && f.dim[2] === 15 && f.dim[0] === 48) return ['N', 'N'];
+    return null;
+  }
+  function etiquetaLados(lados, linea) {
+    var g = PIE_GRANDE[linea], nG = lados.filter(function (s) { return s === 'G'; }).length, nN = lados.length - nG, t = [];
+    if (nG) t.push((nG === 1 ? '1 cajón grande' : nG + ' cajones grandes') + ' (' + g + ' × 40 × 30 cm)');
+    if (nN) t.push(nN * 2 + ' cajones normales (48 × 40 × 15 cm)');
+    return t.join(' y ');
+  }
+  function pieCajones(linea, lados) {
+    var fr = lados.map(function (s) { return s === 'G' ? { n: 1, dim: [PIE_GRANDE[linea], 40, 30], niveles: 1 } : { n: 2, dim: [48, 40, 15], niveles: 2 }; });
+    return { sig: 'C:' + lados.join(''), lados: lados.slice(), frontales: fr, zapateros: [], pares: null, estantes: null, label: etiquetaLados(lados, linea) };
+  }
   function pieOpciones(linea) {
-    var out = [], vistos = {};
+    var out = [], vistos = {}, conLados = false;
     M.filter(function (m) { return m.linea === linea && m.alto === 42; }).forEach(function (m) {
+      if (ladosDeModelo(m)) { conLados = true; return; }
       var sig = JSON.stringify([m.frontales.map(function (f) { return [f.n, f.dim]; }), m.zapateros, m.estantes ? [m.estantes.n, m.estantes.dim] : null]);
       if (vistos[sig]) return; vistos[sig] = 1;
       out.push({ sig: sig, frontales: m.frontales, zapateros: m.zapateros, pares: m.pares, estantes: m.estantes, label: etiquetaPie(m) });
     });
+    if (conLados) out.splice(Math.min(1, out.length), 0, { cajones: true, sig: 'C', label: 'Cajones al pie (elegís cada lado)' });
     return out;
   }
   function pieDeModelo(m) {
+    var lm = ladosDeModelo(m); if (lm) return pieCajones(m.linea, lm);
     var sig = JSON.stringify([m.frontales.map(function (f) { return [f.n, f.dim]; }), m.zapateros, m.estantes ? [m.estantes.n, m.estantes.dim] : null]);
     var op = pieOpciones(m.linea).filter(function (o) { return o.sig === sig; })[0];
     return op || { sig: sig, frontales: m.frontales, zapateros: m.zapateros, pares: m.pares, estantes: m.estantes, label: etiquetaPie(m) };
@@ -101,15 +123,17 @@
     var maxd = Math.max(W, L) + 95;
     S = Math.max(0.7, Math.min(1.75, (escena.clientWidth - 30) / maxd));
     cama.innerHTML = ''; piezas = []; contador = 0;
-    cama.style.setProperty('--c', col.tex ? 'url(' + col.tex + ') center/cover' : col.sw);
+    cama.style.setProperty('--c', COL[0].sw); pintarMuestra();
     var pie = st.pie, hayEst = !!pie.estantes, hayFondo = hayEst || pie.zapateros.length || pie.frontales.length;
     var cab = m.bauleras.cabecera, hc = cab.length ? (cab[0] ? cab[0][1] : 38) : 0;
     var Lb = hayEst ? L - 45 : L, zc = -(L - Lb) / 2;
 
+    var gb = geomBauleras(m, W, H, L, hc), hoyo = gb.filter(function (b) { return b.key === st.sel; })[0] || null;
     var suelo = document.createElement('div'); suelo.className = 'suelo';
     suelo.style.cssText = 'width:' + c(W + 70) + 'px;height:' + c(L + 70) + 'px;left:' + (-c(W + 70) / 2) + 'px;top:' + (-c(L + 70) / 2) + 'px;transform:translate3d(0,' + c(H / 2 + 0.3) + 'px,0) rotateX(90deg)';
     cama.appendChild(suelo);
-    var cuerpo = cuboide(W, H, Lb); cuerpo.classList.add('cuerpo'); poner(cuerpo, 0, H / 2, zc, 0, H); cama.appendChild(cuerpo);
+    var cuerpo = cuboide(W, H, Lb, !!hoyo); cuerpo.classList.add('cuerpo'); poner(cuerpo, 0, H / 2, zc, 0, H); cama.appendChild(cuerpo);
+    if (hoyo) tapaConHueco(W, H, Lb, zc, hoyo);
 
     // lugares y alturas de los cajones
     var zIni = -L / 2 + hc + 3, zFin = L / 2 - (hayEst ? 45 : (pie.zapateros.length || pie.frontales.length ? 40 : 0)) - 3;
@@ -142,7 +166,7 @@
         if (cc.t === 'c') {
           for (var i = 0; i < cc.k; i++) {
             contador++;
-            cajonPieza('P-' + ci + '-' + i, { tipo: 'Cajón', titulo: 'Cajón ' + contador, filas: [['Medidas', PM.fmt(cc.dim)], ['Ubicación', 'Al pie de la cama']].concat(nivelTxt(i, cc.k) ? [['Nivel', nivelTxt(i, cc.k) + ' (apilado)']] : []).concat([['Al abrirlo', 'Sale 40 cm'], ['Correderas', 'Telescópicas reforzadas Eurohard' + (st.soft ? ' con cierre suave' : '')]]), pared: 'pie' },
+            cajonPieza('P-' + ci + '-' + i, { tipo: 'Cajón', titulo: 'Cajón ' + contador, filas: [['Medidas', PM.fmt(cc.dim)], ['Ubicación', 'Al pie de la cama']].concat(nivelTxt(i, cc.k) ? [['Nivel', nivelTxt(i, cc.k) + ' (apilado)']] : []).concat([['Al abrirlo', 'Sale 40 cm'], ['Correderas', 'Telescópicas reforzadas Eurohard' + (st.soft ? ' con cierre suave' : '')]]), pared: 'pie', pieLado: pie.lados ? ci : undefined, estado: cc.k > 1 ? 'N' : 'G' },
               rr[ci].w - 0.8, cc.dim[2], 40, xx, pilaY(cc.k, cc.dim[2], i), L / 2, 0, H);
           }
         } else {
@@ -156,8 +180,8 @@
     bauleras(m, W, H, L, hc);
     cama.classList.toggle('sin-pie', !hayFondo);
     pintarPartes();
-    if (st.sel) { var p = piezas.filter(function (z) { return z.key === st.sel; })[0]; if (p) marcar(p, false); else st.sel = null; }
-    transformar(false);
+    if (st.sel) { var p = piezas.filter(function (z) { return z.key === st.sel; })[0]; if (p) aplicarSel(p); else st.sel = null; }
+    transformar(animarCam); animarCam = false;
   }
 
   function estantes(m, W, H, L, Lb) {
@@ -166,53 +190,103 @@
     tabla(W, 1.5, prof, 0, 0.75, zc); tabla(W, 1.5, prof, 0, H - 0.75, zc);
     tabla(1.5, H, prof, -W / 2 + 0.75, H / 2, zc); tabla(1.5, H, prof, W / 2 - 0.75, H / 2, zc); tabla(1.5, H, prof, 0, H / 2, zc);
     tabla(W, H, 1.5, 0, H / 2, L / 2 - prof + 0.75);
-    var cols = [-W / 4, W / 4], paso = (H - 3) / 3;
-    cols.forEach(function (cx) { [1, 2].forEach(function (i) { tabla((W - 4.5) / 2, 1.2, prof - 2, cx, 1.5 + paso * i, zc + 1); }); });
+    var cols = [-W / 4, W / 4], niv = Math.max(1, Math.round(e.n / 2)), paso = (H - 3) / niv;
+    cols.forEach(function (cx) { for (var i = 1; i < niv; i++) tabla((W - 4.5) / 2, 1.2, prof - 2, cx, 1.5 + paso * i, zc + 1); });
     cama.appendChild(g);
     registrar(g, 'E', { tipo: 'Estantes', titulo: 'Estantes del pie', filas: [['Cantidad', e.n + ' estantes en total'], ['Ancho de cada uno', e.dim[0] + ' cm'], ['Alto', e.dim[2] + ' cm'], ['Profundidad', e.dim[1] + ' cm'], ['Ubicación', 'En los pies de la cama']], pared: 'pie' });
   }
 
-  function bauleras(m, W, H, L, hc) {
-    var cab = m.bauleras.cabecera, cen = m.bauleras.central, zIni = -L / 2;
-    function tapa(w, d, x, z, key, info) {
-      var g = document.createElement('div'); g.className = 'baul';
-      var cb = cuboide(w - 1, 1.4, d - 1); cb.classList.add('tapa'); g.appendChild(cb); poner(g, x, H + 0.7, z, 0, H);
-      cama.appendChild(g); registrar(g, key, info);
-    }
+  function geomBauleras(m, W, H, L, hc) {
+    var cab = m.bauleras.cabecera, cen = m.bauleras.central, zIni = -L / 2, out = [];
     if (cab.length) {
       var pesos = cab.map(function (d) { return d ? d[0] : 1; }), suma = pesos.reduce(function (a, b) { return a + b; }, 0), hueco = 1.5;
       var rr = reparto(W, pesos.map(function (p) { return p * (W - hueco * (cab.length + 1)) / suma; }), hueco);
       cab.forEach(function (d, i) {
-        tapa(rr[i].w, hc, -W / 2 + rr[i].c, zIni + hc / 2, 'B-h-' + i, { tipo: 'Baulera', titulo: 'Baulera de cabecera ' + (i + 1) + ' de ' + cab.length, filas: (d ? [['Medidas', PM.fmt(d)]] : []).concat([['Ubicación', 'En la cabecera de la cama'], ['Tapa', 'Se abre desde arriba']]), pared: 'cab' });
+        out.push({ w: rr[i].w, d: hc, x: -W / 2 + rr[i].c, z: zIni + hc / 2, hh: d ? d[2] : H - 2, key: 'B-h-' + i,
+          info: { tipo: 'Baulera', titulo: 'Baulera de cabecera ' + (i + 1) + ' de ' + cab.length, filas: (d ? [['Medidas', PM.fmt(d)]] : []).concat([['Ubicación', 'En la cabecera de la cama'], ['Tapa', 'Se abre desde arriba']]), pared: 'cab' } });
       });
     }
     var n = cen.reduce(function (a, x) { return a + x.n; }, 0);
     if (n) {
-      var d0 = cen[0].dim, lar = d0 ? d0[0] : 102, anc = d0 ? d0[1] : 50, solo = m.laterales.der === 0;
+      var d0 = cen[0].dim, lar = d0 ? d0[0] : 102, anc = d0 ? d0[1] : 50, solo = m.laterales.der === 0, dd = Math.min(lar, L - hc - 50);
       for (var i = 0; i < n; i++) {
         var x = solo ? W / 2 - anc / 2 - 2 : (n === 1 ? 0 : (i === 0 ? -1 : 1) * (anc / 2 + 1));
-        tapa(anc, Math.min(lar, L - hc - 50), x, zIni + hc + 2 + Math.min(lar, L - hc - 50) / 2, 'B-c-' + i, { tipo: 'Baulera', titulo: n > 1 ? 'Baulera central ' + (i + 1) + ' de ' + n : 'Baulera central', filas: (d0 ? [['Medidas', PM.fmt(d0)]] : []).concat([['Ubicación', solo ? 'Del lado opuesto a los cajones' : 'Centro de la cama'], ['Tapa', 'Se abre desde arriba']]), pared: 'arriba' });
+        out.push({ w: anc, d: dd, x: x, z: zIni + hc + 2 + dd / 2, hh: d0 ? d0[2] : H - 2, key: 'B-c-' + i,
+          info: { tipo: 'Baulera', titulo: n > 1 ? 'Baulera central ' + (i + 1) + ' de ' + n : 'Baulera central', filas: (d0 ? [['Medidas', PM.fmt(d0)]] : []).concat([['Ubicación', solo ? 'Del lado opuesto a los cajones' : 'Centro de la cama'], ['Tapa', 'Se abre desde arriba']]), pared: 'arriba' } });
       }
     }
+    return out;
+  }
+
+  // Cuando hay una baulera elegida, la tapa del cuerpo se arma en 4 tramos alrededor del hueco para que se vea el interior.
+  function tapaConHueco(W, H, Lb, zc, b) {
+    var x0 = -W / 2, x1 = W / 2, z0 = zc - Lb / 2, z1 = zc + Lb / 2;
+    var hx0 = b.x - (b.w - 1) / 2, hx1 = b.x + (b.w - 1) / 2, hz0 = b.z - (b.d - 1) / 2, hz1 = b.z + (b.d - 1) / 2;
+    function tramo(a0, a1, c0, c1) {
+      if (a1 - a0 < 0.05 || c1 - c0 < 0.05) return;
+      var g = document.createElement('div'); g.className = 'cb cuerpo';
+      var f = document.createElement('div'); f.className = 'f tp tpp';
+      f.style.cssText = 'width:' + c(a1 - a0) + 'px;height:' + c(c1 - c0) + 'px;left:' + (-c(a1 - a0) / 2) + 'px;top:' + (-c(c1 - c0) / 2) + 'px;transform:rotateX(90deg)';
+      g.appendChild(f); g.style.transform = 'translate3d(' + c((a0 + a1) / 2) + 'px,' + (-c(H / 2)) + 'px,' + c((c0 + c1) / 2) + 'px)';
+      cama.appendChild(g);
+    }
+    tramo(x0, hx0, z0, z1); tramo(hx1, x1, z0, z1); tramo(hx0, hx1, z0, hz0); tramo(hx0, hx1, hz1, z1);
+    var g = document.createElement('div'); g.className = 'hueco';
+    var cb = cuboide(b.w - 1, b.hh, b.d - 1, true); g.appendChild(cb);
+    g.style.transform = 'translate3d(' + c(b.x) + 'px,' + (-c((H - b.hh / 2) - H / 2)) + 'px,' + c(b.z) + 'px)';
+    cama.appendChild(g);
+  }
+
+  function bauleras(m, W, H, L, hc) {
+    geomBauleras(m, W, H, L, hc).forEach(function (b) {
+      var g = document.createElement('div'); g.className = 'baul';
+      var zb = b.z - (b.d - 1) / 2; // la bisagra está del lado de la cabecera
+      g.style.transform = 'translate3d(' + c(b.x) + 'px,' + (-c(H / 2)) + 'px,' + c(zb) + 'px) rotateX(var(--abre,0deg))';
+      var cb = cuboide(b.w - 1, 1.4, b.d - 1); cb.classList.add('tapa');
+      cb.style.transform = 'translate3d(0,' + (-c(0.7)) + 'px,' + c((b.d - 1) / 2) + 'px)';
+      g.appendChild(cb); cama.appendChild(g); registrar(g, b.key, b.info);
+    });
   }
 
   // ---------- cámara y selección ----------
   function transformar(anim) {
     el('cz-mundo').classList.toggle('anim', !!anim);
     cama.style.transform = 'rotateX(' + vista.rx + 'deg) rotateY(' + vista.ry + 'deg)';
+    el('cz-arriba').textContent = modoArriba ? 'Vista normal' : 'Ver desde arriba';
   }
-  function marcar(p, girar) {
-    piezas.forEach(function (z) { z.g.classList.remove('sel'); z.g.style.setProperty('--op', '0px'); z.g.style.setProperty('--ly', '0px'); });
+  function aplicarSel(p) { // marca la pieza elegida y muestra su ficha, sin reconstruir la cama
+    piezas.forEach(function (z) { z.g.classList.remove('sel'); z.g.style.setProperty('--op', '0px'); });
     p.g.classList.add('sel'); st.sel = p.key;
     if (p.g.classList.contains('cajon')) p.g.style.setProperty('--op', c(32) + 'px');
-    if (p.g.classList.contains('baul')) p.g.style.setProperty('--ly', -c(14) + 'px');
-    if (girar) {
-      var pared = p.info.pared;
-      if (pared === 'izq') vista.ry = 52; else if (pared === 'der') vista.ry = -52; else if (pared === 'pie') vista.ry = -14; else if (pared === 'cab') vista.ry = 160;
-      vista.rx = pared === 'arriba' || pared === 'cab' ? -48 : -26;
-      transformar(true);
-    }
+    if (p.g.classList.contains('baul')) requestAnimationFrame(function () { requestAnimationFrame(function () { p.g.style.setProperty('--abre', '104deg'); }); });
     ficha(p); pintarPartes();
+  }
+  function marcar(p, girar) {
+    var antes = st.sel, esB = p.g.classList.contains('baul'), eraB = !!antes && /^B-/.test(antes);
+    if (esB && antes === p.key) { desmarcar(); return; } // tocar de nuevo la baulera abierta la cierra
+    var cam = girar || esB;
+    if (cam) {
+      var pared = p.info.pared;
+      if (esB) { vista.rx = -62; vista.ry = -20; modoArriba = true; }
+      else {
+        if (pared === 'izq') vista.ry = 52; else if (pared === 'der') vista.ry = -52; else if (pared === 'pie') vista.ry = -14; else if (pared === 'cab') vista.ry = 160;
+        vista.rx = pared === 'arriba' || pared === 'cab' ? -48 : -26; modoArriba = false;
+      }
+    }
+    st.sel = p.key;
+    if (esB || eraB) { animarCam = cam; construir(); } // la tapa de la baulera se abre y deja ver el hueco
+    else { aplicarSel(p); if (cam) transformar(true); }
+  }
+  function desmarcar() {
+    var b = piezas.filter(function (z) { return z.key === st.sel; })[0];
+    st.sel = null;
+    el('cz-ficha-vacia').hidden = false; el('cz-ficha-cuerpo').hidden = true;
+    if (b && b.g.classList.contains('baul')) {
+      b.g.style.setProperty('--abre', '0deg');
+      vista.rx = -24; vista.ry = -38; modoArriba = false; transformar(true);
+      setTimeout(function () { if (!st.sel) construir(); }, 450);
+    } else { piezas.forEach(function (z) { z.g.classList.remove('sel'); z.g.style.setProperty('--op', '0px'); }); }
+    pintarPartes();
   }
   function ficha(p) {
     el('cz-ficha-vacia').hidden = true; el('cz-ficha-cuerpo').hidden = false;
@@ -223,7 +297,14 @@
     if (p.info.lado && st.lat.editable && (p.info.estado === 'G' || p.info.estado === 'N')) {
       bt.hidden = false; bt.textContent = p.info.estado === 'G' ? 'Cambiar este lugar por 2 cajones normales' : 'Cambiar este lugar por 1 cajón grande';
       bt.onclick = function () { alternar(p.info.lado, p.info.slot); };
+    } else if (p.info.pieLado !== undefined && st.pie.lados) {
+      bt.hidden = false; bt.textContent = p.info.estado === 'G' ? 'Cambiar este lugar por 2 cajones normales' : 'Cambiar este lugar por 1 cajón grande';
+      bt.onclick = function () { cambiarPie(p.info.pieLado); };
     } else bt.hidden = true;
+  }
+  function cambiarPie(i) {
+    var l = st.pie.lados.slice(); l[i] = l[i] === 'G' ? 'N' : 'G';
+    st.ultimoLados = l; st.pie = pieCajones(st.linea, l); st.sel = 'P-' + i + '-0'; todo();
   }
   function alternar(lado, slot) {
     st.lat[lado][slot] = st.lat[lado][slot] === 'G' ? 'N' : 'G';
@@ -239,12 +320,12 @@
     if (!arr) return;
     var dx = e.clientX - arr.x, dy = e.clientY - arr.y;
     if (Math.abs(dx) + Math.abs(dy) > 6) arr.mov = true;
-    if (arr.mov) { vista.ry = arr.ry + dx * 0.5; vista.rx = Math.max(-80, Math.min(-6, arr.rx - dy * 0.3)); transformar(false); el('cz-ayuda').style.opacity = 0; }
+    if (arr.mov) { vista.ry = arr.ry + dx * 0.5; vista.rx = Math.max(-80, Math.min(-6, arr.rx - dy * 0.3)); modoArriba = false; transformar(false); el('cz-ayuda').style.opacity = 0; }
   });
   function soltar() { if (arr && !arr.mov && arr.pz) { var k = arr.pz.getAttribute('data-k'); var p = piezas.filter(function (z) { return z.key === k; })[0]; if (p) marcar(p, false); } arr = null; }
   escena.addEventListener('pointerup', soltar); escena.addEventListener('pointercancel', function () { arr = null; });
-  el('cz-girar').addEventListener('click', function () { vista.ry += 90; transformar(true); });
-  el('cz-arriba').addEventListener('click', function () { vista.rx = -82; vista.ry = 0; transformar(true); });
+  el('cz-girar').addEventListener('click', function () { vista.ry += 90; modoArriba = false; transformar(true); });
+  el('cz-arriba').addEventListener('click', function () { modoArriba = !modoArriba; if (modoArriba) { vista.rx = -82; vista.ry = 0; } else { vista.rx = -24; vista.ry = -38; } transformar(true); });
   window.addEventListener('resize', function () { construir(); });
 
   // ---------- paneles ----------
@@ -291,10 +372,26 @@
     // pie
     var pie = el('cz-pie'); pie.innerHTML = '';
     pieOpciones(st.linea).forEach(function (o) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'cz-op' + (o.sig === st.pie.sig ? ' on' : ''); b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', o.sig === st.pie.sig ? 'true' : 'false');
+      var on = o.cajones ? !!st.pie.lados : o.sig === st.pie.sig;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'cz-op' + (on ? ' on' : ''); b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', on ? 'true' : 'false');
       b.textContent = o.label;
-      b.addEventListener('click', function () { st.pie = o; st.sel = null; todo(); });
+      b.addEventListener('click', function () { st.pie = o.cajones ? pieCajones(st.linea, st.ultimoLados || ['G', 'G']) : o; st.sel = null; todo(); });
       pie.appendChild(b);
+      if (o.cajones && on) {
+        var caja = document.createElement('div'); caja.className = 'cz-pie-lados';
+        ['Lado izquierdo', 'Lado derecho'].forEach(function (nom, i) {
+          var f = document.createElement('div'); f.className = 'cz-fila';
+          var r = document.createElement('span'); r.textContent = nom; f.appendChild(r);
+          [['G', '1 grande'], ['N', '2 normales']].forEach(function (op) {
+            var bb = document.createElement('button'); bb.type = 'button'; bb.className = 'cz-slot' + (st.pie.lados[i] === op[0] ? ' on' : ''); bb.textContent = op[1];
+            bb.setAttribute('aria-pressed', st.pie.lados[i] === op[0] ? 'true' : 'false');
+            bb.addEventListener('click', function () { if (st.pie.lados[i] === op[0]) return; cambiarPie(i); });
+            f.appendChild(bb);
+          });
+          caja.appendChild(f);
+        });
+        pie.appendChild(caja);
+      }
     });
     // color
     var cols = el('cz-color'); cols.innerHTML = '';
@@ -345,6 +442,11 @@
     el('cz-resumen').innerHTML = h;
   }
 
+  function pintarMuestra() {
+    var cc = COL[st.color], mu = el('cz-muestra'); if (!mu) return;
+    mu.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><span><small>Color elegido</small><b>' + cc.n + '</b></span>' +
+      '<em>' + (st.color ? 'El dibujo es de referencia: se ve siempre en blanco. Tu cama se fabrica en este color.' : 'El dibujo es de referencia.') + '</em>';
+  }
   function todo() { paneles(); construir(); resumen(); }
   window.__cfg = { probar: function (slug) { reiniciar(slug); todo(); return { cajones: piezas.filter(function (p) { return p.info.tipo === 'Cajón'; }).length, esperado: totalCajones(), baul: piezas.filter(function (p) { return p.info.tipo === 'Baulera'; }).length, otras: piezas.filter(function (p) { return p.info.tipo === 'Zapatero' || p.info.tipo === 'Estantes'; }).length }; } };
   reiniciar(inicial.slug); todo();

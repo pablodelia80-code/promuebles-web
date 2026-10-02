@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initSongPlayer();
+
+  // Altura del encabezado fijo, para que el botón "Volver" quede justo debajo
+  const medirEncabezado = () => {
+    const h = document.querySelector('header.site');
+    if (h) document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px');
+  };
+  medirEncabezado();
+  window.addEventListener('resize', medirEncabezado);
 });
 
 function waLink(msg) {

@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="css/style.css?v=20261012">
-<link rel="stylesheet" href="css/modelo.css?v=20261011">
+<link rel="stylesheet" href="css/style.css?v=20261013">
+<link rel="stylesheet" href="css/modelo.css?v=20261013">
 <script src="js/analytics.js" defer></script>
 </head>
 <body>
@@ -53,66 +53,103 @@
     </div>
   </section>
 
-  <section class="section tight" style="padding-top:0;padding-bottom:0">
-    <div class="wrap">
-      <div class="m-tools-grid" style="margin-top:0">
-        <a href="elegir-cama.html"><b>No sé cuál elegir</b><span>Respondé 4 preguntas y te recomendamos modelos.</span></a>
-        <a href="comparar.html"><b>Comparar modelos</b><span>Poné 2 camas lado a lado.</span></a>
-        <a href="calculadora-espacio.html"><b>¿Entra en tu cuarto?</b><span>Probá la cama en el plano de tu habitación.</span></a>
+  <!-- INICIO: todavía no se eligió una medida -->
+  <div id="prod-inicio">
+    <section class="section tight" style="padding-top:22px;padding-bottom:0">
+      <div class="wrap">
+        <p class="prod-label" id="prod-menu-ancla">Elegí la medida de tu cama</p>
+        <div class="med-grid" id="med-grid"></div>
       </div>
-      <p style="margin:14px 0 22px;font-size:14.5px"><a href="camas-box/" style="font-weight:700;text-decoration:underline">Ver todas las fichas completas de las camas &rarr;</a></p>
-    </div>
-  </section>
+    </section>
 
-  <section class="section tight" style="padding-top:0">
-    <div class="wrap prod-layout">
-      <aside class="prod-sidebar">
-        <p class="label">Categorías</p>
-        <div class="cat-nav" id="cat-nav"></div>
-      </aside>
+    <section class="section tight" style="padding-top:28px;padding-bottom:0">
+      <div class="wrap">
+        <div class="m-tools-grid" style="margin-top:0">
+          <a href="elegir-cama.html"><b>No sé cuál elegir</b><span>Respondé 4 preguntas y te recomendamos modelos.</span></a>
+          <a href="comparar.html"><b>Comparar modelos</b><span>Poné 2 camas lado a lado.</span></a>
+          <a href="calculadora-espacio.html"><b>¿Entra en tu cuarto?</b><span>Probá la cama en el plano de tu habitación.</span></a>
+        </div>
+      </div>
+    </section>
 
-      <div class="prod-main">
-        <!-- Landing default -->
-        <div class="prod-landing" id="prod-landing">
-          <img src="assets/lifestyle/lifestyle-productos-hero.jpg" alt="ProMuebles - camas a medida">
+    <section class="section tight" style="padding-top:28px;padding-bottom:0">
+      <div class="wrap">
+        <div class="prod-landing prod-foto">
+          <img src="assets/lifestyle/lifestyle-productos-hero.jpg" alt="ProMuebles - camas a medida" loading="lazy">
           <div class="grad"></div>
-          <div class="copy">
-            <h2>Camas a medida, hechas para vos</h2>
-            <p>Elegí una categoría para ver los modelos</p>
+          <div class="copy"><h2>Camas a medida, hechas para vos</h2></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- DETALLE: medida elegida -->
+  <section class="section tight" id="prod-detalle" style="padding-top:22px;padding-bottom:0" hidden>
+    <div class="wrap">
+      <button type="button" class="m-volver" id="prod-volver">← Volver a las medidas</button>
+      <h2 class="prod-cat-titulo" id="prod-titulo"></h2>
+      <p class="prod-cat-sub" id="prod-sub"></p>
+
+      <!-- King sub-nav -->
+      <div id="king-subnav" style="display:none;margin-bottom:20px">
+        <p class="prod-label" style="margin-bottom:10px">Elegí la medida King</p>
+        <div class="cat-nav" id="king-subnav-buttons"></div>
+      </div>
+
+      <!-- Product grid -->
+      <div class="prod-grid" id="prod-grid" style="display:none"></div>
+
+      <!-- Personalizacion -->
+      <div id="personalizacion-wrap" style="display:none">
+        <div class="personalizacion-note">
+          <strong>Todas las camas se fabrican en blanco.</strong> Pedila en el color que prefieras con un adicional de $110.000.
+        </div>
+        <div class="color-compare">
+          <div class="compare-frame" id="compare-frame">
+            <img id="compare-a" src="assets/showroom/compare-blanca.jpg" alt="Cama en blanco (estándar)">
+            <img id="compare-b" class="layer-b" src="assets/showroom/compare-roble-kendall.jpg" alt="Cama en color">
+            <div class="compare-handle" id="compare-handle"><div class="grip">&#8660;</div></div>
+            <input type="range" class="compare-range" id="compare-range" min="0" max="100" value="50" aria-label="Comparar blanco y color">
+          </div>
+          <div class="compare-caption">
+            <p>Arrastrá para ver la cama en blanco (estándar) y en color</p>
+            <p>Tocá una muestra abajo para elegir el color</p>
           </div>
         </div>
-
-        <!-- King sub-nav (hidden by default) -->
-        <div id="king-subnav" style="display:none;margin-bottom:20px">
-          <p class="label" style="margin-bottom:10px">Medida King</p>
-          <div class="cat-nav" id="king-subnav-buttons"></div>
-        </div>
-
-        <!-- Product grid -->
-        <div class="prod-grid" id="prod-grid" style="display:none"></div>
-
-        <!-- Personalizacion -->
-        <div id="personalizacion-wrap" style="display:none">
-          <div class="personalizacion-note">
-            <strong>Todas las camas se fabrican en blanco.</strong> Pedila en el color que prefieras con un adicional de $110.000.
-          </div>
-          <div class="color-compare">
-            <div class="compare-frame" id="compare-frame">
-              <img id="compare-a" src="assets/showroom/compare-blanca.jpg" alt="Cama en blanco (estándar)">
-              <img id="compare-b" class="layer-b" src="assets/showroom/compare-roble-kendall.jpg" alt="Cama en color">
-              <div class="compare-handle" id="compare-handle"><div class="grip">&#8660;</div></div>
-              <input type="range" class="compare-range" id="compare-range" min="0" max="100" value="50" aria-label="Comparar blanco y color">
-            </div>
-            <div class="compare-caption">
-              <p>Arrastrá para ver la cama en blanco (estándar) y en color</p>
-              <p>Tocá una muestra abajo para elegir el color</p>
-            </div>
-          </div>
-          <div class="color-grid" id="color-grid"></div>
-        </div>
+        <div class="color-grid" id="color-grid"></div>
       </div>
     </div>
   </section>
+
+  <!-- Reseñas reales de Mercado Libre: las pone herramientas/generar-sitio.js -->
+  <!--RESENAS-->
+  <section class="section"><div class="wrap"><section class="m-resenas" aria-labelledby="rs-t">
+    <div class="rs-head">
+      <span class="rs-sello">Opiniones reales de compradores</span>
+      <h2 id="rs-t">Lo que dicen quienes ya tienen su cama</h2>
+      <p>Son opiniones de compras reales, escritas por los propios compradores en Mercado Libre. Las copiamos tal cual, sin cambiarles una palabra. <b>Podés comprobarlas vos mismo:</b> cada una lleva el enlace a la publicación donde fue escrita, y todas están en nuestra tienda de Mercado Libre.</p>
+    </div>
+    <div class="rs-wrap">
+      <button class="rs-btn rs-prev" type="button" aria-label="Opiniones anteriores">‹</button>
+      <div class="rs-track" tabindex="0">
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Excelente calidad y muy buenas terminaciones. Los cajones son amplios y los rieles funcionan perfecto, sin trabarse. Compré el modelo de 12 cajones y quedó muy bien. La atención y el armado fueron excelentes: coordinaron rápido y lo dejaron armado en minutos. Muy recomendable ♥️.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/camabox-queen-12-cajones-bauleras-sommier-promuebles-200x160/up/MLAU3900649885" target="_blank" rel="noopener">Cama box Queen 12 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Es muy linda, cómoda y práctica. En menos de una semana ya la tenía en mi casa, los chicos vienen y la arman en 5 minutos, es genial, súper recomiendo !.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-8-cajones-botineros-bauleras-promuebles-8-vip/p/MLA75655725" target="_blank" rel="noopener">Cama box 2 plazas 8 Vip</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Hermosa cama!!! muy cómoda!! y muchísimo lugar de guardado. El botinero es espectacular, entran 6 pares grandes de zapatillas!! y los cajones un golazo!. Los chicos, unos genios, en 2 minutos estaba la cama armada. Muy cordiales.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Agosto 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-8-cajones-botineros-bauleras--promuebles/up/MLAU3873268966" target="_blank" rel="noopener">Cama box 2 plazas 8 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Excelente producto,me será de mucha utilidad para aprovechar espacio en un depto chico. Destaco la atención recibida como la instalación que hicieron en tiempo récord y muy profesional. En mi caso tuvieron que subir todo por escalera con mucho esfuerzo y aún así dejaron todo bien y rápido. Super recomendables!. Gracias.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Agosto 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-queen-10-cajones-bauleras-sommier-promuebles/up/MLAU3897407026" target="_blank" rel="noopener">Cama box Queen 10 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Excelente!! rapidísimo el envío y el armado!! amamos la cama! es muy fuerte y funcional. Recomendadísimo.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-10-cajones-bauleras-sommier-promuebles/up/MLAU3900428131" target="_blank" rel="noopener">Cama box 2 plazas 10 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Muy buena atención me lo subieron y armaron rapidísimo, súper amables. Recomiendo 100%.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/camabox-queen-12-cajones-bauleras-sommier-promuebles-200x160/up/MLAU3900649885" target="_blank" rel="noopener">Cama box Queen 12 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Hermosa cama! está cama tiene una altura perfecta de 43cm! no como las otras que vi que tienen 30cm. Los chicos la traen casi armada y en 5 min la dejan lista! un espectáculo.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Agosto 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-10-cajones-bauleras-sommier-promuebles/up/MLAU3900428131" target="_blank" rel="noopener">Cama box 2 plazas 10 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Excelente atención, respuesta rápida y entrega acordada. Los chicos muy amables y predispuestos!! El producto es buenísimo!.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-8-cajones-botineros-bauleras-promuebles-8-vip/p/MLA75655725" target="_blank" rel="noopener">Cama box 2 plazas 8 Vip</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Muy buena la calidad, las terminaciones, es linda. El servicio de entrega y armado impecable. Muy recomendable. Gracias!.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-10-cajones-bauleras-sommier-promuebles/up/MLAU3900428131" target="_blank" rel="noopener">Cama box 2 plazas 10 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Muy buena calidad, tiene la funcionalidad perfecta para departamentos y ambientes pequeños, cuenta con un reborde que hace que el colchón no se mueva, y la atención por parte de los chicos es excelente.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/camabox-queen-12-cajones-bauleras-sommier-promuebles-200x160/up/MLAU3900649885" target="_blank" rel="noopener">Cama box Queen 12 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Excelente calidad de producto, lo instalaron muy rápido, me encantó todo muy lindo y buena calidad. Volvería a comprarla.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Mayo 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-8-cajones-botineros-bauleras--promuebles/up/MLAU3873268966" target="_blank" rel="noopener">Cama box 2 plazas 8 cajones</a></span></figcaption></figure>
+        <figure class="rs-card"><span class="rs-stars" role="img" aria-label="5 de 5 estrellas">★★★★★</span><blockquote>“Buena atención y predisposición por parte de la empresa. El producto práctico y de buena calidad. Es lo que esperaba !.”</blockquote><figcaption><b>Comprador en Mercado Libre</b><span>Septiembre 2026 · <a href="https://www.mercadolibre.com.ar/cama-box-2-plazas-8-cajones-botineros-bauleras-promuebles-8-vip/p/MLA75655725" target="_blank" rel="noopener">Cama box 2 plazas 8 Vip</a></span></figcaption></figure>
+      </div>
+      <button class="rs-btn rs-next" type="button" aria-label="Más opiniones">›</button>
+    </div>
+    <p class="rs-ver"><a class="rs-ver-btn" href="https://www.mercadolibre.com.ar/pagina/promuebles1" target="_blank" rel="noopener">Ver todas las reseñas en Mercado Libre →</a></p>
+  </section></div></section>
+  <!--/RESENAS-->
 </main>
 
 <footer class="site">
@@ -191,10 +228,11 @@
   <button class="lightbox-arrow lightbox-next" onclick="event.stopPropagation();lightboxNext()" aria-label="Siguiente">&#8250;</button>
 </div>
 
-<script src="js/script.js?v=20261008"></script>
-<script src="js/productos-data.js?v=20261008"></script>
-<script src="js/modelos.js?v=20261008"></script>
-<script src="js/productos.js?v=20261008"></script>
+<script src="js/script.js?v=20261013"></script>
+<script src="js/productos-data.js?v=20261013"></script>
+<script src="js/modelos.js?v=20261013"></script>
+<script src="js/productos.js?v=20261013"></script>
+<script src="js/carrusel.js?v=20261013"></script>
 <script src="js/chat-widget.js"></script>
 </body>
 </html>
