@@ -168,8 +168,12 @@ contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contac
 // ---------- la cama ----------
 const texMelamina = lienzo(512, 512, (ctx, w, h) => { ctx.fillStyle = '#9a9a9a'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { const g = 120 + Math.random() * 120; ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')'; ctx.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 1 + Math.random() * 2); } });
 texMelamina.colorSpace = THREE.NoColorSpace; texMelamina.wrapS = texMelamina.wrapT = THREE.RepeatWrapping; texMelamina.repeat.set(3, 3);
-const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xdcd9d3, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
-const matTapa = matBlanco.clone();   // tapa de la cama (donde apoya el colchón) y tapas de bauleras: siempre blancas
+// Cuerpo de la cama (lo que lleva color): material sin sombreado, para que se vea del MISMO color desde cualquier ángulo.
+const BRILLO = 1.3;   // compensa el tono de la imagen final para que el color se vea como la muestra
+const matBlanco = new THREE.MeshBasicMaterial({ color: 0xffffff });
+matBlanco.color.set(0xe6e3dd).multiplyScalar(BRILLO);
+// Tapa de la cama y tapas de bauleras: siempre blancas, con luz
+const matTapa = new THREE.MeshPhysicalMaterial({ color: 0xdcd9d3, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
 const matInterior = new THREE.MeshStandardMaterial({ color: 0xcfccc6, roughness: 0.7 });   // interior de cajones: siempre blanco
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matAgujero = new THREE.MeshBasicMaterial({ color: 0x8a867e });
@@ -519,7 +523,7 @@ function abrirBauleras(abrir) { tapas.forEach(t => { t.userData.abierto = abrir 
 // Color de la melamina: textura real (url) o color liso
 function setColor(c) {
   const aplicar = (map) => {
-    matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xdcd9d3)); matBlanco.needsUpdate = true;
+    matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xe6e3dd)).multiplyScalar(BRILLO); matBlanco.needsUpdate = true;
     dirty = true;
   };
   const url = c && (c.tex3 || c.tex);
