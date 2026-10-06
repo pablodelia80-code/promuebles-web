@@ -155,6 +155,12 @@ function armar() {
   cuerpo.add(caja(W, H, 1.7, matBlanco, 0, H / 2, -L / 2 + 0.85, 0.3)); // cabecera
   [-1, 1].forEach(s => cuerpo.add(caja(1.5, H - 3.4, L - PROF - 2, matBlanco, s * (W / 2 - PROF - 0.8), H / 2, -PROF / 2 - 1)));
   cuerpo.add(caja(W - 0.6, H - 3.4, 1.5, matBlanco, 0, H / 2, L / 2 - PROF - 0.8));
+  // cierres del pie: paneles de las esquinas y divisiones entre los cajones del pie, para que la cama se vea armada completa
+  [-1, 1].forEach(sg => cuerpo.add(caja(1.5, H - 3.4, PROF, matBlanco, sg * (W / 2 - 0.75), H / 2, L / 2 - PROF / 2, 0.2)));
+  const posPie = reparto(W, estado.pie.map(t => t === 'G' ? 65 : 48));
+  for (let i = 0; i < posPie.length - 1; i++) { const xm = (posPie[i].c + posPie[i].w / 2 + posPie[i + 1].c - posPie[i + 1].w / 2) / 2; cuerpo.add(caja(1.5, H - 3.4, PROF, matBlanco, xm, H / 2, L / 2 - PROF / 2)); }
+  // costados de la cabecera cerrados
+  [-1, 1].forEach(sg => cuerpo.add(caja(1.5, H - 3.4, 41, matBlanco, sg * (W / 2 - 0.75), H / 2, -L / 2 + 20.5, 0.2)));
   // divisiones entre cajones laterales
   const zIni = -L / 2 + 41, zFin = L / 2 - PROF - 3, largo = (zFin - zIni) / 2;
   [-1, 1].forEach(s => { for (let i = 0; i <= 2; i++) cuerpo.add(caja(PROF, H - 3.4, 1.4, matBlanco, s * (W / 2 - PROF / 2), H / 2, zIni + largo * i)); });
