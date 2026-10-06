@@ -120,8 +120,8 @@ function logo() {
     ctx.font = '800 150px Poppins, Arial, sans-serif'; ctx.fillText('ProMuebles', w / 2, 190);
     ctx.shadowBlur = 14; ctx.font = '800 62px Poppins, Arial, sans-serif'; ctx.fillText('SHOWROOM', w / 2, 270);
   });
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(190, 74.2), new THREE.MeshBasicMaterial({ map: t, transparent: true }));
-  m.position.set(-22, 90, PARED_Z + 1); return m;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(150, 58.6), new THREE.MeshBasicMaterial({ map: t, transparent: true }));
+  m.position.set(30, 100, PARED_Z + 1); return m;
 }
 const marca = logo(); scene.add(marca);
 if (document.fonts && document.fonts.load) document.fonts.load('800 100px Poppins').then(() => { scene.remove(marca); scene.add(Object.assign(logo(), {})); dirty = true; });
@@ -244,10 +244,21 @@ renderer.domElement.addEventListener('pointerup', e => {
   if (hit) { const c = hit.object.userData.cajon; c.userData.abierto = c.userData.abierto ? 0 : 1; dirty = true; document.getElementById('ayuda').style.opacity = 0; }
 });
 controls.addEventListener('change', () => { dirty = true; });
-controls.addEventListener('start', () => { document.getElementById('ayuda').style.opacity = 0; });
+controls.addEventListener('start', () => { tocoCamara = true; document.getElementById('ayuda').style.opacity = 0; });
 
+// Encuadre automático: la cama entera, con los cajones abiertos, entra en cualquier pantalla
+let tocoCamara = false;
+function encuadrar() {
+  if (tocoCamara) return;
+  const R = 128, vf = THREE.MathUtils.degToRad(camera.fov), hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
+  const dist = R / Math.sin(Math.min(vf, hf) / 2);
+  const dir = new THREE.Vector3(238, 88, 367).normalize();
+  camera.position.copy(controls.target).addScaledVector(dir, dist);
+  controls.minDistance = dist * 0.55; controls.maxDistance = dist * 1.7;
+  controls.update();
+}
 function tamano() {
-  const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
+  const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); encuadrar(); dirty = true;
 }
 new ResizeObserver(tamano).observe(stage); tamano();
 
