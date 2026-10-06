@@ -168,9 +168,10 @@ module.exports = {
 ` + pie('<script src="/js/productos-data.js?v=20261045"></script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/configurar.js?v=20261045"></script>')
 };
 
-// Versión de prueba del configurador con la cama en 3D (sin enlazar ni indexar). Parte de la misma página de configurar.html.
-module.exports['configurar-3d.html'] = (h) => {
-  let s = module.exports['configurar.html'](h);
+// Configurador oficial con la cama en 3D (reemplaza al dibujo CSS; js/configurar.js ya no se usa en la página).
+const configurarCSS = module.exports['configurar.html'];
+module.exports['configurar.html'] = (h) => {
+  let s = configurarCSS(h);
   const a = s.indexOf('<div class="cz-izq">'), b = s.indexOf('<div class="cz-der">');
   const izq = `<div class="cz-izq">
         <div class="cz-escena" id="cz-escena" aria-label="Cama en 3D. Arrastrá para girarla, tocá un cajón o una tapa para abrirlo.">
@@ -185,9 +186,7 @@ module.exports['configurar-3d.html'] = (h) => {
       </div>
       `;
   s = s.slice(0, a) + izq + s.slice(b);
-  s = s.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">');
   s = s.replace(/<script src="\/js\/productos-data\.js/, '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/productos-data.js');
   s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261046"></script>');
-  s = s.replace('Diseñá tu cama box a medida | ProMuebles', 'Prueba: configurador 3D | ProMuebles');
   return s;
 };
