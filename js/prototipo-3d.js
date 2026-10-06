@@ -243,6 +243,16 @@ renderer.domElement.addEventListener('pointerup', e => {
   const hit = rayo.intersectObjects(frentes, false)[0];
   if (hit) { const c = hit.object.userData.cajon; c.userData.abierto = c.userData.abierto ? 0 : 1; dirty = true; document.getElementById('ayuda').style.opacity = 0; }
 });
+// el cursor cambia a "abrir" al pasar sobre un cajón
+let ultimoMov = 0;
+renderer.domElement.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || e.buttons || performance.now() - ultimoMov < 60) return;
+  ultimoMov = performance.now();
+  const r = renderer.domElement.getBoundingClientRect();
+  p2.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  rayo.setFromCamera(p2, camera);
+  stage.classList.toggle('sobre-cajon', rayo.intersectObjects(cajones.map(c => c.userData.frente), false).length > 0);
+});
 controls.addEventListener('change', () => { dirty = true; });
 controls.addEventListener('start', () => { tocoCamara = true; document.getElementById('ayuda').style.opacity = 0; });
 
