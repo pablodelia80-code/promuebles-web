@@ -49,6 +49,8 @@ const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(
 // luz de relleno del cuarto: las paredes que quedan del lado contrario a la luz no se ven negras
 const relleno2 = new THREE.DirectionalLight(0xfff4e6, 0.9); relleno2.position.set(-260, 200, -300); scene.add(relleno2);
 scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+// relleno desde el costado derecho: los paneles que miran hacia ese lado no quedan negros en los colores oscuros
+const relleno3 = new THREE.DirectionalLight(0xfff6ea, 1.9); relleno3.position.set(420, 140, 20); scene.add(relleno3);
 
 const sinMobil = !window.matchMedia('(max-width: 900px)').matches;
 const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
