@@ -171,20 +171,25 @@ function hacerCajon(ancho, alto, prof) {
   return g;
 }
 
-// Zapatero: el frente es una solapa que gira sobre su borde inferior; adentro lleva dos porta-zapatos con brazos curvos y tabla inclinada
+// Zapatero abatible: el frente es una solapa que gira sobre su borde inferior, con dos soportes plásticos en abanico
+// (uno a cada lado) y una barra que sostiene los zapatos; adentro del mueble hay una bandeja inclinada.
+function formaAbanico(R) {
+  const sh = new THREE.Shape();
+  sh.moveTo(0, 0); sh.lineTo(R, 0); sh.absarc(0, 0, R, 0, Math.PI / 2, false); sh.lineTo(0, 0);
+  [[0.62, 22, 1.7], [0.62, 45, 1.7], [0.62, 68, 1.7], [0.36, 40, 1.2]].forEach(([r, ang, rad]) => { const h = new THREE.Path(), a = THREE.MathUtils.degToRad(ang); h.absarc(R * r * Math.cos(a), R * r * Math.sin(a), rad, 0, Math.PI * 2, true); sh.holes.push(h); });
+  return sh;
+}
+const geoAbanico = new THREE.ExtrudeGeometry(formaAbanico(14), { depth: 0.9, bevelEnabled: false, curveSegments: 18 });
+const matPlastico = new THREE.MeshStandardMaterial({ color: 0xeeeae1, roughness: 0.45 });
 function hacerSolapa(ancho, alto) {
   const pivote = new THREE.Group();
   const panel = caja(ancho, alto, 1.7, matBlanco, 0, alto / 2, -0.85, 0.35); pivote.add(panel);
-  const pares = Math.max(1, Math.min(3, Math.round(ancho / 22)));
-  [0.3, 0.68].forEach(f => {
-    const y = alto * f;
-    const tabla = caja(ancho - 10, 1.0, 11, matBlanco, 0, y, -7.7); tabla.rotation.x = 0.28; pivote.add(tabla);
-    for (let k = 0; k < pares; k++) {
-      const x = pares === 1 ? 0 : (k / (pares - 1) - 0.5) * (ancho - 20);
-      const brazo = new THREE.Mesh(new THREE.TorusGeometry(5, 0.55, 8, 24, Math.PI), matBlanco);
-      brazo.rotation.y = Math.PI / 2; brazo.position.set(x, y + 0.8, -7.7); brazo.castShadow = true; brazo.receiveShadow = true; pivote.add(brazo);
-    }
+  [-1, 1].forEach(s => {
+    const f = new THREE.Mesh(geoAbanico, matPlastico);
+    f.rotation.y = Math.PI / 2; f.position.set(s * (ancho / 2 - 1.8) - (s > 0 ? 0 : 0.9) + (s > 0 ? -0.9 : 0), 0, -1.7);
+    f.castShadow = true; f.receiveShadow = true; pivote.add(f);
   });
+  const barra = caja(ancho - 4.5, 1.5, 1.5, matPlastico, 0, 11.5, -1.7 - 9.5); pivote.add(barra);
   panel.userData.solapa = pivote; pivote.userData.malla = panel; pivote.userData.abierto = 0; pivote.userData.valor = 0;
   return pivote;
 }
@@ -328,6 +333,7 @@ function armar() {
     cols.forEach((col, i) => {
       if (col.zap) {
         const z = hacerSolapa(pos[i].w - 1.2, H - 7); z.position.set(pos[i].c, 3.5, L / 2); z.userData.clave = 'zap' + i;
+        const bandeja = caja(pos[i].w - 4, 1.2, PP - 6, matInterior, pos[i].c, H * 0.42, L / 2 - PP / 2 - 1); bandeja.rotation.x = 0.5; cuerpo.add(bandeja);
         cuerpo.add(z); solapas.push(z); return;
       }
       for (let n = 0; n < col.k; n++) {
@@ -361,7 +367,7 @@ function armar() {
 
 function actualizarPos() {
   cajones.forEach(c => { c.position.copy(c.userData.base).addScaledVector(c.userData.dir, c.userData.valor); });
-  solapas.forEach(z => { z.rotation.x = THREE.MathUtils.degToRad(93) * z.userData.valor; });
+  solapas.forEach(z => { z.rotation.x = THREE.MathUtils.degToRad(95) * z.userData.valor; });
   tapas.forEach(t => { const a = THREE.MathUtils.degToRad(105) * t.userData.valor; if (t.userData.eje === 'x') t.rotation.x = t.userData.sentido * a; else t.rotation.z = -t.userData.lado * a; });
 }
 
@@ -489,4 +495,5 @@ document.getElementById('abrir').addEventListener('click', () => { const abrir =
 document.getElementById('bau').addEventListener('click', () => { const abrir = tapas.some(t => !t.userData.abierto); tapas.forEach(t => { t.userData.abierto = abrir ? 1 : 0; }); vistaBauleras(); etiquetas(); dirty = true; });
 
 elegirModelo(modelo, false); bucle();
-window.__proto = { get estado() { return estado; }, elegirModelo, PM, armar, cajones: () => cajones.length, solapas: () => solapas.length, tapas: () => tapas.length, camara: camera, renderer, moverCamara, tween: () => camTween, controls };
+function abrirYa() { cajones.forEach(c => { c.userData.abierto = 1; c.userData.valor = 40; }); solapas.forEach(z => { z.userData.abierto = 1; z.userData.valor = 1; }); tapas.forEach(t => { t.userData.abierto = 1; t.userData.valor = 1; }); actualizarPos(); etiquetas(); dirty = true; }
+window.__proto = { abrirYa, get estado() { return estado; }, elegirModelo, PM, armar, cajones: () => cajones.length, solapas: () => solapas.length, tapas: () => tapas.length, camara: camera, renderer, moverCamara, tween: () => camTween, controls };
