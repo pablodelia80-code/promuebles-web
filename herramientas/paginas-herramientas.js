@@ -187,7 +187,7 @@ module.exports['configurar.html'] = (h) => {
       `;
   s = s.slice(0, a) + izq + s.slice(b);
   s = s.replace(/<script src="\/js\/productos-data\.js/, '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/productos-data.js');
-  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261046"></script>');
+  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261049"></script>');
   s = s.replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261048');
   return s;
 };

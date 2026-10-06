@@ -64,7 +64,7 @@ composer.addPass(new OutputPass());
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 20, 5);
 controls.enableDamping = true; controls.dampingFactor = 0.08;
-controls.enablePan = false;
+controls.enablePan = false; controls.enableZoom = false;   // solo se rota: sin zoom con la rueda ni con los dedos
 controls.minDistance = 300; controls.maxDistance = 760;
 controls.maxPolarAngle = Math.PI * 0.485; controls.minPolarAngle = 0.25;
 controls.rotateSpeed = 0.7;
