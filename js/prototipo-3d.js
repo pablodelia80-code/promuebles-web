@@ -41,7 +41,7 @@ sol.shadow.camera.near = 50; sol.shadow.camera.far = 1000;
 sol.shadow.bias = -0.0003; sol.shadow.normalBias = 0.5; sol.shadow.radius = 7;
 scene.add(sol);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
-const foco = new THREE.SpotLight(0xffe2b8, 6500, 1200, 0.62, 1, 1.6);
+const foco = new THREE.SpotLight(0xffe2b8, 4800, 1200, 0.62, 1, 1.6);
 foco.position.set(-330, 330, 140); foco.target.position.set(-120, 150, -150); scene.add(foco, foco.target);
 const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(300, 120, 260); scene.add(relleno);
 
@@ -125,6 +125,15 @@ function logo() {
 }
 const marca = logo(); scene.add(marca);
 if (document.fonts && document.fonts.load) document.fonts.load('800 100px Poppins').then(() => { scene.remove(marca); scene.add(Object.assign(logo(), {})); dirty = true; });
+
+// Texturas reales recortadas de la foto del showroom (sustituyen a las generadas por código apenas cargan)
+const cargador = new THREE.TextureLoader();
+function cargar(url, rx, ry, fn) {
+  cargador.load(url, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; t.repeat.set(rx, ry); fn(t); dirty = true; });
+}
+cargar('./assets/prototipo/piso.jpg', 9, 13, t => { piso.material.map = t; piso.material.bumpMap = t; piso.material.bumpScale = 1.6; piso.material.color.set(0xe2dfd8); piso.material.needsUpdate = true; });
+cargar('./assets/prototipo/pared.jpg', 5, 1.9, t => { pared.material.map = t; pared.material.bumpMap = t; pared.material.bumpScale = 2.2; pared.material.color.set(0xeceae4); pared.material.needsUpdate = true; });
+cargar('./assets/prototipo/listones.jpg', 1.8, 3.2, t => { listones.material.map = t; listones.material.bumpMap = t; listones.material.bumpScale = 3; listones.material.color.set(0xf2dcc4); listones.material.needsUpdate = true; });
 
 // sombra de contacto suave bajo la cama (apoya la cama en el piso)
 const texContacto = lienzo(256, 256, (ctx, w, h) => { const g = ctx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2); g.addColorStop(0, 'rgba(30,24,18,.55)'); g.addColorStop(0.6, 'rgba(30,24,18,.22)'); g.addColorStop(1, 'rgba(30,24,18,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); });
