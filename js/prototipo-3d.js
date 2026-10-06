@@ -41,8 +41,8 @@ sol.shadow.camera.near = 50; sol.shadow.camera.far = 1000;
 sol.shadow.bias = -0.0003; sol.shadow.normalBias = 0.5; sol.shadow.radius = 7;
 scene.add(sol);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
-const foco = new THREE.SpotLight(0xffe2b8, 4800, 1200, 0.62, 1, 1.6);
-foco.position.set(-330, 330, 140); foco.target.position.set(-120, 150, -150); scene.add(foco, foco.target);
+const foco = new THREE.SpotLight(0xffe2b8, 4200, 1200, 0.5, 1, 1.6);
+foco.position.set(-330, 330, 140); foco.target.position.set(-150, 190, -150); scene.add(foco, foco.target);
 const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(300, 120, 260); scene.add(relleno);
 
 const sinMobil = !window.matchMedia('(max-width: 900px)').matches;
@@ -133,12 +133,13 @@ function cargar(url, rx, ry, fn) {
 }
 cargar('./assets/prototipo/piso.jpg', 9, 13, t => { piso.material.map = t; piso.material.bumpMap = t; piso.material.bumpScale = 1.6; piso.material.color.set(0xe2dfd8); piso.material.needsUpdate = true; });
 cargar('./assets/prototipo/pared.jpg', 5, 1.9, t => { pared.material.map = t; pared.material.bumpMap = t; pared.material.bumpScale = 2.2; pared.material.color.set(0xeceae4); pared.material.needsUpdate = true; });
-cargar('./assets/prototipo/listones.jpg', 1.8, 3.2, t => { listones.material.map = t; listones.material.bumpMap = t; listones.material.bumpScale = 3; listones.material.color.set(0xf2dcc4); listones.material.needsUpdate = true; });
+cargar('./assets/prototipo/listones.jpg?v=2', 1.8, 3.6, t => { listones.material.map = t; listones.material.bumpMap = t; listones.material.bumpScale = 3; listones.material.color.set(0xf2dcc4); listones.material.needsUpdate = true; });
 
 // sombra de contacto suave bajo la cama (apoya la cama en el piso)
 const texContacto = lienzo(256, 256, (ctx, w, h) => { const g = ctx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2); g.addColorStop(0, 'rgba(30,24,18,.55)'); g.addColorStop(0.6, 'rgba(30,24,18,.22)'); g.addColorStop(1, 'rgba(30,24,18,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); });
 const contacto = new THREE.Mesh(new THREE.PlaneGeometry(W + 90, L + 90), new THREE.MeshBasicMaterial({ map: texContacto, transparent: true, depthWrite: false }));
 contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contacto);
+
 
 // ---------- la cama ----------
 const texMelamina = lienzo(512, 512, (ctx, w, h) => { ctx.fillStyle = '#9a9a9a'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { const g = 120 + Math.random() * 120; ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')'; ctx.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 1 + Math.random() * 2); } });
@@ -146,9 +147,9 @@ texMelamina.colorSpace = THREE.NoColorSpace; texMelamina.wrapS = texMelamina.wra
 const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf1efea, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
 const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
-const matLinea = new THREE.LineBasicMaterial({ color: 0xb8b5ad });
+const matAgujero = new THREE.MeshBasicMaterial({ color: 0x8a867e });
 const cama = new THREE.Group(); scene.add(cama);
-let cajones = [];
+let cajones = [], tapas = [];
 
 function caja(w, h, d, mat, x, y, z, radio) {
   const g = radio ? new RoundedBoxGeometry(w, h, d, 4, radio) : new THREE.BoxGeometry(w, h, d);
@@ -170,46 +171,63 @@ function hacerCajon(ancho, alto, prof) {
 }
 
 function ponerCajon(g, tipo, base, dir) {
-  g.userData.tipo = tipo; g.userData.base = base.clone(); g.userData.dir = dir.clone(); g.userData.abierto = tipo === 'lat' ? 0 : 0; g.userData.valor = 0;
+  g.userData.tipo = tipo; g.userData.base = base.clone(); g.userData.dir = dir.clone(); g.userData.abierto = 0; g.userData.valor = 0;
   g.position.copy(base);
   cama.add(g); cajones.push(g);
 }
 
 function reparto(total, anchos) { const hueco = (total - anchos.reduce((a, b) => a + b, 0)) / (anchos.length + 1); let x = hueco, out = []; anchos.forEach(w => { out.push({ c: x + w / 2 - total / 2, w }); x += w + hueco; }); return out; }
 
-// estados: lat.izq / lat.der = lista de lugares ('G' = 1 cajón grande, 'N' = 2 cajones normales apilados); pie = ['G'|'N', 'G'|'N']
-const estado = { izq: ['G', 'G'], der: ['G', 'G'], pie: ['G', 'G'] };
+// Tapa superior con huecos (donde van las tapas de las bauleras), armada en tramos
+function losaConHuecos(huecos) {
+  const g = new THREE.Group(), xs = [-W / 2, W / 2], zs = [-L / 2, L / 2];
+  huecos.forEach(h => { xs.push(h.x0, h.x1); zs.push(h.z0, h.z1); });
+  const ux = [...new Set(xs)].sort((a, b) => a - b), uz = [...new Set(zs)].sort((a, b) => a - b);
+  const dentro = (x, z) => huecos.some(h => x > h.x0 && x < h.x1 && z > h.z0 && z < h.z1);
+  for (let j = 0; j < uz.length - 1; j++) {
+    const za = uz[j], zb = uz[j + 1], zm = (za + zb) / 2; let ini = null;
+    for (let i = 0; i < ux.length - 1; i++) {
+      const xa = ux[i], xb = ux[i + 1], libre = !dentro((xa + xb) / 2, zm);
+      if (libre && ini === null) ini = xa;
+      if ((!libre || i === ux.length - 2) && ini !== null) {
+        const fin = libre ? xb : xa;
+        if (fin - ini > 0.05) g.add(caja(fin - ini + 0.02, 1.7, zb - za + 0.02, matBlanco, (ini + fin) / 2, H - 0.85, zm));
+        ini = null;
+      }
+    }
+  }
+  return g;
+}
+
+// estado: lugares de los costados ('G' = 1 cajón grande, 'N' = 2 normales apilados) y pie (cajones por lado, zapateros o estantes)
+const estado = { izq: ['G', 'G'], der: ['G', 'G'], pie: { tipo: 'cajones', lados: ['G', 'G'] } };
 const recordar = new Map();
 
 function armar() {
   cajones.forEach(c => recordar.set(c.userData.clave, c.userData.valor));
+  tapas.forEach(t => recordar.set(t.userData.clave, t.userData.abierto));
   while (cama.children.length) cama.remove(cama.children[0]);
-  cajones = [];
+  cajones = []; tapas = [];
   const cuerpo = new THREE.Group(); cama.add(cuerpo);
-  // estructura
-  cuerpo.add(caja(W, 1.7, L, matBlanco, 0, H - 0.85, 0, 0.3));         // tapa superior
-  cuerpo.add(caja(W - 0.4, 1.7, L - 0.4, matInterior, 0, 0.85, 0));    // base
-  cuerpo.add(caja(W, H, 1.7, matBlanco, 0, H / 2, -L / 2 + 0.85, 0.3)); // cabecera
-  [-1, 1].forEach(s => cuerpo.add(caja(1.5, H - 3.4, L - PROF - 2, matBlanco, s * (W / 2 - PROF - 0.8), H / 2, -PROF / 2 - 1)));
-  cuerpo.add(caja(W - 0.6, H - 3.4, 1.5, matBlanco, 0, H / 2, L / 2 - PROF - 0.8));
-  // cierres del pie: paneles de las esquinas y divisiones entre los cajones del pie, para que la cama se vea armada completa
-  [-1, 1].forEach(sg => cuerpo.add(caja(1.5, H - 3.4, PROF, matBlanco, sg * (W / 2 - 0.75), H / 2, L / 2 - PROF / 2, 0.2)));
-  const posPie = reparto(W, estado.pie.map(t => t === 'G' ? 65 : 48));
-  for (let i = 0; i < posPie.length - 1; i++) { const xm = (posPie[i].c + posPie[i].w / 2 + posPie[i + 1].c - posPie[i + 1].w / 2) / 2; cuerpo.add(caja(1.5, H - 3.4, PROF, matBlanco, xm, H / 2, L / 2 - PROF / 2)); }
-  // costados de la cabecera cerrados
-  [-1, 1].forEach(sg => cuerpo.add(caja(1.5, H - 3.4, 41, matBlanco, sg * (W / 2 - 0.75), H / 2, -L / 2 + 20.5, 0.2)));
+  const tipoPie = estado.pie.tipo, PP = tipoPie === 'estantes' ? 45 : PROF, paredH = H - 3.4;
+
+  // huecos de las tapas de las bauleras: 2 en la cabecera y 1 central
+  const hCab = (x) => ({ x0: x - 33.7, x1: x + 33.7, z0: -94.3, z1: -59.1 });
+  const hCen = { x0: -24.5, x1: 24.5, z0: -54.5, z1: 47.5 };
+  cuerpo.add(losaConHuecos([hCab(-W / 4), hCab(W / 4), hCen]));
+  cuerpo.add(caja(W - 0.4, 1.7, L - 0.4, matInterior, 0, 0.85, 0));            // base
+  cuerpo.add(caja(W, H, 1.7, matBlanco, 0, H / 2, -L / 2 + 0.85, 0.3));         // cabecera
+  // compartimento de la cabecera (bauleras chicas)
+  cuerpo.add(caja(W - 0.6, paredH, 1.5, matBlanco, 0, H / 2, -57.8));
+  cuerpo.add(caja(1.5, paredH, 37, matBlanco, 0, H / 2, -76.3));
+  [-1, 1].forEach(sg => cuerpo.add(caja(1.5, paredH, 41, matBlanco, sg * (W / 2 - 0.75), H / 2, -L / 2 + 20.5, 0.2)));
+  // espina central (paredes de la baulera central)
+  const zE0 = -57.05, zE1 = L / 2 - PP - 1.55, cE = (zE0 + zE1) / 2;
+  [-1, 1].forEach(s => cuerpo.add(caja(1.5, paredH, zE1 - zE0, matBlanco, s * (W / 2 - PROF - 0.8), H / 2, cE)));
+  cuerpo.add(caja(W - 0.6, paredH, 1.5, matBlanco, 0, H / 2, L / 2 - PP - 0.8));  // fondo del pie
   // divisiones entre cajones laterales
-  const zIni = -L / 2 + 41, zFin = L / 2 - PROF - 3, largo = (zFin - zIni) / 2;
-  [-1, 1].forEach(s => { for (let i = 0; i <= 2; i++) cuerpo.add(caja(PROF, H - 3.4, 1.4, matBlanco, s * (W / 2 - PROF / 2), H / 2, zIni + largo * i)); });
-  // líneas de las tapas de las bauleras (cabecera y centro)
-  const z0 = -L / 2;
-  const marcos = [[-W / 4 + 0, z0 + 19, 68, 38], [W / 4 + 0, z0 + 19, 68, 38], [0, z0 + 41 + 52, 50, 102]];
-  marcos.forEach(([x, z, w, d]) => {
-    const pts = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2], [-w / 2, -d / 2]].map(p => new THREE.Vector3(x + p[0], H + 0.06, z + p[1]));
-    cuerpo.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), matLinea));
-  });
-  // agujeritos de las tapas de las bauleras
-  [[-W / 4 - 22, z0 + 19], [W / 4 + 22, z0 + 19], [0, z0 + 41 + 52 - 40]].forEach(([x, z]) => { const h = new THREE.Mesh(new THREE.CircleGeometry(1.4, 20), new THREE.MeshBasicMaterial({ color: 0x8a867e })); h.rotation.x = -Math.PI / 2; h.position.set(x, H + 0.05, z); cuerpo.add(h); });
+  const zIni = -57, zFin = L / 2 - PP - 3, largo = (zFin - zIni) / 2;
+  [-1, 1].forEach(s => { for (let i = 0; i <= 2; i++) cuerpo.add(caja(PROF, paredH, 1.4, matBlanco, s * (W / 2 - PROF / 2), H / 2, zIni + largo * i)); });
   // cajones de los costados
   [['izq', -1], ['der', 1]].forEach(([lado, s]) => {
     estado[lado].forEach((tipo, i) => {
@@ -223,97 +241,150 @@ function armar() {
       });
     });
   });
-  // cajones del pie
-  const anchos = estado.pie.map(t => t === 'G' ? 65 : 48), pos = reparto(W, anchos);
-  estado.pie.forEach((tipo, i) => {
-    const niveles = tipo === 'G' ? [[35, 21]] : [[16.8, 11.9], [16.8, 30.1]];
-    niveles.forEach(([alto, y], n) => {
-      const c = hacerCajon(anchos[i] - 1.2, alto, PROF);
-      c.userData.clave = 'pie' + i + '-' + n;
-      ponerCajon(c, 'pie', new THREE.Vector3(pos[i].c, y, L / 2), new THREE.Vector3(0, 0, 1));
+  // pie de la cama
+  if (tipoPie === 'estantes') {
+    [-1, 1].forEach(sg => cuerpo.add(caja(1.5, paredH, PP, matBlanco, sg * (W / 2 - 0.75), H / 2, L / 2 - PP / 2, 0.2)));
+    cuerpo.add(caja(1.5, paredH, PP, matBlanco, 0, H / 2, L / 2 - PP / 2));
+    [-1, 1].forEach(sg => cuerpo.add(caja((W - 4.5) / 2, 1.5, PP - 1.6, matBlanco, sg * W / 4, H / 2, L / 2 - PP / 2 + 0.8)));
+  } else {
+    const anchos = tipoPie === 'zapateros' ? [65, 65] : estado.pie.lados.map(t => t === 'G' ? 65 : 48), pos = reparto(W, anchos);
+    [-1, 1].forEach(sg => cuerpo.add(caja(1.5, paredH, PP, matBlanco, sg * (W / 2 - 0.75), H / 2, L / 2 - PP / 2, 0.2)));
+    for (let i = 0; i < pos.length - 1; i++) { const xm = (pos[i].c + pos[i].w / 2 + pos[i + 1].c - pos[i + 1].w / 2) / 2; cuerpo.add(caja(1.5, paredH, PP, matBlanco, xm, H / 2, L / 2 - PP / 2)); }
+    anchos.forEach((ancho, i) => {
+      const niveles = tipoPie === 'zapateros' ? [[35, 21]] : (estado.pie.lados[i] === 'G' ? [[35, 21]] : [[16.8, 11.9], [16.8, 30.1]]);
+      niveles.forEach(([alto, y], n) => {
+        const c = hacerCajon(ancho - 1.2, alto, PROF);
+        c.userData.clave = (tipoPie === 'zapateros' ? 'zap' : 'pie') + i + '-' + n;
+        ponerCajon(c, 'pie', new THREE.Vector3(pos[i].c, y, L / 2), new THREE.Vector3(0, 0, 1));
+      });
     });
+  }
+  // tapas de las bauleras: giran sobre una bisagra y dejan ver el hueco (las de la cabecera por el lado de la pared; la central por un costado)
+  [[hCab(-W / 4), 'cab0', 'x', -1], [hCab(W / 4), 'cab1', 'x', -1], [hCen, 'cen', 'z', 1]].forEach(([h, clave, eje, sentido]) => {
+    const w = h.x1 - h.x0 - 0.6, d = h.z1 - h.z0 - 0.6, pivote = new THREE.Group();
+    let tapa, agujero = new THREE.Mesh(new THREE.CircleGeometry(1.4, 20), matAgujero);
+    agujero.rotation.x = -Math.PI / 2;
+    if (eje === 'x') {
+      pivote.position.set((h.x0 + h.x1) / 2, H, h.z0 + 0.3);
+      tapa = caja(w, 1.6, d, matBlanco, 0, -0.85, d / 2, 0.25);
+      agujero.position.set(w / 2 - 6, 0.82, d / 2 - 7);
+    } else {
+      pivote.position.set(h.x1 - 0.3, H, (h.z0 + h.z1) / 2);
+      tapa = caja(w, 1.6, d, matBlanco, -w / 2, -0.85, 0, 0.25);
+      agujero.position.set(-w / 2 + 7, 0.82, 0);
+    }
+    tapa.add(agujero); pivote.add(tapa);
+    pivote.userData = { clave, eje, sentido, abierto: 0, valor: 0, malla: tapa }; tapa.userData.tapa = pivote;
+    cuerpo.add(pivote); tapas.push(pivote);
   });
   cajones.forEach(c => { const v = recordar.get(c.userData.clave); if (v) { c.userData.valor = v; c.userData.abierto = v > 20 ? 1 : 0; } });
+  tapas.forEach(t => { const v = recordar.get(t.userData.clave); if (v) { t.userData.abierto = 1; t.userData.valor = 1; } });
   actualizarPos(); dirty = true;
 }
 
-function actualizarPos() { cajones.forEach(c => { c.position.copy(c.userData.base).addScaledVector(c.userData.dir, c.userData.valor); }); }
+function actualizarPos() {
+  cajones.forEach(c => { c.position.copy(c.userData.base).addScaledVector(c.userData.dir, c.userData.valor); });
+  tapas.forEach(t => { const a = THREE.MathUtils.degToRad(105) * t.userData.valor; if (t.userData.eje === 'x') t.rotation.x = t.userData.sentido * a; else t.rotation.z = -a; });
+}
 
 // ---------- interacción ----------
 let dirty = true;
 const rayo = new THREE.Raycaster(), p2 = new THREE.Vector2();
+const tocables = () => cajones.map(c => c.userData.frente).concat(tapas.map(t => t.userData.malla));
+function apuntar(e) { const r = renderer.domElement.getBoundingClientRect(); p2.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); rayo.setFromCamera(p2, camera); return rayo.intersectObjects(tocables(), false)[0]; }
 let abajo = null;
 renderer.domElement.addEventListener('pointerdown', e => { abajo = { x: e.clientX, y: e.clientY }; });
 renderer.domElement.addEventListener('pointerup', e => {
   if (!abajo || Math.hypot(e.clientX - abajo.x, e.clientY - abajo.y) > 6) { abajo = null; return; }
   abajo = null;
-  const r = renderer.domElement.getBoundingClientRect();
-  p2.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-  rayo.setFromCamera(p2, camera);
-  const frentes = cajones.map(c => c.userData.frente);
-  const hit = rayo.intersectObjects(frentes, false)[0];
-  if (hit) { const c = hit.object.userData.cajon; c.userData.abierto = c.userData.abierto ? 0 : 1; dirty = true; document.getElementById('ayuda').style.opacity = 0; }
+  const hit = apuntar(e);
+  if (!hit) return;
+  document.getElementById('ayuda').style.opacity = 0;
+  if (hit.object.userData.cajon) { const c = hit.object.userData.cajon; c.userData.abierto = c.userData.abierto ? 0 : 1; }
+  else { const t = hit.object.userData.tapa; t.userData.abierto = t.userData.abierto ? 0 : 1; vistaBauleras(); }
+  etiquetas(); dirty = true;
 });
-// el cursor cambia a "abrir" al pasar sobre un cajón
+// el cursor cambia a "abrir" al pasar sobre un cajón o una tapa
 let ultimoMov = 0;
 renderer.domElement.addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse' || e.buttons || performance.now() - ultimoMov < 60) return;
   ultimoMov = performance.now();
-  const r = renderer.domElement.getBoundingClientRect();
-  p2.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-  rayo.setFromCamera(p2, camera);
-  stage.classList.toggle('sobre-cajon', rayo.intersectObjects(cajones.map(c => c.userData.frente), false).length > 0);
+  stage.classList.toggle('sobre-cajon', !!apuntar(e));
 });
 controls.addEventListener('change', () => { dirty = true; });
-controls.addEventListener('start', () => { tocoCamara = true; document.getElementById('ayuda').style.opacity = 0; });
+controls.addEventListener('start', () => { tocoCamara = true; camTween = null; document.getElementById('ayuda').style.opacity = 0; });
 
 // Encuadre automático: la cama entera, con los cajones abiertos, entra en cualquier pantalla
-let tocoCamara = false;
+let tocoCamara = false, camTween = null, distInicial = 600;
+const dirInicial = new THREE.Vector3(238, 88, 367).normalize();
 function encuadrar() {
-  if (tocoCamara) return;
   const R = 128, vf = THREE.MathUtils.degToRad(camera.fov), hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
-  const dist = R / Math.sin(Math.min(vf, hf) / 2);
-  const dir = new THREE.Vector3(238, 88, 367).normalize();
-  camera.position.copy(controls.target).addScaledVector(dir, dist);
-  controls.minDistance = dist * 0.55; controls.maxDistance = dist * 1.7;
+  distInicial = R / Math.sin(Math.min(vf, hf) / 2);
+  controls.minDistance = distInicial * 0.55; controls.maxDistance = distInicial * 1.7;
+  if (tocoCamara) return;
+  camera.position.copy(controls.target).addScaledVector(dirInicial, distInicial);
   controls.update();
+}
+// Al abrir una baulera la cámara sube para mirar adentro; al cerrar todas vuelve a la vista inicial
+function moverCamara(phi) {
+  tocoCamara = true;
+  const sph = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+  camTween = { t: 0, de: sph.clone(), a: new THREE.Spherical(Math.min(sph.radius, distInicial * 1.05), phi, sph.theta) };
+}
+function vistaBauleras() {
+  if (tapas.some(t => t.userData.abierto)) moverCamara(0.62);
+  else moverCamara(new THREE.Spherical().setFromVector3(dirInicial).phi);
 }
 function tamano() {
   const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); encuadrar(); dirty = true;
 }
 new ResizeObserver(tamano).observe(stage); tamano();
 
+let ultimo = performance.now();
 function bucle() {
   requestAnimationFrame(bucle);
+  const ahora = performance.now(), dt = Math.min(0.05, (ahora - ultimo) / 1000); ultimo = ahora;
   let mueve = controls.update();
+  if (camTween) {
+    camTween.t = Math.min(1, camTween.t + dt / 0.9);
+    const k = camTween.t < 0.5 ? 2 * camTween.t * camTween.t : 1 - Math.pow(-2 * camTween.t + 2, 2) / 2, s = camTween.de, a = camTween.a;
+    camera.position.setFromSpherical(new THREE.Spherical(s.radius + (a.radius - s.radius) * k, s.phi + (a.phi - s.phi) * k, s.theta)).add(controls.target);
+    camera.lookAt(controls.target); controls.update(); mueve = true;
+    if (camTween.t >= 1) camTween = null;
+  }
   cajones.forEach(c => {
     const meta = c.userData.abierto ? 40 : 0, d = meta - c.userData.valor;
     if (Math.abs(d) > 0.05) { c.userData.valor += d * 0.14; mueve = true; } else if (c.userData.valor !== meta) { c.userData.valor = meta; mueve = true; }
+  });
+  tapas.forEach(t => {
+    const meta = t.userData.abierto ? 1 : 0, d = meta - t.userData.valor;
+    if (Math.abs(d) > 0.004) { t.userData.valor += d * 0.12; mueve = true; } else if (t.userData.valor !== meta) { t.userData.valor = meta; mueve = true; }
   });
   if (mueve) { actualizarPos(); dirty = true; }
   if (dirty) { composer.render(); dirty = false; }
 }
 
-// ---------- botones: 1 cajón grande o 2 normales ----------
+// ---------- paneles ----------
+function etiquetas() {
+  document.getElementById('abrir').textContent = cajones.some(c => !c.userData.abierto) ? 'Abrir todos los cajones' : 'Cerrar todos los cajones';
+  document.getElementById('bau').textContent = tapas.some(t => !t.userData.abierto) ? 'Abrir las bauleras' : 'Cerrar las bauleras';
+}
+function fila(nombre, hijos) { const f = document.createElement('div'); f.className = 'fila'; const t = document.createElement('span'); t.textContent = nombre; f.appendChild(t); hijos.forEach(h => f.appendChild(h)); return f; }
+function opciones(lista, actual, alElegir) {
+  const g = document.createElement('div'); g.className = 'par';
+  lista.forEach(([val, txt]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.className = actual === val ? 'on' : ''; b.addEventListener('click', () => alElegir(val)); g.appendChild(b); });
+  return g;
+}
 function paneles() {
   const cont = document.getElementById('lugares'); cont.innerHTML = '';
-  [['izq', 'Lado izquierdo'], ['der', 'Lado derecho'], ['pie', 'Pie de la cama']].forEach(([k, nombre]) => {
-    const fila = document.createElement('div'); fila.className = 'fila';
-    const t = document.createElement('span'); t.textContent = nombre; fila.appendChild(t);
-    estado[k].forEach((tipo, i) => {
-      const grupo = document.createElement('div'); grupo.className = 'par';
-      [['G', '1 grande'], ['N', '2 normales']].forEach(([val, txt]) => {
-        const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.className = tipo === val ? 'on' : '';
-        b.addEventListener('click', () => { estado[k][i] = val; armar(); paneles(); });
-        grupo.appendChild(b);
-      });
-      fila.appendChild(grupo);
-    });
-    cont.appendChild(fila);
-  });
+  const GN = [['G', '1 grande'], ['N', '2 normales']];
+  [['izq', 'Costado izquierdo'], ['der', 'Costado derecho']].forEach(([k, nombre]) => cont.appendChild(fila(nombre, estado[k].map((tipo, i) => opciones(GN, tipo, v => { estado[k][i] = v; armar(); paneles(); etiquetas(); })))));
+  cont.appendChild(fila('Pie de la cama', [opciones([['cajones', 'Cajones'], ['zapateros', 'Zapateros'], ['estantes', 'Estantes']], estado.pie.tipo, v => { estado.pie.tipo = v; armar(); paneles(); etiquetas(); })]));
+  if (estado.pie.tipo === 'cajones') cont.appendChild(fila('Cajones del pie', estado.pie.lados.map((tipo, i) => opciones(GN, tipo, v => { estado.pie.lados[i] = v; armar(); paneles(); etiquetas(); }))));
 }
-document.getElementById('abrir').addEventListener('click', () => { const abrir = cajones.some(c => !c.userData.abierto); cajones.forEach(c => { c.userData.abierto = abrir ? 1 : 0; }); document.getElementById('abrir').textContent = abrir ? 'Cerrar todos los cajones' : 'Abrir todos los cajones'; dirty = true; });
+document.getElementById('abrir').addEventListener('click', () => { const abrir = cajones.some(c => !c.userData.abierto); cajones.forEach(c => { c.userData.abierto = abrir ? 1 : 0; }); etiquetas(); dirty = true; });
+document.getElementById('bau').addEventListener('click', () => { const abrir = tapas.some(t => !t.userData.abierto); tapas.forEach(t => { t.userData.abierto = abrir ? 1 : 0; }); vistaBauleras(); etiquetas(); dirty = true; });
 
-armar(); paneles(); bucle();
-setTimeout(() => { cajones.forEach(c => { c.userData.abierto = 1; }); document.getElementById('abrir').textContent = 'Cerrar todos los cajones'; dirty = true; }, 700);
-window.__proto = { estado, armar, cajones: () => cajones.length, camara: camera, renderer };
+armar(); paneles(); etiquetas(); bucle();
+setTimeout(() => { cajones.forEach(c => { c.userData.abierto = 1; }); etiquetas(); dirty = true; }, 700);
+window.__proto = { estado, armar, cajones: () => cajones.length, tapas: () => tapas.length, camara: camera, renderer, moverCamara, tween: () => camTween, controls };
