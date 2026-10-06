@@ -149,7 +149,7 @@ const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness:
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matAgujero = new THREE.MeshBasicMaterial({ color: 0x8a867e });
 const cama = new THREE.Group(); scene.add(cama);
-let cajones = [], tapas = [];
+let cajones = [], tapas = [], solapas = [];
 
 function caja(w, h, d, mat, x, y, z, radio) {
   const g = radio ? new RoundedBoxGeometry(w, h, d, 4, radio) : new THREE.BoxGeometry(w, h, d);
@@ -168,6 +168,22 @@ function hacerCajon(ancho, alto, prof) {
   [-1, 1].forEach(s => g.add(caja(0.7, 1.4, pi - 4, matMetal, s * (ancho / 2 - 1.5), -hi / 2 - 1.2, -1.7 - pi / 2 - 1)));
   frente.userData.cajon = g; g.userData.frente = frente;
   return g;
+}
+
+// Zapatero: el frente es una solapa que gira sobre su borde inferior; adentro lleva dos zapateros con brazos curvos y tabla inclinada
+function hacerSolapa(ancho, alto) {
+  const pivote = new THREE.Group();
+  const panel = caja(ancho, alto, 1.7, matBlanco, 0, alto / 2, -0.85, 0.35); pivote.add(panel);
+  [0.3, 0.68].forEach(f => {
+    const y = alto * f;
+    const tabla = caja(ancho - 10, 1.0, 11, matBlanco, 0, y, -7.7); tabla.rotation.x = 0.28; pivote.add(tabla);
+    [-1, 0, 1].forEach(k => {
+      const brazo = new THREE.Mesh(new THREE.TorusGeometry(5, 0.55, 8, 24, Math.PI), matBlanco);
+      brazo.rotation.y = Math.PI / 2; brazo.position.set(k * (ancho / 2 - 10), y + 0.8, -7.7); brazo.castShadow = true; brazo.receiveShadow = true; pivote.add(brazo);
+    });
+  });
+  panel.userData.solapa = pivote; pivote.userData.malla = panel; pivote.userData.abierto = 0; pivote.userData.valor = 0;
+  return pivote;
 }
 
 function ponerCajon(g, tipo, base, dir) {
@@ -206,8 +222,9 @@ const recordar = new Map();
 function armar() {
   cajones.forEach(c => recordar.set(c.userData.clave, c.userData.valor));
   tapas.forEach(t => recordar.set(t.userData.clave, t.userData.abierto));
+  solapas.forEach(z => recordar.set(z.userData.clave, z.userData.abierto));
   while (cama.children.length) cama.remove(cama.children[0]);
-  cajones = []; tapas = [];
+  cajones = []; tapas = []; solapas = [];
   const cuerpo = new THREE.Group(); cama.add(cuerpo);
   const tipoPie = estado.pie.tipo, PP = tipoPie === 'estantes' ? 45 : PROF, paredH = H - 3.4;
 
@@ -251,10 +268,14 @@ function armar() {
     [-1, 1].forEach(sg => cuerpo.add(caja(1.5, paredH, PP, matBlanco, sg * (W / 2 - 0.75), H / 2, L / 2 - PP / 2, 0.2)));
     for (let i = 0; i < pos.length - 1; i++) { const xm = (pos[i].c + pos[i].w / 2 + pos[i + 1].c - pos[i + 1].w / 2) / 2; cuerpo.add(caja(1.5, paredH, PP, matBlanco, xm, H / 2, L / 2 - PP / 2)); }
     anchos.forEach((ancho, i) => {
-      const niveles = tipoPie === 'zapateros' ? [[35, 21]] : (estado.pie.lados[i] === 'G' ? [[35, 21]] : [[16.8, 11.9], [16.8, 30.1]]);
+      if (tipoPie === 'zapateros') {
+        const z = hacerSolapa(ancho - 1.2, 35); z.position.set(pos[i].c, 3.5, L / 2); z.userData.clave = 'zap' + i;
+        cuerpo.add(z); solapas.push(z); return;
+      }
+      const niveles = estado.pie.lados[i] === 'G' ? [[35, 21]] : [[16.8, 11.9], [16.8, 30.1]];
       niveles.forEach(([alto, y], n) => {
         const c = hacerCajon(ancho - 1.2, alto, PROF);
-        c.userData.clave = (tipoPie === 'zapateros' ? 'zap' : 'pie') + i + '-' + n;
+        c.userData.clave = 'pie' + i + '-' + n;
         ponerCajon(c, 'pie', new THREE.Vector3(pos[i].c, y, L / 2), new THREE.Vector3(0, 0, 1));
       });
     });
@@ -279,18 +300,20 @@ function armar() {
   });
   cajones.forEach(c => { const v = recordar.get(c.userData.clave); if (v) { c.userData.valor = v; c.userData.abierto = v > 20 ? 1 : 0; } });
   tapas.forEach(t => { const v = recordar.get(t.userData.clave); if (v) { t.userData.abierto = 1; t.userData.valor = 1; } });
+  solapas.forEach(z => { const v = recordar.get(z.userData.clave); if (v) { z.userData.abierto = 1; z.userData.valor = 1; } });
   actualizarPos(); dirty = true;
 }
 
 function actualizarPos() {
   cajones.forEach(c => { c.position.copy(c.userData.base).addScaledVector(c.userData.dir, c.userData.valor); });
+  solapas.forEach(z => { z.rotation.x = THREE.MathUtils.degToRad(93) * z.userData.valor; });
   tapas.forEach(t => { const a = THREE.MathUtils.degToRad(105) * t.userData.valor; if (t.userData.eje === 'x') t.rotation.x = t.userData.sentido * a; else t.rotation.z = -a; });
 }
 
 // ---------- interacción ----------
 let dirty = true;
 const rayo = new THREE.Raycaster(), p2 = new THREE.Vector2();
-const tocables = () => cajones.map(c => c.userData.frente).concat(tapas.map(t => t.userData.malla));
+const tocables = () => cajones.map(c => c.userData.frente).concat(tapas.map(t => t.userData.malla), solapas.map(z => z.userData.malla));
 function apuntar(e) { const r = renderer.domElement.getBoundingClientRect(); p2.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); rayo.setFromCamera(p2, camera); return rayo.intersectObjects(tocables(), false)[0]; }
 let abajo = null;
 renderer.domElement.addEventListener('pointerdown', e => { abajo = { x: e.clientX, y: e.clientY }; });
@@ -301,6 +324,7 @@ renderer.domElement.addEventListener('pointerup', e => {
   if (!hit) return;
   document.getElementById('ayuda').style.opacity = 0;
   if (hit.object.userData.cajon) { const c = hit.object.userData.cajon; c.userData.abierto = c.userData.abierto ? 0 : 1; }
+  else if (hit.object.userData.solapa) { const z = hit.object.userData.solapa; z.userData.abierto = z.userData.abierto ? 0 : 1; }
   else { const t = hit.object.userData.tapa; t.userData.abierto = t.userData.abierto ? 0 : 1; vistaBauleras(); }
   etiquetas(); dirty = true;
 });
@@ -356,6 +380,10 @@ function bucle() {
     const meta = c.userData.abierto ? 40 : 0, d = meta - c.userData.valor;
     if (Math.abs(d) > 0.05) { c.userData.valor += d * 0.14; mueve = true; } else if (c.userData.valor !== meta) { c.userData.valor = meta; mueve = true; }
   });
+  solapas.forEach(z => {
+    const meta = z.userData.abierto ? 1 : 0, d = meta - z.userData.valor;
+    if (Math.abs(d) > 0.004) { z.userData.valor += d * 0.1; mueve = true; } else if (z.userData.valor !== meta) { z.userData.valor = meta; mueve = true; }
+  });
   tapas.forEach(t => {
     const meta = t.userData.abierto ? 1 : 0, d = meta - t.userData.valor;
     if (Math.abs(d) > 0.004) { t.userData.valor += d * 0.12; mueve = true; } else if (t.userData.valor !== meta) { t.userData.valor = meta; mueve = true; }
@@ -366,7 +394,7 @@ function bucle() {
 
 // ---------- paneles ----------
 function etiquetas() {
-  document.getElementById('abrir').textContent = cajones.some(c => !c.userData.abierto) ? 'Abrir todos los cajones' : 'Cerrar todos los cajones';
+  document.getElementById('abrir').textContent = cajones.some(c => !c.userData.abierto) || solapas.some(z => !z.userData.abierto) ? 'Abrir todos los cajones' : 'Cerrar todos los cajones';
   document.getElementById('bau').textContent = tapas.some(t => !t.userData.abierto) ? 'Abrir las bauleras' : 'Cerrar las bauleras';
 }
 function fila(nombre, hijos) { const f = document.createElement('div'); f.className = 'fila'; const t = document.createElement('span'); t.textContent = nombre; f.appendChild(t); hijos.forEach(h => f.appendChild(h)); return f; }
@@ -382,9 +410,9 @@ function paneles() {
   cont.appendChild(fila('Pie de la cama', [opciones([['cajones', 'Cajones'], ['zapateros', 'Zapateros'], ['estantes', 'Estantes']], estado.pie.tipo, v => { estado.pie.tipo = v; armar(); paneles(); etiquetas(); })]));
   if (estado.pie.tipo === 'cajones') cont.appendChild(fila('Cajones del pie', estado.pie.lados.map((tipo, i) => opciones(GN, tipo, v => { estado.pie.lados[i] = v; armar(); paneles(); etiquetas(); }))));
 }
-document.getElementById('abrir').addEventListener('click', () => { const abrir = cajones.some(c => !c.userData.abierto); cajones.forEach(c => { c.userData.abierto = abrir ? 1 : 0; }); etiquetas(); dirty = true; });
+document.getElementById('abrir').addEventListener('click', () => { const abrir = cajones.some(c => !c.userData.abierto) || solapas.some(z => !z.userData.abierto); cajones.forEach(c => { c.userData.abierto = abrir ? 1 : 0; }); solapas.forEach(z => { z.userData.abierto = abrir ? 1 : 0; }); etiquetas(); dirty = true; });
 document.getElementById('bau').addEventListener('click', () => { const abrir = tapas.some(t => !t.userData.abierto); tapas.forEach(t => { t.userData.abierto = abrir ? 1 : 0; }); vistaBauleras(); etiquetas(); dirty = true; });
 
 armar(); paneles(); etiquetas(); bucle();
-setTimeout(() => { cajones.forEach(c => { c.userData.abierto = 1; }); etiquetas(); dirty = true; }, 700);
-window.__proto = { estado, armar, cajones: () => cajones.length, tapas: () => tapas.length, camara: camera, renderer, moverCamara, tween: () => camTween, controls };
+setTimeout(() => { cajones.forEach(c => { c.userData.abierto = 1; }); solapas.forEach(z => { z.userData.abierto = 1; }); etiquetas(); dirty = true; }, 700);
+window.__proto = { estado, armar, cajones: () => cajones.length, solapas: () => solapas.length, tapas: () => tapas.length, camara: camera, renderer, moverCamara, tween: () => camTween, controls };
