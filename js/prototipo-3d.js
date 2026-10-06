@@ -225,25 +225,34 @@ function losaConHuecos(huecos) {
 
 // ---------- el modelo elegido y su estado ----------
 const PM = window.PM;
-const PIE_GRANDE = { '2-plazas': 65, 'queen': 75 };            // ancho del cajón grande del pie (6 y 10 Vip)
-const ZAP_LINEA = { '2-plazas': [65, 65], 'queen': [75, 75] };
+// Opciones del pie por medida: columnas, ancho del cajón grande (g) y de los cajones chicos apilados (n)
+const PIE_CFG = {
+  '1-plaza': { cols: 1, g: 75, n: 75, estantes: false, zap: [75] },
+  '1-plaza-y-media': { cols: 2, g: 45, n: 45, estantes: false, zap: [45, 45] },
+  '2-plazas': { cols: 2, g: 65, n: 48, estantes: true, zap: [65, 65] },
+  'queen': { cols: 2, g: 75, n: 48, estantes: true, zap: [75, 75] }
+};
 function ladosDeModelo(m) {
-  if (!PIE_GRANDE[m.linea] || m.alto !== 42 || m.frontales.length !== 1) return null;
+  const c = PIE_CFG[m.linea];
+  if (!c || m.alto !== 42 || m.frontales.length !== 1) return null;
   const f = m.frontales[0];
-  if (f.n === 2 && f.dim[2] === 30) return ['G', 'G'];
-  if (f.n === 4 && f.dim[2] === 15 && f.dim[0] === 48) return ['N', 'N'];
+  if (c.cols === 2 && f.n === 2 && f.dim[2] === 30) return ['G', 'G'];
+  if (c.cols === 2 && f.n === 4 && f.dim[2] === 15 && f.dim[0] === c.n) return ['N', 'N'];
+  if (c.cols === 1 && f.n === 1 && f.dim[2] === 30) return ['G'];
+  if (c.cols === 1 && f.n === 2 && f.dim[2] === 15) return ['N'];
   return null;
 }
-const puedeCambiarPie = m => !!PIE_GRANDE[m.linea] && m.alto === 42;
+const puedeCambiarPie = m => !!PIE_CFG[m.linea] && m.alto === 42;
 let modelo = PM.MODELOS.find(x => x.slug === new URLSearchParams(location.search).get('m')) || PM.MODELOS.find(x => x.slug === '6-vip-2-plazas');
 let estado;
 function estadoDe(m) {
   const lat = m.laterales, k = m.latNiveles;
   const slots = c => !c ? [] : (lat.patron ? lat.patron.slice() : (k === 1 ? new Array(c).fill('G') : k === 2 ? new Array(Math.round(c / 2)).fill('N') : new Array(Math.round(c / k)).fill('F')));
   let pie;
-  if (m.estantes) pie = { tipo: 'estantes', lados: ['G', 'G'] };
-  else if (m.zapateros.length) pie = { tipo: 'zapateros', lados: ['G', 'G'] };
-  else { const l = ladosDeModelo(m); pie = l ? { tipo: 'cajones', lados: l } : { tipo: 'frontales', lados: ['G', 'G'] }; }
+  const nCols = PIE_CFG[m.linea] ? PIE_CFG[m.linea].cols : 2, porDefecto = new Array(nCols).fill('G');
+  if (m.estantes) pie = { tipo: 'estantes', lados: porDefecto };
+  else if (m.zapateros.length) pie = { tipo: 'zapateros', lados: porDefecto };
+  else { const l = ladosDeModelo(m); pie = l ? { tipo: 'cajones', lados: l } : { tipo: 'frontales', lados: porDefecto }; }
   return { izq: slots(lat.izq), der: slots(lat.der), pie };
 }
 const altoPila = (k) => (H - 7 - (k - 1) * 1.4) / k;
@@ -265,8 +274,8 @@ function armar() {
 
   // ----- columnas del pie -----
   let cols = [];
-  if (tipoPie === 'cajones') cols = estado.pie.lados.map(t => t === 'G' ? { w: PIE_GRANDE[m.linea], k: 1 } : { w: 48, k: 2 });
-  else if (tipoPie === 'zapateros') cols = (m.zapateros.length ? m.zapateros : ZAP_LINEA[m.linea] || [65, 65]).map(w => ({ w, zap: true }));
+  if (tipoPie === 'cajones') cols = estado.pie.lados.map(t => t === 'G' ? { w: PIE_CFG[m.linea].g, k: 1 } : { w: PIE_CFG[m.linea].n, k: 2 });
+  else if (tipoPie === 'zapateros') cols = (m.zapateros.length ? m.zapateros : (PIE_CFG[m.linea] ? PIE_CFG[m.linea].zap : [65, 65])).map(w => ({ w, zap: true }));
   else if (tipoPie === 'frontales') m.frontales.forEach(f => { const k = f.niveles || 1; for (let i = 0; i < Math.max(1, Math.round(f.n / k)); i++) cols.push({ w: f.dim[0], k }); });
   const PP = tipoPie === 'estantes' ? 45 : (cols.length ? PROF : 0);
   const zFootWall = L / 2 - PP - 0.8;
@@ -484,9 +493,9 @@ function paneles() {
   const nombres = modelo.laterales.der === 0 ? [['izq', 'Costado con cajones']] : [['izq', 'Costado izquierdo'], ['der', 'Costado derecho']];
   if (editable) nombres.forEach(([k, nombre]) => cont.appendChild(fila(nombre, estado[k].map((tipo, i) => opciones(GN, tipo, v => { estado[k][i] = v; armar(); paneles(); etiquetas(); })))));
   if (puedeCambiarPie(modelo)) {
-    const tipos = [['cajones', 'Cajones'], ['zapateros', 'Zapateros'], ['estantes', 'Estantes']];
+    const tipos = [['cajones', 'Cajones'], ['zapateros', 'Zapateros']].concat(PIE_CFG[modelo.linea].estantes ? [['estantes', 'Estantes']] : []);
     cont.appendChild(fila('Pie de la cama', [opciones(tipos, estado.pie.tipo === 'frontales' ? 'cajones' : estado.pie.tipo, v => { estado.pie.tipo = v; if (v === 'estantes' && !modelo.estantes) modelo = Object.assign({}, modelo, { estantes: { n: 4, dim: [modelo.linea === 'queen' ? 80 : 70, 45, 19] } }); armar(); paneles(); etiquetas(); })]));
-    if (estado.pie.tipo === 'cajones') cont.appendChild(fila('Cajones del pie', estado.pie.lados.map((tipo, i) => opciones(GN, tipo, v => { estado.pie.lados[i] = v; armar(); paneles(); etiquetas(); }))));
+    if (estado.pie.tipo === 'cajones') cont.appendChild(fila(PIE_CFG[modelo.linea].cols === 1 ? 'Cajón del pie' : 'Cajones del pie', estado.pie.lados.map((tipo, i) => opciones(GN, tipo, v => { estado.pie.lados[i] = v; armar(); paneles(); etiquetas(); }))));
   }
   const fijo = document.getElementById('fijo');
   fijo.textContent = estado.pie.tipo === 'frontales' ? 'El pie de este modelo es fijo: ' + PM.frontalesTotal(modelo) + ' cajones al pie.' : '';
