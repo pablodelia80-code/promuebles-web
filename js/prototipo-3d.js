@@ -411,6 +411,8 @@ controls.addEventListener('start', () => { tocoCamara = true; camTween = null; d
 // Encuadre automático: la cama entera, con los cajones abiertos, entra en cualquier pantalla
 let tocoCamara = false, camTween = null, distInicial = 600;
 const dirInicial = new THREE.Vector3(238, 88, 367).normalize();
+// En las camas con todos los cajones en un solo costado, la cámara arranca del lado de los cajones para que se vean
+function orientarCamara() { dirInicial.set(modelo.laterales.der === 0 ? -238 : 238, 88, 367).normalize(); }
 function encuadrar() {
   const R = 0.4 * Math.hypot(W + 80, L + 40), vf = THREE.MathUtils.degToRad(camera.fov), hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
   distInicial = R / Math.sin(Math.min(vf, hf) / 2);
@@ -478,7 +480,7 @@ const nombreCorto = m => m.corto.replace(/ (Queen|King 180|King 200|Plaza y Medi
 const LINEAS = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
 function elegirModelo(m, conUrl) {
   modelo = m; estado = estadoDe(m); recordar.clear(); tocoCamara = false; camTween = null;
-  armar(); encuadrar(); paneles(); etiquetas();
+  orientarCamara(); armar(); encuadrar(); paneles(); etiquetas();
   document.getElementById('titulo').textContent = 'Cama ' + m.corto + ' en 3D';
   try { if (conUrl) history.replaceState(null, '', '?m=' + m.slug); } catch (e) { }
   setTimeout(() => { if (modelo !== m) return; cajones.forEach(c => { c.userData.abierto = 1; }); solapas.forEach(z => { z.userData.abierto = 1; }); etiquetas(); dirty = true; }, 700);
