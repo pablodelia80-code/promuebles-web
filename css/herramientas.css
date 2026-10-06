@@ -231,3 +231,31 @@
   .cfg-page .pm-chat-toggle,.cfg-page .pm-chat-panel{bottom:244px}
   .cfg-page main{padding-bottom:90px}
 }
+
+/* La ficha de la parte elegida solo se muestra cuando hay una parte elegida */
+.cz-ficha:has(#cz-ficha-vacia:not([hidden])){display:none}
+
+/* Celular: la cama queda fija arriba mientras se eligen las opciones */
+@media (max-width:900px){
+  .cfg-page header.site{position:static}
+  .cz-izq{position:sticky;top:0;z-index:40;background:#fff;padding:6px 0 8px;border-bottom:1px solid var(--line)}
+  .cz-escena{height:clamp(190px,30vh,250px)}
+  .cz-partes{display:none}
+  .cz-botones{margin-top:8px}
+  .cz-botones .btn{padding:8px 14px;font-size:13px}
+}
+
+/* Celular: muestra de color más chica y encabezados de pasos en dos líneas */
+@media (max-width:900px){
+  .cz-muestra{left:8px;top:8px;padding:5px 10px 5px 5px;gap:0 8px;max-width:62%}
+  .cz-muestra i{width:30px;height:30px}
+  .cz-muestra small{font-size:9.5px}
+  .cz-muestra b{font-size:13px}
+  .cz-muestra em{display:none}
+  .cz-paso-btn{display:grid;grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"n t c" "n r c";gap:1px 12px;align-items:center}
+  .cz-paso-btn i{grid-area:n}
+  .cz-paso-tit{grid-area:t}
+  .cz-paso-res{grid-area:r;margin:0;text-align:left;white-space:normal;font-size:13px}
+  .cz-cambiar{grid-area:c}
+  .cz-paso.on .cz-paso-btn{grid-template-areas:"n t t"}
+}

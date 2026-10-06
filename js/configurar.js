@@ -295,6 +295,7 @@
     el('cz-f-tipo').textContent = p.info.tipo; el('cz-f-titulo').textContent = p.info.titulo;
     var dl = el('cz-f-dl'); dl.innerHTML = '';
     p.info.filas.forEach(function (f) { var r = document.createElement('div'), a = document.createElement('dt'), b = document.createElement('dd'); a.textContent = f[0]; b.textContent = f[1]; r.appendChild(a); r.appendChild(b); dl.appendChild(r); });
+    if (window.innerWidth <= 900) setTimeout(function () { window.scrollTo({ top: Math.max(0, el('cz-ficha').getBoundingClientRect().top + window.scrollY - alturaFija() - 8), behavior: 'smooth' }); }, 60);
     var bt = el('cz-f-cambiar');
     if (p.info.lado && st.lat.editable && (p.info.estado === 'G' || p.info.estado === 'N')) {
       bt.hidden = false; bt.textContent = p.info.estado === 'G' ? 'Cambiar este lugar por 2 cajones normales' : 'Cambiar este lugar por 1 cajón grande';
@@ -453,6 +454,11 @@
     mu.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><span><small>Color elegido</small><b>' + cc.n + '</b></span>' +
       '<em>' + (st.color ? 'El dibujo es de referencia: se ve siempre en blanco. Tu cama se fabrica en este color.' : 'El dibujo es de referencia.') + '</em>';
   }
+  // Altura de lo que queda fijo arriba: el encabezado en la computadora, la cama en el celular
+  function alturaFija() {
+    if (window.innerWidth <= 900) { var iz = document.querySelector('.cz-izq'); return iz ? iz.offsetHeight : 0; }
+    return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hdr'), 10) || 70;
+  }
   // ---------- pasos guiados ----------
   var paso = 1, TOT = 5, secs = [].slice.call(document.querySelectorAll('.cz-paso'));
   function irPaso(n, desplazar) {
@@ -468,8 +474,7 @@
     el('cz-barra-paso').textContent = 'Paso ' + paso + ' de ' + TOT;
     el('cz-barra-sig').textContent = paso < TOT ? 'Continuar →' : 'Enviar por WhatsApp';
     if (desplazar) {
-      var h = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hdr'), 10) || 70;
-      window.scrollTo({ top: Math.max(0, secs[paso - 1].getBoundingClientRect().top + window.scrollY - h - 14), behavior: 'smooth' });
+      window.scrollTo({ top: Math.max(0, secs[paso - 1].getBoundingClientRect().top + window.scrollY - alturaFija() - 14), behavior: 'smooth' });
     }
   }
   function resumenesPasos() {
