@@ -487,7 +487,10 @@ function elegirModelo(m, conUrl) {
 }
 function paneles() {
   const sel = document.getElementById('selector'); sel.innerHTML = '';
+  const titulo = (n, txt) => { const t = document.createElement('p'); t.className = 'paso-t'; t.innerHTML = '<i>' + n + '</i><span>' + txt + '</span>'; return t; };
+  sel.appendChild(titulo(1, 'Elegí el tamaño de tu cama'));
   sel.appendChild(opciones(LINEAS.map(l => [l, PM.LINEAS[l].nombre, PM.LINEAS[l].colchon]), modelo.linea, l => elegirModelo(PM.porPrecio(PM.MODELOS.filter(x => x.linea === l))[0], true), 'medidas'));
+  sel.appendChild(titulo(2, 'Elegí el modelo de ' + PM.LINEAS[modelo.linea].nombre + ' (cambia la cantidad de cajones)'));
   sel.appendChild(opciones(PM.porPrecio(PM.MODELOS.filter(x => x.linea === modelo.linea)).map(x => [x.slug, nombreCorto(x), x.cajones + ' cajones']), modelo.slug, s => elegirModelo(PM.MODELOS.find(x => x.slug === s), true), 'modelos'));
   const cont = document.getElementById('lugares'); cont.innerHTML = '';
   const GN = [['G', '1 grande'], ['N', '2 normales']];
