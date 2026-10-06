@@ -16,7 +16,7 @@ const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.78;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -35,10 +35,10 @@ camera.position.set(238, 108, 372);
 const sol = new THREE.DirectionalLight(0xfff0dc, 2.1);
 sol.position.set(-220, 360, 260);
 sol.castShadow = true;
-sol.shadow.mapSize.set(2048, 2048);
+const lado = window.matchMedia('(max-width: 900px)').matches ? 2048 : 4096; sol.shadow.mapSize.set(lado, lado); sol.shadow.blurSamples = 20;
 sol.shadow.camera.left = -330; sol.shadow.camera.right = 330; sol.shadow.camera.top = 330; sol.shadow.camera.bottom = -330;
 sol.shadow.camera.near = 50; sol.shadow.camera.far = 1000;
-sol.shadow.bias = -0.0004; sol.shadow.normalBias = 0.6; sol.shadow.radius = 5;
+sol.shadow.bias = -0.0003; sol.shadow.normalBias = 0.5; sol.shadow.radius = 7;
 scene.add(sol);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
 const foco = new THREE.SpotLight(0xffe2b8, 6500, 1200, 0.62, 1, 1.6);
@@ -70,7 +70,7 @@ function ruido(ctx, w, h, base, n, amp) {
   ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
   for (let i = 0; i < n; i++) { const g = 120 + Math.random() * amp; ctx.fillStyle = 'rgba(' + g + ',' + g + ',' + (g - 4) + ',' + (Math.random() * 0.12) + ')'; const s = 1 + Math.random() * 5; ctx.fillRect(Math.random() * w, Math.random() * h, s, s); }
 }
-const texPiso = lienzo(1024, 1024, (ctx, w, h) => {
+const texPiso = lienzo(2048, 2048, (ctx, w, h) => {
   ruido(ctx, w, h, '#8f8c85', 9000, 80);
   for (let i = 0; i < 40; i++) { const x = Math.random() * w, y = Math.random() * h, r = 80 + Math.random() * 220, g = ctx.createRadialGradient(x, y, 0, x, y, r), t = Math.random() < .5 ? '255,255,250' : '70,66,60'; g.addColorStop(0, 'rgba(' + t + ',.09)'); g.addColorStop(1, 'rgba(' + t + ',0)'); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
   ctx.strokeStyle = 'rgba(70,66,60,.10)'; ctx.lineWidth = 2;
@@ -99,13 +99,13 @@ const PARED_Z = -150;
 const pared = new THREE.Mesh(new THREE.PlaneGeometry(1000, 380), new THREE.MeshStandardMaterial({ map: texPared, bumpMap: texPared, bumpScale: 1.4, roughness: 0.9 }));
 pared.position.set(120, 190, PARED_Z); pared.receiveShadow = true; scene.add(pared);
 
-const texListones = lienzo(512, 512, (ctx, w, h) => {
-  for (let x = 0; x < w; x += 32) {
-    const g = ctx.createLinearGradient(x, 0, x + 32, 0); const t = 150 + Math.random() * 25;
+const texListones = lienzo(1024, 1024, (ctx, w, h) => {
+  for (let x = 0; x < w; x += 64) {
+    const g = ctx.createLinearGradient(x, 0, x + 64, 0); const t = 150 + Math.random() * 25;
     g.addColorStop(0, 'rgb(' + t + ',' + (t - 52) + ',' + (t - 105) + ')'); g.addColorStop(1, 'rgb(' + (t - 22) + ',' + (t - 70) + ',' + (t - 118) + ')');
-    ctx.fillStyle = g; ctx.fillRect(x, 0, 28, h);
-    ctx.fillStyle = '#5d3f26'; ctx.fillRect(x + 28, 0, 4, h);
-    ctx.strokeStyle = 'rgba(90,55,25,.18)'; for (let k = 0; k < 18; k++) { ctx.beginPath(); const yy = Math.random() * h; ctx.moveTo(x + 2, yy); ctx.lineTo(x + 26, yy + (Math.random() - .5) * 12); ctx.stroke(); }
+    ctx.fillStyle = g; ctx.fillRect(x, 0, 56, h);
+    ctx.fillStyle = '#4f3320'; ctx.fillRect(x + 56, 0, 8, h);
+    for (let k = 0; k < 140; k++) { ctx.strokeStyle = 'rgba(' + (Math.random() < .5 ? '80,48,20' : '210,150,90') + ',' + (0.05 + Math.random() * 0.12) + ')'; ctx.lineWidth = 0.6 + Math.random() * 1.2; const xx = x + 3 + Math.random() * 50; ctx.beginPath(); ctx.moveTo(xx, 0); ctx.bezierCurveTo(xx + (Math.random() - .5) * 8, h * .33, xx + (Math.random() - .5) * 8, h * .66, xx + (Math.random() - .5) * 6, h); ctx.stroke(); }
   }
 });
 texListones.wrapS = texListones.wrapT = THREE.RepeatWrapping; texListones.repeat.set(2.6, 1);
@@ -115,7 +115,7 @@ listones.position.set(-250, 190, PARED_Z + 0.6); listones.receiveShadow = true; 
 function logo() {
   const t = lienzo(1024, 400, (ctx, w, h) => {
     ctx.clearRect(0, 0, w, h);
-    ctx.shadowColor = 'rgba(255,214,150,.75)'; ctx.shadowBlur = 26;
+    ctx.shadowColor = 'rgba(255,196,120,.95)'; ctx.shadowBlur = 46;
     ctx.fillStyle = '#5a4535'; ctx.textAlign = 'center';
     ctx.font = '800 150px Poppins, Arial, sans-serif'; ctx.fillText('ProMuebles', w / 2, 190);
     ctx.shadowBlur = 14; ctx.font = '800 62px Poppins, Arial, sans-serif'; ctx.fillText('SHOWROOM', w / 2, 270);
@@ -132,7 +132,9 @@ const contacto = new THREE.Mesh(new THREE.PlaneGeometry(W + 90, L + 90), new THR
 contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contacto);
 
 // ---------- la cama ----------
-const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf1efea, roughness: 0.42, metalness: 0, clearcoat: 0.18, clearcoatRoughness: 0.35 });
+const texMelamina = lienzo(512, 512, (ctx, w, h) => { ctx.fillStyle = '#9a9a9a'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { const g = 120 + Math.random() * 120; ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')'; ctx.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 1 + Math.random() * 2); } });
+texMelamina.colorSpace = THREE.NoColorSpace; texMelamina.wrapS = texMelamina.wrapT = THREE.RepeatWrapping; texMelamina.repeat.set(3, 3);
+const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf1efea, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
 const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matLinea = new THREE.LineBasicMaterial({ color: 0xb8b5ad });
