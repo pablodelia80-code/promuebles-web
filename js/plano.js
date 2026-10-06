@@ -65,14 +65,16 @@
     var sideW = Math.max(.18, Math.min(.45, lat.dim[0] / m.anchoTotal)) * bw;
     function columna(cant, x, lado, dx) {
       if (!cant) return;
-      var lugares = Math.max(1, Math.round(cant / kLat));
+      var pat = lat.patron; // Estantes Vip: por lado, 'G' = 1 grande de 30; 'N' = 2 apilados de 15
+      var lugares = pat ? pat.length : Math.max(1, Math.round(cant / kLat));
       var h = (hb - (lugares - 1) * 4) / lugares;
       for (var l = 0; l < lugares; l++) {
-        apilar(items, { x: x, y: yb + l * (h + 4), w: sideW, h: h }, kLat, function (i) {
+        var kk = pat ? (pat[l] === 'G' ? 1 : 2) : kLat, dm = pat ? [lat.dim[0], lat.dim[1], pat[l] === 'G' ? 30 : 15] : lat.dim;
+        apilar(items, { x: x, y: yb + l * (h + 4), w: sideW, h: h }, kk, function (i) {
           n++;
           return { tipo: 'c', etiqueta: String(n), abre: [dx, 0], kind: 'Cajón', titulo: 'Cajón ' + n + ' de ' + m.cajones,
-            filas: [filaMedidas(lat.dim), ['Ubicación', lado]].concat(nivelTxt(i, kLat) ? [['Nivel', nivelTxt(i, kLat) + ' (apilado)']] : []).concat([['Al abrirlo', 'Sale 40 cm'], ['Correderas', 'Telescópicas reforzadas Eurohard']]),
-            apilado: kLat > 1 };
+            filas: [filaMedidas(dm), ['Ubicación', lado]].concat(nivelTxt(i, kk) ? [['Nivel', nivelTxt(i, kk) + ' (apilado)']] : []).concat([['Al abrirlo', 'Sale 40 cm'], ['Correderas', 'Telescópicas reforzadas Eurohard']]),
+            apilado: kk > 1 };
         });
       }
     }

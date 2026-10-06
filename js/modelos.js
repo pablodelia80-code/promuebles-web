@@ -14,6 +14,7 @@
     'king-200':        { nombre: 'King 200',       colchon: '200 × 200 cm', carga: 1000, total: [203, 203], prefijo: 'Cama box' }
   };
 
+  // laterales.patron (Estantes Vip): por lado, de la cabecera al pie: 'G' = 1 cajón grande de 48 × 40 × 30; 'N' = 2 cajones de 48 × 40 × 15 apilados.
   // Zapateros: ancho de cada uno (Pedro, WhatsApp 01/10/2026). Alto 15 y profundidad 40 (iguales a los frontales).
   var ZAPATEROS = {
     '1-plaza': [75], '1-plaza-y-media': [45, 45], '2-plazas': [65, 65], 'queen': [75, 75],
@@ -53,13 +54,13 @@
     m({ slug: '6-vip-2-plazas', sinReparto: true, linea: '2-plazas', cat: '2-plazas', nombre: 'Modelo 6 Vip', corto: '6 Vip', idx: 6, alto: 42,
         laterales: { izq: 2, der: 2, dim: [48, 40, 30] }, frontales: [{ n: 2, dim: [65, 40, 30] }], bauleras: BAULERAS['2-plazas'], cajones: 6 }),
     m({ slug: 'estantes-vip-2-plazas', sinReparto: true, linea: '2-plazas', cat: '2-plazas', nombre: 'Modelo con Estantes Vip', corto: 'Estantes Vip', idx: 7, alto: 42,
-        laterales: { izq: 3, der: 3, dim: [48, 40, 30] }, estantes: { n: 4, dim: [70, 45, 19] }, bauleras: BAULERAS['2-plazas'], cajones: 6 }),
+        laterales: { izq: 3, der: 3, dim: [48, 40, 15], patron: ['G', 'N'] }, estantes: { n: 4, dim: [70, 45, 19] }, bauleras: BAULERAS['2-plazas'], cajones: 6 }),
     m({ slug: '10-vip-2-plazas', linea: '2-plazas', cat: '2-plazas', nombre: 'Modelo 10 Vip', corto: '10 Vip', idx: 8, alto: 42,
-        laterales: { izq: 4, der: 4, dim: [48, 40, 30] }, frontales: [{ n: 2, dim: [65, 40, 30] }], bauleras: BAULERAS['2-plazas'], cajones: 10 }),
+        laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 2, dim: [65, 40, 30] }], bauleras: BAULERAS['2-plazas'], cajones: 10 }),
     m({ slug: '12-vip-2-plazas', linea: '2-plazas', cat: '2-plazas', nombre: 'Modelo 12 Vip', corto: '12 Vip', idx: 9, alto: 42,
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 4, dim: [48, 40, 15] }], bauleras: BAULERAS['2-plazas'], cajones: 12, confirmarFrontales: true }),
     m({ slug: '18-vip-2-plazas', linea: '2-plazas', cat: '2-plazas', nombre: 'Modelo 18 Vip', corto: '18 Vip', idx: 10, alto: 52,
-        laterales: { izq: 6, der: 6, dim: [48, 40, 15] }, frontales: [{ n: 6, dim: [64, 40, 12] }],
+        laterales: { izq: 6, der: 6, dim: [48, 40, 12] }, frontales: [{ n: 6, dim: [64, 40, 12] }],
         bauleras: { central: [{ dim: null, n: 1 }], cabecera: [null, null] }, cajones: 18 }),
     // ---------- QUEEN ----------
     m({ slug: '4-vip-queen', sinReparto: true, linea: 'queen', cat: 'queen', nombre: 'Modelo 4 Vip Queen', corto: '4 Vip Queen', idx: 11, alto: 42,
@@ -69,13 +70,13 @@
     m({ slug: '8-vip-queen', linea: 'queen', cat: 'queen', nombre: 'Modelo 8 Vip Queen', corto: '8 Vip Queen', idx: 13, alto: 42,
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, zapateros: ZAPATEROS['queen'], bauleras: BAULERAS['queen'], cajones: 8 }),
     m({ slug: '10-vip-queen', linea: 'queen', cat: 'queen', nombre: 'Modelo 10 Vip Queen', corto: '10 Vip Queen', idx: 14, alto: 42,
-        laterales: { izq: 4, der: 4, dim: [48, 40, 30] }, frontales: [{ n: 2, dim: [75, 40, 30] }], bauleras: BAULERAS['queen'], cajones: 10 }),
+        laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 2, dim: [75, 40, 30] }], bauleras: BAULERAS['queen'], cajones: 10 }),
     m({ slug: '12-vip-queen', linea: 'queen', cat: 'queen', nombre: 'Modelo 12 Vip Queen', corto: '12 Vip Queen', idx: 15, alto: 42,
         laterales: { izq: 4, der: 4, dim: [48, 40, 15] }, frontales: [{ n: 4, dim: [48, 40, 15] }], bauleras: BAULERAS['queen'], cajones: 12, confirmarFrontales: true }),
     m({ slug: 'estantes-vip-queen', sinReparto: true, linea: 'queen', cat: 'queen', nombre: 'Modelo Estantes Vip Queen', corto: 'Estantes Vip Queen', idx: 16, alto: 42,
-        laterales: { izq: 3, der: 3, dim: [48, 40, 30] }, estantes: { n: 4, dim: [80, 45, 19], calc: true }, bauleras: BAULERAS['queen'], cajones: 6 }),
+        laterales: { izq: 3, der: 3, dim: [48, 40, 15], patron: ['G', 'N'] }, estantes: { n: 4, dim: [80, 45, 19], calc: true }, bauleras: BAULERAS['queen'], cajones: 6 }),
     m({ slug: '18-vip-queen', linea: 'queen', cat: 'queen', nombre: 'Modelo 18 Vip Queen', corto: '18 Vip Queen', idx: 17, alto: 52,
-        laterales: { izq: 6, der: 6, dim: [48, 40, 15] }, frontales: [{ n: 6, dim: [74, 40, 12] }],
+        laterales: { izq: 6, der: 6, dim: [48, 40, 12] }, frontales: [{ n: 6, dim: [74, 40, 12] }],
         bauleras: { central: [{ dim: null, n: 1 }], cabecera: [null, null] }, cajones: 18 }),
     // ---------- KING 180 ----------
     m({ slug: '8-vip-king-180', linea: 'king-180', cat: 'king', nombre: '8 Vip King', corto: '8 Vip King 180', idx: 18, alto: 42,
@@ -178,7 +179,8 @@
       agrupar(m.frontales.reduce(function (a, f) { for (var i = 0; i < f.n; i++) a.push(f.dim); return a; }, [])).forEach(function (g) {
         s.push('Cajones al pie de ' + fmt(g.dim) + (m.frontales.length > 1 || m.frontales[0].n > 1 ? ' (' + g.n + ')' : ''));
       });
-    } else s.push('Cajones de ' + fmt(lat.dim));
+    } else if (lat.patron) s.push('Cajones laterales, por lado: 2 apilados de ' + fmt(lat.dim) + ' y 1 grande de ' + fmt([lat.dim[0], lat.dim[1], 30]));
+    else s.push('Cajones de ' + fmt(lat.dim));
     s.push('Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados');
     s.push('Soporta hasta ' + m.carga + ' kg');
     s.push('Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm');

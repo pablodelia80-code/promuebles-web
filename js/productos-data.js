@@ -43,11 +43,11 @@ const PRODUCTS = [
     specs: ['6 cajones: 4 laterales y 2 al pie', '1 baulera central de 102 × 50 × 40 cm', '2 bauleras en la cabecera de 68 × 38 × 40 cm', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 30 cm', 'Cajones al pie de 65 × 40 × 30 cm (2)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo con Estantes Vip', cat: '2-plazas', medida: '140 × 190 cm', img: 'assets/productos/Modelo-Cajones-VIP.jpg', price: 490000,
     resumen: '6 cajones, 4 estantes en los pies y 3 bauleras.',
-    specs: ['6 cajones laterales', '1 baulera central de 102 × 50 × 40 cm', '2 bauleras en la cabecera de 68 × 38 × 40 cm', '4 estantes en los pies de 70 cm de ancho, 19 de alto y 45 de profundidad', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones de 48 × 40 × 30 cm', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['6 cajones laterales', '1 baulera central de 102 × 50 × 40 cm', '2 bauleras en la cabecera de 68 × 38 × 40 cm', '4 estantes en los pies de 70 cm de ancho, 19 de alto y 45 de profundidad', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones laterales, por lado: 2 apilados de 48 × 40 × 15 cm y 1 grande de 48 × 40 × 30 cm', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo 10 Vip', cat: '2-plazas', medida: '140 × 190 cm', img: 'assets/productos/4.jpg', price: 550000,
     clientPhotos: ['assets/producto-fotos/10-vip-1.jpg','assets/producto-fotos/10-vip-2.jpg','assets/producto-fotos/10-vip-3.jpg','assets/producto-fotos/10-vip-4.jpg','assets/producto-fotos/10-vip-5.jpg','assets/producto-fotos/10-vip-6.jpg','assets/producto-fotos/10-vip-7.jpg'],
     resumen: '10 cajones y 3 bauleras.',
-    specs: ['10 cajones: 4 de cada lado y 2 al pie', '1 baulera central de 102 × 50 × 40 cm', '2 bauleras en la cabecera de 68 × 38 × 40 cm', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 30 cm', 'Cajones al pie de 65 × 40 × 30 cm (2)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['10 cajones: 4 de cada lado y 2 al pie', '1 baulera central de 102 × 50 × 40 cm', '2 bauleras en la cabecera de 68 × 38 × 40 cm', 'Medida total: 193 × 143 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 15 cm', 'Cajones al pie de 65 × 40 × 30 cm (2)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo 12 Vip', cat: '2-plazas', medida: '140 × 190 cm', img: 'assets/productos/1-12-VIP.jpg', price: 570000,
     clientPhotos: ['assets/producto-fotos/12-vip-1.jpg','assets/producto-fotos/12-vip-2.jpg','assets/producto-fotos/12-vip-3.jpg','assets/producto-fotos/12-vip-4.jpg','assets/producto-fotos/12-vip-5.jpg','assets/producto-fotos/12-vip-6.jpg'],
     resumen: '12 cajones y 3 bauleras.',
@@ -55,7 +55,7 @@ const PRODUCTS = [
   { n: 'Modelo 18 Vip', cat: '2-plazas', medida: '140 × 190 cm', img: 'assets/productos/18-VIP.jpg', price: 770000,
     clientPhotos: ['assets/producto-fotos/18-vip-1.jpg','assets/producto-fotos/18-vip-2.jpg','assets/producto-fotos/18-vip-3.jpg','assets/producto-fotos/18-vip-4.jpg'],
     resumen: '18 cajones y 3 bauleras.',
-    specs: ['18 cajones: 6 de cada lado y 6 al pie', '1 baulera central grande', '2 bauleras en la cabecera', 'Medida total: 193 × 143 cm · Altura: 52 cm', 'Cajones laterales de 48 × 40 × 15 cm', 'Cajones al pie de 64 × 40 × 12 cm (6)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['18 cajones: 6 de cada lado y 6 al pie', '1 baulera central grande', '2 bauleras en la cabecera', 'Medida total: 193 × 143 cm · Altura: 52 cm', 'Cajones laterales de 48 × 40 × 12 cm', 'Cajones al pie de 64 × 40 × 12 cm (6)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
 
   // Queen
   { n: 'Modelo 4 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/1-4-VIP.jpg', price: 500000,
@@ -73,18 +73,18 @@ const PRODUCTS = [
   { n: 'Modelo 10 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/4.jpg', price: 580000,
     clientPhotos: ['assets/producto-fotos/10-vip-1.jpg','assets/producto-fotos/10-vip-2.jpg','assets/producto-fotos/10-vip-3.jpg','assets/producto-fotos/10-vip-4.jpg','assets/producto-fotos/10-vip-5.jpg','assets/producto-fotos/10-vip-6.jpg','assets/producto-fotos/10-vip-7.jpg'],
     resumen: '10 cajones y 3 bauleras.',
-    specs: ['10 cajones: 4 de cada lado y 2 al pie', '1 baulera central de 102 × 70 × 40 cm', '2 bauleras en la cabecera de 78 × 44 × 40 cm', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 30 cm', 'Cajones al pie de 75 × 40 × 30 cm (2)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['10 cajones: 4 de cada lado y 2 al pie', '1 baulera central de 102 × 70 × 40 cm', '2 bauleras en la cabecera de 78 × 44 × 40 cm', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 15 cm', 'Cajones al pie de 75 × 40 × 30 cm (2)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo 12 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/1-12-VIP.jpg', price: 600000,
     clientPhotos: ['assets/producto-fotos/12-vip-1.jpg','assets/producto-fotos/12-vip-2.jpg','assets/producto-fotos/12-vip-3.jpg','assets/producto-fotos/12-vip-4.jpg','assets/producto-fotos/12-vip-5.jpg','assets/producto-fotos/12-vip-6.jpg'],
     resumen: '12 cajones y 3 bauleras.',
     specs: ['12 cajones: 4 de cada lado y 4 al pie', '1 baulera central de 102 × 70 × 40 cm', '2 bauleras en la cabecera de 78 × 44 × 40 cm', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones laterales de 48 × 40 × 15 cm', 'Cajones al pie de 48 × 40 × 15 cm (4)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo Estantes Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/Modelo-Cajones-VIP-1.jpg', price: 520000,
     resumen: '6 cajones, 4 estantes en los pies y 3 bauleras.',
-    specs: ['6 cajones laterales', '1 baulera central de 102 × 70 × 40 cm', '2 bauleras en la cabecera de 78 × 44 × 40 cm', '4 estantes en los pies de 80 cm de ancho, 19 de alto y 45 de profundidad', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones de 48 × 40 × 30 cm', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['6 cajones laterales', '1 baulera central de 102 × 70 × 40 cm', '2 bauleras en la cabecera de 78 × 44 × 40 cm', '4 estantes en los pies de 80 cm de ancho, 19 de alto y 45 de profundidad', 'Medida total: 203 × 163 cm · Altura: 42 cm', 'Cajones laterales, por lado: 2 apilados de 48 × 40 × 15 cm y 1 grande de 48 × 40 × 30 cm', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
   { n: 'Modelo 18 Vip Queen', cat: 'queen', medida: '160 × 200 cm', img: 'assets/productos/18-VIP.jpg', price: 800000,
     clientPhotos: ['assets/producto-fotos/18-vip-1.jpg','assets/producto-fotos/18-vip-2.jpg','assets/producto-fotos/18-vip-3.jpg','assets/producto-fotos/18-vip-4.jpg'],
     resumen: '18 cajones y 3 bauleras.',
-    specs: ['18 cajones: 6 de cada lado y 6 al pie', '1 baulera central grande', '2 bauleras en la cabecera', 'Medida total: 203 × 163 cm · Altura: 52 cm', 'Cajones laterales de 48 × 40 × 15 cm', 'Cajones al pie de 74 × 40 × 12 cm (6)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
+    specs: ['18 cajones: 6 de cada lado y 6 al pie', '1 baulera central grande', '2 bauleras en la cabecera', 'Medida total: 203 × 163 cm · Altura: 52 cm', 'Cajones laterales de 48 × 40 × 12 cm', 'Cajones al pie de 74 × 40 × 12 cm (6)', 'Melamina Egger de 15 mm, blanca por dentro y por fuera, con cantos ABS termofusionados', 'Soporta hasta 1000 kg', 'Correderas telescópicas reforzadas Eurohard, el cajón sale 40 cm'] },
 
   // King 180x200
   { n: '8 Vip King', cat: 'king', subcat: 'king-180', medida: 'King 180 × 200 cm', img: 'assets/productos/1-King-8.jpg', price: 680000,
@@ -116,12 +116,12 @@ const PRODUCTS = [
 
 const COLORS = [
   { n: 'Blanco', sw: '#FFFFFF', compare: 'assets/showroom/compare-blanca.jpg' },
-  { n: 'Wengue', sw: '#3B2A1D', tex: 'assets/colores/texture-wengue.jpg', compare: 'assets/showroom/compare-wengue.jpg' },
-  { n: 'Roble Kendall', sw: '#A9825A', tex: 'assets/colores/texture-roble-kendall.jpg', compare: 'assets/showroom/compare-roble-kendall.jpg' },
-  { n: 'Nogal Pacífico', sw: '#7A5433', tex: 'assets/colores/texture-nogal-pacifico.jpg', compare: 'assets/showroom/compare-nogal-pacifico.jpg' },
+  { n: 'Wengue', sw: '#3B2A1D', tex: 'assets/colores/texture2-wengue.jpg', compare: 'assets/showroom/compare-wengue.jpg' },
+  { n: 'Roble Kendall', sw: '#A9825A', tex: 'assets/colores/texture2-roble-kendall.jpg', compare: 'assets/showroom/compare-roble-kendall.jpg' },
+  { n: 'Nogal Pacífico', sw: '#7A5433', tex: 'assets/colores/texture2-nogal-pacifico.jpg', compare: 'assets/showroom/compare-nogal-pacifico.jpg' },
   { n: 'Negro', sw: '#1B1512', compare: 'assets/showroom/compare-negro.jpg' },
   { n: 'Gris Perla', sw: '#B9B4AE', compare: 'assets/showroom/compare-gris-perla.jpg' },
   { n: 'Gris Sombra', sw: '#6E6862', compare: 'assets/showroom/compare-gris-sombra.jpg' },
-  { n: 'Kentoky', sw: '#8C6B4A', tex: 'assets/colores/texture-kentoky.jpg', compare: 'assets/showroom/compare-kentoky.jpg' }
+  { n: 'Kentoky', sw: '#8C6B4A', tex: 'assets/colores/texture2-kentoky.jpg', compare: 'assets/showroom/compare-kentoky.jpg' }
 ];
 const CAMA_BLANCA = 'assets/showroom/compare-blanca.jpg';

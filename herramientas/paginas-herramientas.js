@@ -1,5 +1,5 @@
 // Páginas de las herramientas del comprador. Las genera generar-sitio.js; la lógica está en js/comparar.js, calculadora.js, elegir.js y configurar.js.
-const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261018"></script>\n<script src="/js/modelos.js?v=20261018"></script>\n<script src="/js/${n}.js?v=20261018"></script>`;
+const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261019"></script>\n<script src="/js/modelos.js?v=20261019"></script>\n<script src="/js/${n}.js?v=20261019"></script>`;
 
 module.exports = {
   'comparar.html': ({ cabecera, pie }) => cabecera('Comparar camas box lado a lado | ProMuebles',
@@ -99,23 +99,71 @@ module.exports = {
             <button type="button" class="btn btn-nogal" id="cz-f-cambiar" hidden></button>
           </div>
         </div>
-        <div class="cfg" id="cz-pasos">
-          <fieldset><legend><i>1</i> Elegí la medida</legend><div class="f-chips" id="cz-medida"></div></fieldset>
-          <fieldset><legend><i>2</i> Modelo de partida</legend><div class="f-modelos" id="cz-modelo"></div></fieldset>
-          <fieldset><legend><i>3</i> Cajones de los costados</legend><p class="h-nota" id="cz-lat-nota" style="margin:0 0 10px"></p><div id="cz-lat"></div></fieldset>
-          <fieldset><legend><i>4</i> Al pie de la cama</legend><div class="cz-pie" id="cz-pie"></div></fieldset>
-          <fieldset><legend><i>5</i> Color</legend><p class="h-nota" style="margin:0 0 10px">Todas se fabrican en blanco. En otro color hay un adicional.</p><div class="f-colores" id="cz-color"></div></fieldset>
-          <fieldset><legend><i>6</i> Correderas</legend>
-            <button class="m-switch" id="cz-soft" role="switch" aria-checked="false" style="animation:none">
-              <span class="m-switch-track"><span class="m-switch-knob"></span></span>
-              <span class="m-switch-text"><b>Con cierre suave</b><small>El cajón se frena solo y cierra sin golpe</small></span>
-            </button></fieldset>
-          <fieldset><legend><i>7</i> ¿Algo más?</legend><textarea id="cz-notas" rows="3" placeholder="Contanos cualquier detalle que quieras pedir"></textarea></fieldset>
+        <div class="cz-prog" id="cz-prog" role="status" aria-live="polite">
+          <span id="cz-prog-txt">Paso 1 de 5</span>
+          <div class="cz-prog-barra"><i id="cz-prog-fill"></i></div>
         </div>
-        <aside class="f-resumen" id="cz-resumen" aria-live="polite"></aside>
+        <div class="cfg cz-pasos" id="cz-pasos">
+          <section class="cz-paso on" id="paso-1" data-p="1">
+            <button type="button" class="cz-paso-btn" aria-expanded="true" aria-controls="paso-1-c"><i>1</i><span class="cz-paso-tit">Elegí la medida de tu cama</span><em class="cz-paso-res" id="res-1"></em><b class="cz-cambiar">Cambiar</b></button>
+            <div class="cz-paso-c" id="paso-1-c">
+              <div class="f-chips" id="cz-medida"></div>
+              <button type="button" class="btn btn-nogal cz-sig" data-sig="2">Continuar →</button>
+            </div>
+          </section>
+          <section class="cz-paso" id="paso-2" data-p="2">
+            <button type="button" class="cz-paso-btn" aria-expanded="false" aria-controls="paso-2-c"><i>2</i><span class="cz-paso-tit">Elegí tus cajones</span><em class="cz-paso-res" id="res-2"></em><b class="cz-cambiar">Cambiar</b></button>
+            <div class="cz-paso-c" id="paso-2-c" hidden>
+              <h3 class="cz-sub">¿Cuántos cajones querés?</h3>
+              <p class="h-nota cz-subn">Elegí el modelo con el que querés empezar. Después podés ajustarlo.</p>
+              <div class="f-chips" id="cz-modelo"></div>
+              <div id="cz-bloque-lat">
+                <h3 class="cz-sub">Costados</h3>
+                <p class="h-nota cz-subn" id="cz-lat-nota"></p>
+                <div id="cz-lat"></div>
+              </div>
+              <div id="cz-bloque-pie">
+                <h3 class="cz-sub">Pie de la cama</h3>
+                <div class="cz-pie" id="cz-pie"></div>
+              </div>
+              <button type="button" class="btn btn-nogal cz-sig" data-sig="3">Continuar →</button>
+            </div>
+          </section>
+          <section class="cz-paso" id="paso-3" data-p="3">
+            <button type="button" class="cz-paso-btn" aria-expanded="false" aria-controls="paso-3-c"><i>3</i><span class="cz-paso-tit">Color y cierre suave</span><em class="cz-paso-res" id="res-3"></em><b class="cz-cambiar">Cambiar</b></button>
+            <div class="cz-paso-c" id="paso-3-c" hidden>
+              <h3 class="cz-sub">Color</h3>
+              <p class="h-nota cz-subn">Todas se fabrican en blanco. En otro color hay un adicional.</p>
+              <div class="f-colores" id="cz-color"></div>
+              <h3 class="cz-sub">Correderas</h3>
+              <button class="m-switch" id="cz-soft" role="switch" aria-checked="false" style="animation:none">
+                <span class="m-switch-track"><span class="m-switch-knob"></span></span>
+                <span class="m-switch-text"><b>Con cierre suave</b><small>El cajón se frena solo y cierra sin golpe</small></span>
+              </button>
+              <button type="button" class="btn btn-nogal cz-sig" data-sig="4">Continuar →</button>
+            </div>
+          </section>
+          <section class="cz-paso" id="paso-4" data-p="4">
+            <button type="button" class="cz-paso-btn" aria-expanded="false" aria-controls="paso-4-c"><i>4</i><span class="cz-paso-tit">¿Algo más?</span><em class="cz-paso-res" id="res-4"></em><b class="cz-cambiar">Cambiar</b></button>
+            <div class="cz-paso-c" id="paso-4-c" hidden>
+              <textarea id="cz-notas" rows="3" placeholder="Contanos cualquier detalle que quieras pedir (es opcional)"></textarea>
+              <button type="button" class="btn btn-nogal cz-sig" data-sig="5">Ver mi resumen →</button>
+            </div>
+          </section>
+          <section class="cz-paso" id="paso-5" data-p="5">
+            <button type="button" class="cz-paso-btn" aria-expanded="false" aria-controls="paso-5-c"><i>5</i><span class="cz-paso-tit">Tu resumen y envío</span><em class="cz-paso-res" id="res-5"></em><b class="cz-cambiar">Ver</b></button>
+            <div class="cz-paso-c" id="paso-5-c" hidden>
+              <aside class="f-resumen" id="cz-resumen" aria-live="polite"></aside>
+            </div>
+          </section>
+        </div>
       </div>
+    </div>
+    <div class="cz-barra" id="cz-barra">
+      <div class="cz-barra-info"><small id="cz-barra-paso">Paso 1 de 5</small><b id="cz-barra-precio"></b></div>
+      <button type="button" class="btn btn-nogal" id="cz-barra-sig">Continuar →</button>
     </div>
   </div>
 </main>
-` + pie('<script src="/js/productos-data.js?v=20261018"></script>\n<script src="/js/modelos.js?v=20261018"></script>\n<script src="/js/configurar.js?v=20261018"></script>')
+` + pie('<script src="/js/productos-data.js?v=20261019"></script>\n<script src="/js/modelos.js?v=20261019"></script>\n<script src="/js/configurar.js?v=20261019"></script>')
 };

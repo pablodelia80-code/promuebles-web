@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-02",
+ "actualizado": "2026-10-06",
  "moneda": "ARS",
  "modelos": [
   {
@@ -408,7 +408,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    30
+    15
    ],
    "zapateros_ancho_cm": [],
    "estantes": {
@@ -472,7 +472,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    30
+    15
    ],
    "zapateros_ancho_cm": [],
    "estantes": null,
@@ -590,7 +590,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    15
+    12
    ],
    "zapateros_ancho_cm": [],
    "estantes": null,
@@ -820,7 +820,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    30
+    15
    ],
    "zapateros_ancho_cm": [],
    "estantes": null,
@@ -938,7 +938,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    30
+    15
    ],
    "zapateros_ancho_cm": [],
    "estantes": {
@@ -1002,7 +1002,7 @@
    "medida_cajon_lateral_cm": [
     48,
     40,
-    15
+    12
    ],
    "zapateros_ancho_cm": [],
    "estantes": null,

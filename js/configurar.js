@@ -11,8 +11,10 @@
   var escena = el('cz-escena'), cama = el('cz-cama');
 
   // ---------- datos derivados ----------
+  function nombreCorto(m) { return m.corto.replace(/ (Queen|King 180|King 200|Plaza y Media)$/, ''); }
   function modelo() { return M.filter(function (m) { return m.slug === st.slug; })[0]; }
   function slotsDe(m) {
+    if (m.laterales.patron) return { izq: m.laterales.patron.slice(), der: m.laterales.patron.slice(), editable: true };
     var k = m.latNiveles, est = k === 1 ? 'G' : (k === 2 ? 'N' : 'F');
     function arr(c) { if (!c) return []; var n = k === 1 ? c : Math.round(c / k); return new Array(n).fill(est); }
     return { izq: arr(m.laterales.izq), der: arr(m.laterales.der), editable: k === 1 || k === 2 };
@@ -349,14 +351,15 @@
     });
     var lista = el('cz-modelo'); lista.innerHTML = '';
     PM.porPrecio(M.filter(function (m) { return m.linea === st.linea; })).forEach(function (m) {
-      var v = PM.venta(m), nB = PM.totalBauleras(m), b = document.createElement('button'); b.type = 'button'; b.className = 'f-modelo' + (m.slug === st.slug ? ' on' : '');
-      b.innerHTML = '<img src="' + PM.webp(v.img, 's') + '" alt="" width="200" height="267" loading="lazy"><span><b>' + m.corto + '</b><small>' + m.cajones + ' cajones' + (nB ? ' · ' + nB + (nB === 1 ? ' baulera' : ' bauleras') : '') + '</small></span><em>' + PM.pesos(v.precio) + '</em>';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'f-chip' + (m.slug === st.slug ? ' on' : ''); b.setAttribute('aria-pressed', m.slug === st.slug ? 'true' : 'false');
+      b.innerHTML = '<b>' + nombreCorto(m) + '</b><span>' + m.cajones + ' cajones</span>';
       b.addEventListener('click', function () { reiniciar(m.slug); todo(); });
       lista.appendChild(b);
     });
     // costados
     var lat = el('cz-lat'); lat.innerHTML = '';
-    el('cz-lat-nota').textContent = st.lat.editable ? 'Tocá cada lugar para cambiarlo: 1 cajón grande o 2 cajones normales.' : 'En este modelo los cajones de los costados no se modifican.';
+    el('cz-lat-nota').textContent = 'Tocá cada lugar para cambiarlo: 1 cajón grande o 2 cajones normales.';
+    el('cz-bloque-lat').hidden = !st.lat.editable;
     ['izq', 'der'].forEach(function (lado) {
       if (!st.lat[lado].length) return;
       var f = document.createElement('div'); f.className = 'cz-fila';
@@ -393,18 +396,19 @@
         pie.appendChild(caja);
       }
     });
+    el('cz-bloque-pie').hidden = !pieOpciones(st.linea).some(function (o) { return o.cajones ? !!st.pie.lados : o.sig === st.pie.sig; });
     // color
     var cols = el('cz-color'); cols.innerHTML = '';
     COL.forEach(function (cc, i) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'f-sw' + (i === st.color ? ' on' : ''); b.setAttribute('aria-label', cc.n); b.title = cc.n;
-      b.style.background = cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'cz-col' + (i === st.color ? ' on' : ''); b.setAttribute('aria-pressed', i === st.color ? 'true' : 'false');
+      b.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><b>' + cc.n + '</b><small>' + (i ? '+ ' + PM.pesos(PM.COLOR_ADICIONAL) : 'Sin adicional') + '</small>';
       b.addEventListener('click', function () { st.color = i; todo(); });
       cols.appendChild(b);
     });
     el('cz-soft').setAttribute('aria-checked', st.soft ? 'true' : 'false');
   }
   el('cz-soft').addEventListener('click', function () { st.soft = !st.soft; todo(); });
-  el('cz-notas').addEventListener('input', resumen);
+  el('cz-notas').addEventListener('input', function () { resumen(); resumenesPasos(); });
 
   function lineaLat(lado) {
     var a = st.lat[lado]; if (!a.length) return null;
@@ -440,6 +444,8 @@
     h += '<a class="btn-whatsapp m-cta" target="_blank" rel="noopener" href="https://wa.me/5491168767075?text=' + encodeURIComponent(msg) + '">Enviar mi diseño por WhatsApp</a>' +
       '<p class="h-nota" style="margin:0">Esto es una solicitud, no una compra. Revisamos que se pueda fabricar y te respondemos con el precio y el plazo.</p>';
     el('cz-resumen').innerHTML = h;
+    st.precioTxt = precio ? PM.pesos(precio) : 'Precio a confirmar';
+    st.waHref = 'https://wa.me/5491168767075?text=' + encodeURIComponent(msg);
   }
 
   function pintarMuestra() {
@@ -447,8 +453,41 @@
     mu.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><span><small>Color elegido</small><b>' + cc.n + '</b></span>' +
       '<em>' + (st.color ? 'El dibujo es de referencia: se ve siempre en blanco. Tu cama se fabrica en este color.' : 'El dibujo es de referencia.') + '</em>';
   }
-  function todo() { paneles(); construir(); resumen(); }
+  // ---------- pasos guiados ----------
+  var paso = 1, TOT = 5, secs = [].slice.call(document.querySelectorAll('.cz-paso'));
+  function irPaso(n, desplazar) {
+    paso = Math.max(1, Math.min(TOT, n));
+    secs.forEach(function (sec) {
+      var p = +sec.getAttribute('data-p'), on = p === paso;
+      sec.classList.toggle('on', on); sec.classList.toggle('hecho', p < paso);
+      sec.querySelector('.cz-paso-c').hidden = !on;
+      sec.querySelector('.cz-paso-btn').setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    el('cz-prog-txt').textContent = 'Paso ' + paso + ' de ' + TOT;
+    el('cz-prog-fill').style.width = (paso / TOT * 100) + '%';
+    el('cz-barra-paso').textContent = 'Paso ' + paso + ' de ' + TOT;
+    el('cz-barra-sig').textContent = paso < TOT ? 'Continuar →' : 'Enviar por WhatsApp';
+    if (desplazar) {
+      var h = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hdr'), 10) || 70;
+      window.scrollTo({ top: Math.max(0, secs[paso - 1].getBoundingClientRect().top + window.scrollY - h - 14), behavior: 'smooth' });
+    }
+  }
+  function resumenesPasos() {
+    var m = modelo(), col = COL[st.color], notas = el('cz-notas').value.trim();
+    el('res-1').textContent = m.lineaNombre + ' · ' + m.colchon;
+    el('res-2').textContent = nombreCorto(m) + ' · ' + totalCajones() + ' cajones';
+    el('res-3').textContent = col.n + (st.color ? ' (+' + PM.pesos(PM.COLOR_ADICIONAL) + ')' : '') + ' · ' + (st.soft ? 'con cierre suave' : 'sin cierre suave');
+    el('res-4').textContent = notas ? (notas.length > 28 ? notas.slice(0, 28) + '…' : notas) : 'Sin notas';
+    el('res-5').textContent = st.precioTxt;
+    el('cz-barra-precio').textContent = st.precioTxt;
+  }
+  secs.forEach(function (sec) { sec.querySelector('.cz-paso-btn').addEventListener('click', function () { irPaso(+sec.getAttribute('data-p'), true); }); });
+  [].slice.call(document.querySelectorAll('.cz-sig')).forEach(function (b) { b.addEventListener('click', function () { irPaso(+b.getAttribute('data-sig'), true); }); });
+  el('cz-barra-sig').addEventListener('click', function () { if (paso < TOT) irPaso(paso + 1, true); else window.open(st.waHref, '_blank', 'noopener'); });
+  document.body.classList.add('cfg-page');
+
+  function todo() { paneles(); construir(); resumen(); resumenesPasos(); }
   window.__cfg = { probar: function (slug) { reiniciar(slug); todo(); return { cajones: piezas.filter(function (p) { return p.info.tipo === 'Cajón'; }).length, esperado: totalCajones(), baul: piezas.filter(function (p) { return p.info.tipo === 'Baulera'; }).length, otras: piezas.filter(function (p) { return p.info.tipo === 'Zapatero' || p.info.tipo === 'Estantes'; }).length }; } };
-  reiniciar(inicial.slug); todo();
+  reiniciar(inicial.slug); todo(); irPaso(1, false);
   if (window.ResizeObserver) { var t; new ResizeObserver(function () { clearTimeout(t); t = setTimeout(construir, 150); }).observe(escena); }
 })();
