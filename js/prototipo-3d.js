@@ -4,31 +4,35 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const W = 143, L = 193, H = 42, PROF = 40;
 const stage = document.getElementById('stage');
 
 // ---------- escena, cámara y luz ----------
-const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.88;
+renderer.toneMappingExposure = 0.78;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xcfcac2);
-scene.fog = new THREE.Fog(0xcfcac2, 700, 1500);
+scene.background = new THREE.Color(0x9c978f);
+scene.fog = new THREE.Fog(0x9c978f, 800, 1700);
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-scene.environmentIntensity = 0.32;
+scene.environmentIntensity = 0.22;
 
-const camera = new THREE.PerspectiveCamera(32, 1, 10, 3000);
-camera.position.set(215, 135, 320);
+const camera = new THREE.PerspectiveCamera(26, 1, 10, 3000);
+camera.position.set(238, 108, 372);
 
-const sol = new THREE.DirectionalLight(0xfff0dc, 2.6);
+const sol = new THREE.DirectionalLight(0xfff0dc, 2.1);
 sol.position.set(-220, 360, 260);
 sol.castShadow = true;
 sol.shadow.mapSize.set(2048, 2048);
@@ -36,13 +40,27 @@ sol.shadow.camera.left = -330; sol.shadow.camera.right = 330; sol.shadow.camera.
 sol.shadow.camera.near = 50; sol.shadow.camera.far = 1000;
 sol.shadow.bias = -0.0004; sol.shadow.normalBias = 0.6; sol.shadow.radius = 5;
 scene.add(sol);
-scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.38));
+scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
+const foco = new THREE.SpotLight(0xffe2b8, 6500, 1200, 0.62, 1, 1.6);
+foco.position.set(-330, 330, 140); foco.target.position.set(-120, 150, -150); scene.add(foco, foco.target);
+const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(300, 120, 260); scene.add(relleno);
+
+const sinMobil = !window.matchMedia('(max-width: 900px)').matches;
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
+composer.addPass(new RenderPass(scene, camera));
+const ao = new GTAOPass(scene, camera, 4, 4);
+ao.output = GTAOPass.OUTPUT.Default;
+ao.updateGtaoMaterial({ radius: 24, distanceExponent: 1.4, thickness: 12, scale: 1.15, samples: sinMobil ? 16 : 8, distanceFallOff: 1 });
+ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
+ao.blendIntensity = 1;
+composer.addPass(ao);
+composer.addPass(new OutputPass());
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0, 22, 12);
+controls.target.set(0, 20, 5);
 controls.enableDamping = true; controls.dampingFactor = 0.08;
 controls.enablePan = false;
-controls.minDistance = 230; controls.maxDistance = 650;
+controls.minDistance = 300; controls.maxDistance = 760;
 controls.maxPolarAngle = Math.PI * 0.485; controls.minPolarAngle = 0.25;
 controls.rotateSpeed = 0.7;
 
@@ -53,16 +71,17 @@ function ruido(ctx, w, h, base, n, amp) {
   for (let i = 0; i < n; i++) { const g = 120 + Math.random() * amp; ctx.fillStyle = 'rgba(' + g + ',' + g + ',' + (g - 4) + ',' + (Math.random() * 0.12) + ')'; const s = 1 + Math.random() * 5; ctx.fillRect(Math.random() * w, Math.random() * h, s, s); }
 }
 const texPiso = lienzo(1024, 1024, (ctx, w, h) => {
-  ruido(ctx, w, h, '#a9a69e', 26000, 110);
+  ruido(ctx, w, h, '#8f8c85', 9000, 80);
+  for (let i = 0; i < 40; i++) { const x = Math.random() * w, y = Math.random() * h, r = 80 + Math.random() * 220, g = ctx.createRadialGradient(x, y, 0, x, y, r), t = Math.random() < .5 ? '255,255,250' : '70,66,60'; g.addColorStop(0, 'rgba(' + t + ',.09)'); g.addColorStop(1, 'rgba(' + t + ',0)'); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
   ctx.strokeStyle = 'rgba(70,66,60,.10)'; ctx.lineWidth = 2;
   for (let i = 0; i < 5; i++) { ctx.beginPath(); let x = Math.random() * w, y = Math.random() * h; ctx.moveTo(x, y); for (let k = 0; k < 14; k++) { x += (Math.random() - .5) * 90; y += (Math.random() - .3) * 70; ctx.lineTo(x, y); } ctx.stroke(); }
 });
-texPiso.wrapS = texPiso.wrapT = THREE.RepeatWrapping; texPiso.repeat.set(5, 5);
+texPiso.wrapS = texPiso.wrapT = THREE.RepeatWrapping; texPiso.repeat.set(3, 3);
 const piso = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400), new THREE.MeshStandardMaterial({ map: texPiso, roughness: 0.82, metalness: 0 }));
 piso.rotation.x = -Math.PI / 2; piso.receiveShadow = true; scene.add(piso);
 
 const texPared = lienzo(1024, 512, (ctx, w, h) => {
-  ruido(ctx, w, h, '#a7a49d', 30000, 120);
+  ruido(ctx, w, h, '#9a9791', 30000, 120);
   ctx.strokeStyle = 'rgba(60,56,50,.35)'; ctx.lineWidth = 3;
   for (let x = 0; x <= w; x += 256) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
   ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
@@ -106,15 +125,15 @@ const contacto = new THREE.Mesh(new THREE.PlaneGeometry(W + 90, L + 90), new THR
 contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contacto);
 
 // ---------- la cama ----------
-const matBlanco = new THREE.MeshStandardMaterial({ color: 0xf6f5f1, roughness: 0.5, metalness: 0 });
-const matInterior = new THREE.MeshStandardMaterial({ color: 0xefede8, roughness: 0.65 });
+const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf4f3ef, roughness: 0.42, metalness: 0, clearcoat: 0.18, clearcoatRoughness: 0.35 });
+const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matLinea = new THREE.LineBasicMaterial({ color: 0xb8b5ad });
 const cama = new THREE.Group(); scene.add(cama);
 let cajones = [];
 
 function caja(w, h, d, mat, x, y, z, radio) {
-  const g = radio ? new RoundedBoxGeometry(w, h, d, 3, radio) : new THREE.BoxGeometry(w, h, d);
+  const g = radio ? new RoundedBoxGeometry(w, h, d, 4, radio) : new THREE.BoxGeometry(w, h, d);
   const m = new THREE.Mesh(g, mat || matBlanco); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m;
 }
 
@@ -219,7 +238,7 @@ controls.addEventListener('change', () => { dirty = true; });
 controls.addEventListener('start', () => { document.getElementById('ayuda').style.opacity = 0; });
 
 function tamano() {
-  const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
+  const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
 }
 new ResizeObserver(tamano).observe(stage); tamano();
 
@@ -231,7 +250,7 @@ function bucle() {
     if (Math.abs(d) > 0.05) { c.userData.valor += d * 0.14; mueve = true; } else if (c.userData.valor !== meta) { c.userData.valor = meta; mueve = true; }
   });
   if (mueve) { actualizarPos(); dirty = true; }
-  if (dirty) { renderer.render(scene, camera); dirty = false; }
+  if (dirty) { composer.render(); dirty = false; }
 }
 
 // ---------- botones: 1 cajón grande o 2 normales ----------
