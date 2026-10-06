@@ -346,7 +346,7 @@
     ORDEN.forEach(function (k) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'f-chip' + (k === st.linea ? ' on' : '');
       b.innerHTML = '<b>' + PM.LINEAS[k].nombre + '</b><span>' + PM.LINEAS[k].colchon + '</span>';
-      b.addEventListener('click', function () { reiniciar(PM.porPrecio(M.filter(function (m) { return m.linea === k; }))[0].slug); todo(); });
+      b.addEventListener('click', function () { reiniciar(PM.porPrecio(M.filter(function (m) { return m.linea === k; }))[0].slug); todo(); irPaso(2, true); }); // al elegir la medida se abre solo el paso siguiente
       chips.appendChild(b);
     });
     var lista = el('cz-modelo'); lista.innerHTML = '';

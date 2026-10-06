@@ -38,9 +38,9 @@ ${extra && extra.og ? `<meta property="og:image" content="${SITIO}${extra.og}">`
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="/css/style.css?v=20261019">
-<link rel="stylesheet" href="/css/modelo.css?v=20261019">
-<link rel="stylesheet" href="/css/herramientas.css?v=20261019">
+<link rel="stylesheet" href="/css/style.css?v=20261020">
+<link rel="stylesheet" href="/css/modelo.css?v=20261020">
+<link rel="stylesheet" href="/css/herramientas.css?v=20261020">
 ${extra && extra.jsonld ? extra.jsonld.map(j => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n') : ''}
 <script src="/js/analytics.js" defer></script>
 </head>
@@ -100,7 +100,7 @@ function pie(scripts) {
   <div class="wrap foot-bottom">&copy; 2026 ProMuebles</div>
 </footer>
 <a class="wa-float" href="https://wa.me/5491168767075" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_SVG}</a>
-<script src="/js/script.js?v=20261019"></script>
+<script src="/js/script.js?v=20261020"></script>
 ${scripts || ''}
 </body>
 </html>
@@ -315,7 +315,7 @@ function pagina(m) {
   </div>
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
-` + pie('<script src="/js/modelos.js?v=20261019"></script>\n<script src="/js/zonas-envio.js?v=20261019"></script>\n<script src="/js/plano.js?v=20261019"></script>\n<script src="/js/modelo.js?v=20261019"></script>\n<script src="/js/carrusel.js?v=20261019"></script>\n<script src="/js/pestanas.js?v=20261019"></script>');
+` + pie('<script src="/js/modelos.js?v=20261020"></script>\n<script src="/js/zonas-envio.js?v=20261020"></script>\n<script src="/js/plano.js?v=20261020"></script>\n<script src="/js/modelo.js?v=20261020"></script>\n<script src="/js/carrusel.js?v=20261020"></script>\n<script src="/js/pestanas.js?v=20261020"></script>');
 }
 
 // ---------- catálogo ----------

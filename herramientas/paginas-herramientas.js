@@ -1,5 +1,5 @@
 // Páginas de las herramientas del comprador. Las genera generar-sitio.js; la lógica está en js/comparar.js, calculadora.js, elegir.js y configurar.js.
-const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261019"></script>\n<script src="/js/modelos.js?v=20261019"></script>\n<script src="/js/${n}.js?v=20261019"></script>`;
+const SCRIPTS = n => `<script src="/js/productos-data.js?v=20261020"></script>\n<script src="/js/modelos.js?v=20261020"></script>\n<script src="/js/${n}.js?v=20261020"></script>`;
 
 module.exports = {
   'comparar.html': ({ cabecera, pie }) => cabecera('Comparar camas box lado a lado | ProMuebles',
@@ -165,5 +165,5 @@ module.exports = {
     </div>
   </div>
 </main>
-` + pie('<script src="/js/productos-data.js?v=20261019"></script>\n<script src="/js/modelos.js?v=20261019"></script>\n<script src="/js/configurar.js?v=20261019"></script>')
+` + pie('<script src="/js/productos-data.js?v=20261020"></script>\n<script src="/js/modelos.js?v=20261020"></script>\n<script src="/js/configurar.js?v=20261020"></script>')
 };
