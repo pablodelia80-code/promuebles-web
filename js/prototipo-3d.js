@@ -24,8 +24,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x9c978f);
-scene.fog = new THREE.Fog(0x9c978f, 800, 1700);
+scene.background = new THREE.Color(0x77726b);
+scene.fog = new THREE.Fog(0x77726b, 1100, 2400);
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 scene.environmentIntensity = 0.22;
@@ -45,6 +45,9 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
 const foco = new THREE.SpotLight(0xffe2b8, 4200, 1200, 0.5, 1, 1.6);
 foco.position.set(-330, 330, 140); foco.target.position.set(-150, 190, -150); scene.add(foco, foco.target);
 const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(300, 120, 260); scene.add(relleno);
+// luz de relleno del cuarto: las paredes que quedan del lado contrario a la luz no se ven negras
+const relleno2 = new THREE.DirectionalLight(0xfff4e6, 0.9); relleno2.position.set(-260, 200, -300); scene.add(relleno2);
+scene.add(new THREE.AmbientLight(0xffffff, 0.22));
 
 const sinMobil = !window.matchMedia('(max-width: 900px)').matches;
 const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
@@ -78,8 +81,9 @@ const texPiso = lienzo(2048, 2048, (ctx, w, h) => {
   for (let i = 0; i < 5; i++) { ctx.beginPath(); let x = Math.random() * w, y = Math.random() * h; ctx.moveTo(x, y); for (let k = 0; k < 14; k++) { x += (Math.random() - .5) * 90; y += (Math.random() - .3) * 70; ctx.lineTo(x, y); } ctx.stroke(); }
 });
 texPiso.wrapS = texPiso.wrapT = THREE.RepeatWrapping; texPiso.repeat.set(3, 3);
-const piso = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400), new THREE.MeshStandardMaterial({ map: texPiso, bumpMap: texPiso, bumpScale: 1.0, roughness: 0.78, metalness: 0 }));
-piso.rotation.x = -Math.PI / 2; piso.receiveShadow = true; scene.add(piso);
+const SALA = { x: 450, z0: -150, z1: 750, alto: 380 };   // el cuarto del showroom: 9 m de ancho y de largo, paredes de 3,8 m
+const piso = new THREE.Mesh(new THREE.PlaneGeometry(SALA.x * 2, SALA.z1 - SALA.z0), new THREE.MeshStandardMaterial({ map: texPiso, bumpMap: texPiso, bumpScale: 1.0, roughness: 0.78, metalness: 0 }));
+piso.rotation.x = -Math.PI / 2; piso.position.set(0, 0, (SALA.z0 + SALA.z1) / 2); piso.receiveShadow = true; scene.add(piso);
 
 function cemento(w, h, claro) {
   return lienzo(w, h, (ctx) => {
@@ -96,9 +100,20 @@ const texPared = cemento(2048, 1024, true);
   c.fillStyle = 'rgba(45,42,38,.65)'; for (let x = 256; x < w; x += 512) for (const y of [150, 330, 700, 880]) { c.beginPath(); c.arc(x, y, 7, 0, 7); c.fill(); }
   texPared.needsUpdate = true; }
 texPared.wrapS = THREE.RepeatWrapping; texPared.repeat.set(1.6, 1);
-const PARED_Z = -150;
-const pared = new THREE.Mesh(new THREE.PlaneGeometry(1000, 380), new THREE.MeshStandardMaterial({ map: texPared, bumpMap: texPared, bumpScale: 1.4, roughness: 0.9 }));
-pared.position.set(120, 190, PARED_Z); pared.receiveShadow = true; scene.add(pared);
+const PARED_Z = SALA.z0;
+const zc = (SALA.z0 + SALA.z1) / 2, anchoSala = SALA.x * 2, largoSala = SALA.z1 - SALA.z0;
+const muros = [];
+function muro(w, h, x, y, z, ry, rx, tono) {
+  const t = texPared.clone(); t.needsUpdate = true; t.repeat.set(w / 625, h / 380);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, bumpMap: t, bumpScale: 1.4, roughness: 0.9, color: tono || 0xffffff }));
+  m.position.set(x, y, z); m.rotation.y = ry || 0; m.rotation.x = rx || 0; m.receiveShadow = true; scene.add(m);
+  muros.push({ m, w, h }); return m;
+}
+const pared = muro(anchoSala, SALA.alto, 0, SALA.alto / 2, SALA.z0, 0);                          // fondo (con listones y logo)
+muro(largoSala, SALA.alto, -SALA.x, SALA.alto / 2, zc, Math.PI / 2);                              // izquierda
+muro(largoSala, SALA.alto, SALA.x, SALA.alto / 2, zc, -Math.PI / 2);                              // derecha
+muro(anchoSala, SALA.alto, 0, SALA.alto / 2, SALA.z1, Math.PI);                                   // frente
+muro(anchoSala, largoSala, 0, SALA.alto, zc, 0, Math.PI / 2, 0xb9b5ae);                           // techo
 
 const texListones = lienzo(1024, 1024, (ctx, w, h) => {
   for (let x = 0; x < w; x += 64) {
@@ -132,8 +147,13 @@ const cargador = new THREE.TextureLoader();
 function cargar(url, rx, ry, fn) {
   cargador.load(url, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; t.repeat.set(rx, ry); fn(t); dirty = true; });
 }
-cargar('./assets/prototipo/piso.jpg', 9, 13, t => { piso.material.map = t; piso.material.bumpMap = t; piso.material.bumpScale = 1.6; piso.material.color.set(0xe2dfd8); piso.material.needsUpdate = true; });
-cargar('./assets/prototipo/pared.jpg', 5, 1.9, t => { pared.material.map = t; pared.material.bumpMap = t; pared.material.bumpScale = 2.2; pared.material.color.set(0xeceae4); pared.material.needsUpdate = true; });
+cargar('./assets/prototipo/piso.jpg', 3.5, 3.5, t => { piso.material.map = t; piso.material.bumpMap = t; piso.material.bumpScale = 1.6; piso.material.color.set(0xe2dfd8); piso.material.needsUpdate = true; });
+cargar('./assets/prototipo/pared.jpg', 1, 1, t => {
+  muros.forEach(({ m, w, h }, i) => {
+    const tt = i ? t.clone() : t; tt.needsUpdate = true; tt.repeat.set(w / 200, h / 200);
+    m.material.map = tt; m.material.bumpMap = tt; m.material.bumpScale = 2.2; m.material.color.set(i === 4 ? 0xa9a6a0 : 0xeceae4); m.material.needsUpdate = true;
+  });
+});
 cargar('./assets/prototipo/listones.jpg?v=2', 1.8, 3.6, t => { listones.material.map = t; listones.material.bumpMap = t; listones.material.bumpScale = 3; listones.material.color.set(0xf2dcc4); listones.material.needsUpdate = true; });
 
 // sombra de contacto suave bajo la cama (apoya la cama en el piso)
