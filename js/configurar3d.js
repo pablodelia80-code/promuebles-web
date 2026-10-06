@@ -1,6 +1,6 @@
 // Configurador con la cama en 3D (versión de prueba de configurar.html): el cliente elige tamaño, modelo, cajones, color y cierre suave,
 // ve la cama armada en el showroom y envía su solicitud por WhatsApp. La cama 3D es el motor js/cama3d.js.
-import { crearCama3D } from './cama3d.js';
+import { crearCama3D } from './cama3d.js?v=20261046';
 
 const PM = window.PM, COL = COLORS;
 const ORDEN = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
@@ -226,7 +226,12 @@ el('cz-abrir').addEventListener('click', () => api.abrirTodos(api.hayCerrados())
 el('cz-bau').addEventListener('click', () => api.abrirBauleras(api.hayBauleraCerrada()));
 document.body.classList.add('cfg-page');
 
-function todo() { paneles(); resumen(); resumenesPasos(); botones(); }
+// Muestra grande del color elegido, al lado de la cama (mismo redondel que el selector)
+function pintarMuestra() {
+  const cc = COL[st.color], mu = el('cz-muestra'); if (!mu) return;
+  mu.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><span><small>Color elegido</small><b>' + cc.n + '</b></span>';
+}
+function todo() { paneles(); resumen(); resumenesPasos(); botones(); pintarMuestra(); }
 const inicial = PM.MODELOS.find(x => x.slug === new URLSearchParams(location.search).get('m')) || PM.MODELOS.find(x => x.slug === '6-vip-2-plazas');
 api.elegirModelo(inicial); todo(); irPaso(1, false);
 window.__cfg3d = api; window.__ficha = ficha;

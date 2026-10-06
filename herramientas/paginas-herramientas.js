@@ -174,19 +174,20 @@ module.exports['configurar-3d.html'] = (h) => {
   const a = s.indexOf('<div class="cz-izq">'), b = s.indexOf('<div class="cz-der">');
   const izq = `<div class="cz-izq">
         <div class="cz-escena" id="cz-escena" aria-label="Cama en 3D. Arrastrá para girarla, tocá un cajón o una tapa para abrirlo.">
+          <div class="cz-muestra" id="cz-muestra" aria-live="polite"></div>
           <div class="cz-ayuda" id="cz-ayuda">↔ Arrastrá para girar · tocá un cajón o una tapa para abrirlo</div>
         </div>
         <div class="cz-botones">
           <button type="button" id="cz-abrir" class="btn btn-ghost">Abrir todos los cajones</button>
           <button type="button" id="cz-bau" class="btn btn-ghost">Abrir las bauleras</button>
         </div>
-        <p class="h-nota" style="margin:8px 0 0">Imagen 3D de referencia: el color y los detalles reales pueden variar levemente.</p>
+        <p class="h-nota" style="margin:8px 0 0">Imagen 3D de referencia: el color y los detalles reales pueden variar levemente. La tapa de la cama y el interior de los cajones van siempre en blanco.</p>
       </div>
       `;
   s = s.slice(0, a) + izq + s.slice(b);
   s = s.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">');
   s = s.replace(/<script src="\/js\/productos-data\.js/, '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/productos-data.js');
-  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js$1"></script>');
+  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261046"></script>');
   s = s.replace('Diseñá tu cama box a medida | ProMuebles', 'Prueba: configurador 3D | ProMuebles');
   return s;
 };

@@ -173,7 +173,7 @@
 .cz-cama .hueco .bt{filter:brightness(.7)}
 .cz-cama .tpp{box-shadow:none}
 .cz-muestra{position:absolute;left:12px;top:12px;max-width:min(270px,72%);display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;padding:8px 12px 8px 8px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid var(--line);pointer-events:none;z-index:3}
-.cz-muestra i{width:42px;height:42px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--arena),0 3px 8px rgba(60,40,20,.25)}
+.cz-muestra i{width:84px;height:84px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--arena),0 4px 12px rgba(60,40,20,.3)}
 .cz-muestra span{display:grid;line-height:1.15}
 .cz-muestra small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--madera)}
 .cz-muestra b{font:800 15px 'Poppins',sans-serif;color:var(--nogal)}
@@ -248,7 +248,7 @@
 /* Celular: muestra de color más chica y encabezados de pasos en dos líneas */
 @media (max-width:900px){
   .cz-muestra{left:8px;top:8px;padding:5px 10px 5px 5px;gap:0 8px;max-width:62%}
-  .cz-muestra i{width:30px;height:30px}
+  .cz-muestra i{width:54px;height:54px}
   .cz-muestra small{font-size:9.5px}
   .cz-muestra b{font-size:13px}
   .cz-muestra em{display:none}

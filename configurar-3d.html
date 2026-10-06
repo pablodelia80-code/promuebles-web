@@ -19,7 +19,7 @@
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="stylesheet" href="/css/style.css?v=20261045">
 <link rel="stylesheet" href="/css/modelo.css?v=20261045">
-<link rel="stylesheet" href="/css/herramientas.css?v=20261045">
+<link rel="stylesheet" href="/css/herramientas.css?v=20261046">
 
 <script src="/js/analytics.js" defer></script>
 </head>
@@ -50,13 +50,14 @@
     <div class="cz">
       <div class="cz-izq">
         <div class="cz-escena" id="cz-escena" aria-label="Cama en 3D. Arrastrá para girarla, tocá un cajón o una tapa para abrirlo.">
+          <div class="cz-muestra" id="cz-muestra" aria-live="polite"></div>
           <div class="cz-ayuda" id="cz-ayuda">↔ Arrastrá para girar · tocá un cajón o una tapa para abrirlo</div>
         </div>
         <div class="cz-botones">
           <button type="button" id="cz-abrir" class="btn btn-ghost">Abrir todos los cajones</button>
           <button type="button" id="cz-bau" class="btn btn-ghost">Abrir las bauleras</button>
         </div>
-        <p class="h-nota" style="margin:8px 0 0">Imagen 3D de referencia: el color y los detalles reales pueden variar levemente.</p>
+        <p class="h-nota" style="margin:8px 0 0">Imagen 3D de referencia: el color y los detalles reales pueden variar levemente. La tapa de la cama y el interior de los cajones van siempre en blanco.</p>
       </div>
       <div class="cz-der">
         <div class="m-card cz-ficha" id="cz-ficha" aria-live="polite">
@@ -171,6 +172,6 @@
 <script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>
 <script src="/js/productos-data.js?v=20261045"></script>
 <script src="/js/modelos.js?v=20261045"></script>
-<script type="module" src="/js/configurar3d.js?v=20261045"></script>
+<script type="module" src="/js/configurar3d.js?v=20261046"></script>
 </body>
 </html>

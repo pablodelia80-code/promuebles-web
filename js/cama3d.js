@@ -167,14 +167,28 @@ contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contac
 const texMelamina = lienzo(512, 512, (ctx, w, h) => { ctx.fillStyle = '#9a9a9a'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { const g = 120 + Math.random() * 120; ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')'; ctx.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 1 + Math.random() * 2); } });
 texMelamina.colorSpace = THREE.NoColorSpace; texMelamina.wrapS = texMelamina.wrapT = THREE.RepeatWrapping; texMelamina.repeat.set(3, 3);
 const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf1efea, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
-const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });
+const matTapa = matBlanco.clone();   // tapa de la cama (donde apoya el colchón) y tapas de bauleras: siempre blancas
+const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });   // interior de cajones: siempre blanco
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matAgujero = new THREE.MeshBasicMaterial({ color: 0x8a867e });
 const cama = new THREE.Group(); scene.add(cama);
 let cajones = [], tapas = [], solapas = [];
 
+// Veta a tamaño real: la textura se reparte por centímetros (no por cara) y corre en horizontal
+const CM_TEXTURA = 70;
+function uvReales(g) {
+  const p = g.attributes.position, n = g.attributes.normal, uv = g.attributes.uv, ox = Math.random(), oy = Math.random();
+  for (let i = 0; i < p.count; i++) {
+    const ax = Math.abs(n.getX(i)), ay = Math.abs(n.getY(i)), az = Math.abs(n.getZ(i));
+    let u, v;
+    if (ax >= ay && ax >= az) { u = p.getZ(i); v = p.getY(i); } else if (az >= ay) { u = p.getX(i); v = p.getY(i); } else { u = p.getX(i); v = p.getZ(i); }
+    uv.setXY(i, u / CM_TEXTURA + ox, v / CM_TEXTURA + oy);
+  }
+  uv.needsUpdate = true;
+}
 function caja(w, h, d, mat, x, y, z, radio) {
   const g = radio ? new RoundedBoxGeometry(w, h, d, 4, radio) : new THREE.BoxGeometry(w, h, d);
+  if (mat === undefined || mat === matBlanco) uvReales(g);
   const m = new THREE.Mesh(g, mat || matBlanco); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m;
 }
 
@@ -236,7 +250,7 @@ function losaConHuecos(huecos) {
       if (libre && ini === null) ini = xa;
       if ((!libre || i === ux.length - 2) && ini !== null) {
         const fin = libre ? xb : xa;
-        if (fin - ini > 0.05) g.add(caja(fin - ini + 0.02, 1.7, zb - za + 0.02, matBlanco, (ini + fin) / 2, H - 0.85, zm));
+        if (fin - ini > 0.05) g.add(caja(fin - ini + 0.02, 1.7, zb - za + 0.02, matTapa, (ini + fin) / 2, H - 0.85, zm));
         ini = null;
       }
     }
@@ -381,10 +395,10 @@ function armar() {
     let tapa;
     if (eje === 'x') {
       pivote.position.set((h.x0 + h.x1) / 2, H, h.z0 + 0.3);
-      tapa = caja(w, 1.6, d, matBlanco, 0, -0.85, d / 2, 0.25); agujero.position.set(w / 2 - 6, 0.82, d / 2 - 7);
+      tapa = caja(w, 1.6, d, matTapa, 0, -0.85, d / 2, 0.25); agujero.position.set(w / 2 - 6, 0.82, d / 2 - 7);
     } else {
       pivote.position.set(lado > 0 ? h.x1 - 0.3 : h.x0 + 0.3, H, (h.z0 + h.z1) / 2);
-      tapa = caja(w, 1.6, d, matBlanco, -lado * w / 2, -0.85, 0, 0.25); agujero.position.set(-lado * (w / 2 - 7), 0.82, 0);
+      tapa = caja(w, 1.6, d, matTapa, -lado * w / 2, -0.85, 0, 0.25); agujero.position.set(-lado * (w / 2 - 7), 0.82, 0);
     }
     tapa.add(agujero); pivote.add(tapa); tapa.userData.info = { tipo: 'baulera', clave, ancho: w, largo: d };
     pivote.userData = { clave, eje, sentido: sentido || 1, lado: lado || 1, abierto: 0, valor: 0, malla: tapa }; tapa.userData.tapa = pivote;
@@ -503,10 +517,11 @@ function abrirBauleras(abrir) { tapas.forEach(t => { t.userData.abierto = abrir 
 // Color de la melamina: textura real (url) o color liso
 function setColor(c) {
   const aplicar = (map) => {
-    [matBlanco, matInterior].forEach((mat, i) => { mat.map = map; mat.color.set(map ? (i ? 0xd9d6d0 : 0xffffff) : (c && c.sw ? c.sw : (i ? 0xe6e3dd : 0xf1efea))); mat.needsUpdate = true; });
+    matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xf1efea)); matBlanco.needsUpdate = true;
     dirty = true;
   };
-  if (c && c.tex) cargador.load(c.tex, t => { t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping; t.repeat.set(3, 3); t.anisotropy = 8; aplicar(t); });
+  const url = c && (c.tex3 || c.tex);
+  if (url) cargador.load(url, t => { t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; aplicar(t); });
   else aplicar(null);
 }
 function abrirYa() { cajones.forEach(c => { c.userData.abierto = 1; c.userData.valor = 40; }); solapas.forEach(z => { z.userData.abierto = 1; z.userData.valor = 1; }); tapas.forEach(t => { t.userData.abierto = 1; t.userData.valor = 1; }); actualizarPos(); avisar(); dirty = true; }

@@ -116,12 +116,12 @@ const PRODUCTS = [
 
 const COLORS = [
   { n: 'Blanco', sw: '#FFFFFF', compare: 'assets/showroom/compare-blanca.jpg' },
-  { n: 'Wengue', sw: '#3B2A1D', tex: 'assets/colores/texture2-wengue.jpg', compare: 'assets/showroom/compare-wengue.jpg' },
-  { n: 'Roble Kendall', sw: '#A9825A', tex: 'assets/colores/texture2-roble-kendall.jpg', compare: 'assets/showroom/compare-roble-kendall.jpg' },
-  { n: 'Nogal Pacífico', sw: '#7A5433', tex: 'assets/colores/texture2-nogal-pacifico.jpg', compare: 'assets/showroom/compare-nogal-pacifico.jpg' },
+  { n: 'Wengue', sw: '#3B2A1D', tex: 'assets/colores/texture2-wengue.jpg', tex3: 'assets/colores/texture3-wengue.jpg', compare: 'assets/showroom/compare-wengue.jpg' },
+  { n: 'Roble Kendall', sw: '#A9825A', tex: 'assets/colores/texture2-roble-kendall.jpg', tex3: 'assets/colores/texture3-roble-kendall.jpg', compare: 'assets/showroom/compare-roble-kendall.jpg' },
+  { n: 'Nogal Pacífico', sw: '#7A5433', tex: 'assets/colores/texture2-nogal-pacifico.jpg', tex3: 'assets/colores/texture3-nogal-pacifico.jpg', compare: 'assets/showroom/compare-nogal-pacifico.jpg' },
   { n: 'Negro', sw: '#1B1512', compare: 'assets/showroom/compare-negro.jpg' },
   { n: 'Gris Perla', sw: '#B9B4AE', compare: 'assets/showroom/compare-gris-perla.jpg' },
   { n: 'Gris Sombra', sw: '#6E6862', compare: 'assets/showroom/compare-gris-sombra.jpg' },
-  { n: 'Kentoky', sw: '#8C6B4A', tex: 'assets/colores/texture2-kentoky.jpg', compare: 'assets/showroom/compare-kentoky.jpg' }
+  { n: 'Kentoky', sw: '#8C6B4A', tex: 'assets/colores/texture2-kentoky.jpg', tex3: 'assets/colores/texture3-kentoky.jpg', compare: 'assets/showroom/compare-kentoky.jpg' }
 ];
 const CAMA_BLANCA = 'assets/showroom/compare-blanca.jpg';
