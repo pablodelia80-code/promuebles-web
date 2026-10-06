@@ -34,7 +34,7 @@ scene.environmentIntensity = 0.22;
 const camera = new THREE.PerspectiveCamera(26, 1, 10, 3000);
 camera.position.set(238, 108, 372);
 
-const sol = new THREE.DirectionalLight(0xfff0dc, 2.1);
+const sol = new THREE.DirectionalLight(0xfff0dc, 1.5);
 sol.position.set(-220, 360, 260);
 sol.castShadow = true;
 const lado = window.matchMedia('(max-width: 900px)').matches ? 2048 : 4096; sol.shadow.mapSize.set(lado, lado); sol.shadow.blurSamples = 20;
@@ -45,12 +45,12 @@ scene.add(sol);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xb0a79b, 0.3));
 const foco = new THREE.SpotLight(0xffe2b8, 4200, 1200, 0.5, 1, 1.6);
 foco.position.set(-330, 330, 140); foco.target.position.set(-150, 190, -150); scene.add(foco, foco.target);
-const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.5); relleno.position.set(300, 120, 260); scene.add(relleno);
+const relleno = new THREE.DirectionalLight(0xdfe8ff, 0.9); relleno.position.set(300, 120, 260); scene.add(relleno);
 // luz de relleno del cuarto: las paredes que quedan del lado contrario a la luz no se ven negras
 const relleno2 = new THREE.DirectionalLight(0xfff4e6, 0.9); relleno2.position.set(-260, 200, -300); scene.add(relleno2);
-scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+const ambiente = new THREE.AmbientLight(0xffffff, 0.6); scene.add(ambiente);
 // relleno desde el costado derecho: los paneles que miran hacia ese lado no quedan negros en los colores oscuros
-const relleno3 = new THREE.DirectionalLight(0xfff6ea, 1.9); relleno3.position.set(420, 140, 20); scene.add(relleno3);
+const relleno3 = new THREE.DirectionalLight(0xfff6ea, 2.4); relleno3.position.set(420, 140, 20); scene.add(relleno3);
 
 const sinMobil = !window.matchMedia('(max-width: 900px)').matches;
 const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
@@ -168,9 +168,9 @@ contacto.rotation.x = -Math.PI / 2; contacto.position.y = 0.15; scene.add(contac
 // ---------- la cama ----------
 const texMelamina = lienzo(512, 512, (ctx, w, h) => { ctx.fillStyle = '#9a9a9a'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { const g = 120 + Math.random() * 120; ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')'; ctx.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 1 + Math.random() * 2); } });
 texMelamina.colorSpace = THREE.NoColorSpace; texMelamina.wrapS = texMelamina.wrapT = THREE.RepeatWrapping; texMelamina.repeat.set(3, 3);
-const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xf1efea, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
+const matBlanco = new THREE.MeshPhysicalMaterial({ color: 0xdcd9d3, roughness: 0.5, roughnessMap: texMelamina, bumpMap: texMelamina, bumpScale: 0.12, metalness: 0, clearcoat: 0.22, clearcoatRoughness: 0.3 });
 const matTapa = matBlanco.clone();   // tapa de la cama (donde apoya el colchón) y tapas de bauleras: siempre blancas
-const matInterior = new THREE.MeshStandardMaterial({ color: 0xe6e3dd, roughness: 0.7 });   // interior de cajones: siempre blanco
+const matInterior = new THREE.MeshStandardMaterial({ color: 0xcfccc6, roughness: 0.7 });   // interior de cajones: siempre blanco
 const matMetal = new THREE.MeshStandardMaterial({ color: 0x9ea3a8, roughness: 0.35, metalness: 0.85 });
 const matAgujero = new THREE.MeshBasicMaterial({ color: 0x8a867e });
 const cama = new THREE.Group(); scene.add(cama);
@@ -519,7 +519,7 @@ function abrirBauleras(abrir) { tapas.forEach(t => { t.userData.abierto = abrir 
 // Color de la melamina: textura real (url) o color liso
 function setColor(c) {
   const aplicar = (map) => {
-    matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xf1efea)); matBlanco.needsUpdate = true;
+    matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xdcd9d3)); matBlanco.needsUpdate = true;
     dirty = true;
   };
   const url = c && (c.tex3 || c.tex);
