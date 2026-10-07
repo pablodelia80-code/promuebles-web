@@ -16,7 +16,9 @@ const PROF = 40;
 
 // ---------- escena, cámara y luz ----------
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const esMovil = window.matchMedia('(max-width: 900px)').matches;
+let pixelRatio = Math.min(window.devicePixelRatio, esMovil ? 1.5 : 2);
+renderer.setPixelRatio(pixelRatio);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -479,6 +481,34 @@ function tamano() {
 }
 new ResizeObserver(tamano).observe(stage); tamano();
 
+// ---------- calidad adaptativa ----------
+// Mide cuántos cuadros por segundo logra el equipo mientras la cama se mueve y, si va lento, baja de a un paso el detalle
+// que menos se nota en una pantalla chica: resolución y sombra, luego oclusión ambiental, luego suavizado de bordes y por último sombras.
+// En los equipos que andan bien nunca baja nada.
+let nivelCalidad = 0, cuadrosMedidos = [], ultimoCuadro = 0, saltear = 40;
+function bajarCalidad() {
+  nivelCalidad++;
+  if (nivelCalidad === 1) {
+    pixelRatio = Math.min(pixelRatio, 1); renderer.setPixelRatio(pixelRatio); composer.setPixelRatio(pixelRatio);
+    sol.shadow.mapSize.set(1024, 1024); if (sol.shadow.map) { sol.shadow.map.dispose(); sol.shadow.map = null; }
+    tamano();
+  } else if (nivelCalidad === 2) { ao.enabled = false; }
+  else if (nivelCalidad === 3) { [composer.renderTarget1, composer.renderTarget2].forEach(rt => { rt.samples = 0; rt.dispose(); }); }
+  else if (nivelCalidad === 4) { renderer.shadowMap.enabled = false; scene.traverse(o => { if (o.material) o.material.needsUpdate = true; }); }
+  cuadrosMedidos = []; saltear = 25; dirty = true;
+}
+function medirCuadro(ahora) {
+  if (document.hidden || nivelCalidad >= 4) { ultimoCuadro = 0; return; }
+  const dt = ahora - ultimoCuadro; ultimoCuadro = ahora;
+  if (saltear > 0) { saltear--; return; }
+  if (dt > 250) return;   // pausa entre movimientos: no cuenta
+  cuadrosMedidos.push(dt);
+  if (cuadrosMedidos.length >= 24) {
+    const prom = cuadrosMedidos.reduce((a, b) => a + b, 0) / cuadrosMedidos.length;
+    if (prom > 38) bajarCalidad(); else cuadrosMedidos.shift();
+  }
+}
+
 let ultimo = performance.now();
 function bucle() {
   requestAnimationFrame(bucle);
@@ -504,7 +534,7 @@ function bucle() {
     if (Math.abs(d) > 0.004) { t.userData.valor += d * 0.12; mueve = true; } else if (t.userData.valor !== meta) { t.userData.valor = meta; mueve = true; }
   });
   if (mueve) { actualizarPos(); dirty = true; }
-  if (dirty) { composer.render(); dirty = false; }
+  if (dirty) { composer.render(); dirty = false; medirCuadro(ahora); }
 }
 
 

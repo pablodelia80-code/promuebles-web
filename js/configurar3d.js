@@ -1,9 +1,9 @@
 // Configurador con la cama en 3D (versión de prueba de configurar.html): el cliente elige tamaño, modelo, cajones, color y cierre suave,
 // ve la cama armada en el showroom y envía su solicitud por WhatsApp. La cama 3D es el motor js/cama3d.js.
-import { crearCama3D } from './cama3d.js?v=20261058';
+import { crearCama3D } from './cama3d.js?v=20261061';
 
 const PM = window.PM, COL = COLORS;
-COL.forEach(c => { if (c.tex) c.tex += '?v=20261058'; if (c.tex3) c.tex3 += '?v=20261058'; });   // las texturas se actualizan aunque el navegador tenga las anteriores
+COL.forEach(c => { if (c.tex) c.tex += '?v=20261061'; if (c.tex3) c.tex3 += '?v=20261061'; });   // las texturas se actualizan aunque el navegador tenga las anteriores
 const ORDEN = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king-180', 'king-200'];
 const el = id => document.getElementById(id);
 const st = { color: 0, soft: false };
