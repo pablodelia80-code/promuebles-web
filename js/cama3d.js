@@ -194,10 +194,14 @@ function uvReales(g) {
   }
   uv.needsUpdate = true;
 }
+// Líneas finas en los bordes de los paneles (la junta entre un cajón y otro): el cuerpo no tiene sombreado y sin ellas el blanco pierde el contorno
+const matLinea = new THREE.LineBasicMaterial({ color: 0xa6a39d });
+const matLineaTapa = new THREE.LineBasicMaterial({ color: 0xb4b1ab });
 function caja(w, h, d, mat, x, y, z, radio) {
   const g = radio ? new RoundedBoxGeometry(w, h, d, 4, radio) : new THREE.BoxGeometry(w, h, d);
   if (mat === undefined || mat === matBlanco) uvReales(g);
-  const m = new THREE.Mesh(g, mat || matBlanco); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m;
+  const m = new THREE.Mesh(g, mat || matBlanco);
+  if (mat === undefined || mat === matBlanco || mat === matTapa) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 35), mat === matTapa ? matLineaTapa : matLinea)); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m;
 }
 
 // Cajón: el frente mira hacia +z local y la caja se extiende hacia -z. Se desliza hacia +z para abrirse.
@@ -554,6 +558,7 @@ function abrirBauleras(abrir) { tapas.forEach(t => { t.userData.abierto = abrir 
 function setColor(c) {
   const aplicar = (map) => {
     matBlanco.map = map; matBlanco.color.set(map ? 0xffffff : (c && c.sw ? c.sw : 0xe6e3dd)).multiplyScalar(BRILLO); matBlanco.needsUpdate = true;
+    matLinea.color.set(c && c.sw ? c.sw : 0xe6e3dd).multiplyScalar(c && c.sw && !c.tex && c.sw !== '#FFFFFF' ? 0.6 : (c && c.tex ? 0.5 : 0.72));
     dirty = true;
   };
   const url = c && (c.tex3 || c.tex);
