@@ -354,7 +354,7 @@ function pagina(m, opt) {
 ` + pie(opt.tres_d
     ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261067"></script>\n<script type="module" src="/js/ficha3d.js?v=20261067"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
     : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261067"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
-  return opt.tres_d ? reordenar3d(out) : out;
+  return opt.tres_d ? reordenar3d(out).replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261067').replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261067') : out;
 }
 
 // ---------- catálogo ----------
@@ -384,11 +384,9 @@ function catalogo() { // el catálogo aparte se eliminó: Productos es la única
 }
 
 // ---------- ejecutar ----------
-PM.MODELOS.forEach(m => escribir('camas-box/' + m.slug + '/index.html', pagina(m)));
-// Prueba oculta (sin enlazar, noindex): ficha del 8 Vip 2 Plazas con la cama en 3D en lugar del esquema
-escribir('prueba-ficha-3d.html', pagina(PM.MODELOS.find(x => x.slug === '8-vip-2-plazas'), { tres_d: true })
-  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261067')
-  .replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">'));
+PM.MODELOS.forEach(m => escribir('camas-box/' + m.slug + '/index.html', pagina(m, { tres_d: true })));
+// El enlace de la prueba oculta (prueba-ficha-3d.html) ahora redirige a la ficha real del 8 Vip 2 Plazas
+escribir('prueba-ficha-3d.html', '<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="robots" content="noindex"><link rel="canonical" href="' + SITIO + '/camas-box/8-vip-2-plazas/"><meta http-equiv="refresh" content="0; url=/camas-box/8-vip-2-plazas/"><title>Cama box 8 Vip 2 Plazas | ProMuebles</title></head><body><script>location.replace("/camas-box/8-vip-2-plazas/")</script><a href="/camas-box/8-vip-2-plazas/">Ir a la ficha</a></body></html>');
 escribir('camas-box/index.html', catalogo());
 
 // Contenido: preguntas frecuentes y artículos
