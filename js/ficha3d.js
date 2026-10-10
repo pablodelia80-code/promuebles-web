@@ -5,7 +5,7 @@ const datos = JSON.parse(document.getElementById('m-data').textContent);
 const m = PM.MODELOS.find(x => x.slug === datos.slug);
 const el = id => document.getElementById(id);
 const stage = el('cz-escena');
-const V = '20261065';
+const V = '20261066';
 
 function ficha(info, api) {
   const e = api.estado, lat = m.laterales, cfg = api.PIE_CFG[m.linea];

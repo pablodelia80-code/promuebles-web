@@ -119,6 +119,30 @@ const ORDEN_CAT = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king'];
 // Dirección de Productos con la categoría ya elegida (para el botón "Volver" de cada ficha)
 const volverUrl = m => '/productos.html?cat=' + m.cat + (m.cat === 'king' ? '&king=' + m.linea : '');
 
+// Ficha con la cama en 3D: datos clave, luego el 3D a la izquierda y las medidas con la ficha técnica a la derecha,
+// después las reseñas y las herramientas. Sin "Otros modelos".
+function reordenar3d(html) {
+  const corta = (clase) => {
+    const i = html.indexOf('<section class="' + clase + '"');
+    if (i < 0) return null;
+    const j = html.indexOf('</section>', i) + '</section>'.length;
+    const pedazo = html.slice(i, j);
+    html = html.slice(0, i).replace(/[ \t]*$/, '') + html.slice(j).replace(/^\n/, '');
+    return pedazo;
+  };
+  const resenas = corta('m-resenas');
+  const specs = corta('m-specs');
+  corta('m-otros');
+  let explore = corta('m-explore');
+  explore = explore.replace('<section class="m-explore">', '<section class="m-explore m-explore-3d">')
+    .replace('<div class="m-card" id="m-card" aria-live="polite">', '<div class="m-right">\n        <div class="m-card" id="m-card" aria-live="polite">');
+  const cierre = '      </div>\n    </section>';
+  const k = explore.lastIndexOf(cierre);
+  explore = explore.slice(0, k) + '        ' + specs.replace('<section class="m-specs">', '<section class="m-specs m-specs-lado">') + '\n        </div>\n' + explore.slice(k);
+  const t = html.indexOf('<section class="m-tools">');
+  return html.slice(0, t) + explore + '\n\n    ' + resenas + '\n\n    ' + html.slice(t);
+}
+
 function pagina(m, opt) {
   opt = opt || {};
   const p = D.PRODUCTS[m.idx];
@@ -167,7 +191,7 @@ function pagina(m, opt) {
     m.estantes ? [m.estantes.n + ' estantes en los pies: ' + m.estantes.dim[0] + ' cm de ancho, ' + m.estantes.dim[2] + ' de alto y ' + m.estantes.dim[1] + ' de profundidad'] : []
   );
 
-  return h + `
+  const out = h + `
 <main class="modelo" id="contenido">
   <div class="wrap">
     <a class="m-volver" href="${volverUrl(m)}">← Volver a ${esc(m.lineaNombre)}</a>
@@ -328,8 +352,9 @@ function pagina(m, opt) {
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
 ` + pie(opt.tres_d
-    ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261065"></script>\n<script type="module" src="/js/ficha3d.js?v=20261065"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
-    : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261065"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
+    ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261066"></script>\n<script type="module" src="/js/ficha3d.js?v=20261066"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
+    : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261066"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
+  return opt.tres_d ? reordenar3d(out) : out;
 }
 
 // ---------- catálogo ----------
@@ -362,7 +387,7 @@ function catalogo() { // el catálogo aparte se eliminó: Productos es la única
 PM.MODELOS.forEach(m => escribir('camas-box/' + m.slug + '/index.html', pagina(m)));
 // Prueba oculta (sin enlazar, noindex): ficha del 8 Vip 2 Plazas con la cama en 3D en lugar del esquema
 escribir('prueba-ficha-3d.html', pagina(PM.MODELOS.find(x => x.slug === '8-vip-2-plazas'), { tres_d: true })
-  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261065')
+  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261066')
   .replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">'));
 escribir('camas-box/index.html', catalogo());
 
