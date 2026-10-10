@@ -352,8 +352,8 @@ function pagina(m, opt) {
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
 ` + pie(opt.tres_d
-    ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261066"></script>\n<script type="module" src="/js/ficha3d.js?v=20261066"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
-    : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261066"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
+    ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261067"></script>\n<script type="module" src="/js/ficha3d.js?v=20261067"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
+    : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261067"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
   return opt.tres_d ? reordenar3d(out) : out;
 }
 
@@ -387,7 +387,7 @@ function catalogo() { // el catálogo aparte se eliminó: Productos es la única
 PM.MODELOS.forEach(m => escribir('camas-box/' + m.slug + '/index.html', pagina(m)));
 // Prueba oculta (sin enlazar, noindex): ficha del 8 Vip 2 Plazas con la cama en 3D en lugar del esquema
 escribir('prueba-ficha-3d.html', pagina(PM.MODELOS.find(x => x.slug === '8-vip-2-plazas'), { tres_d: true })
-  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261066')
+  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261067')
   .replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">'));
 escribir('camas-box/index.html', catalogo());
 
