@@ -286,3 +286,17 @@
 .rs-card{cursor:default;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
 @media (hover:hover){.rs-card:hover{transform:scale(1.035);border-color:var(--gold);box-shadow:0 14px 32px rgba(74,50,34,.16)}}
 .rs-wrap-video .rs-btn{top:46%}
+
+/* Cama 3D en la ficha (reemplaza el esquema); se carga al llegar a la sección o al tocar el botón */
+.m-3d-wrap{max-width:none;padding:14px}
+.m-3d-wrap #cz-escena{touch-action:pan-y}
+.m-3d-wrap .cz-escena{height:clamp(320px,44vw,480px)}
+.m-3d-poster{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;transition:opacity .4s}
+.cz-escena.listo .m-3d-poster{opacity:0}
+.cz-escena.cargando::after{content:"Cargando la cama en 3D…";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.92);font:700 14px 'Manrope',sans-serif;color:var(--nogal)}
+.cz-escena.listo::after{content:none}
+.m-3d-start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;padding:14px 22px;border:0;border-radius:999px;background:var(--nogal,#3b2418);color:#fff;font:800 15px 'Manrope',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(40,25,10,.35)}
+.m-3d-start[hidden],.m-3d-botones[hidden]{display:none}
+.m-3d-wrap .cz-ayuda{z-index:3}
+.m-3d-botones{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px}
+@media (max-width:900px){.m-3d-wrap .cz-escena{height:clamp(300px,78vw,420px)}}

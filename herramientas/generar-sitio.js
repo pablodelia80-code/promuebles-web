@@ -119,7 +119,8 @@ const ORDEN_CAT = ['1-plaza', '1-plaza-y-media', '2-plazas', 'queen', 'king'];
 // Dirección de Productos con la categoría ya elegida (para el botón "Volver" de cada ficha)
 const volverUrl = m => '/productos.html?cat=' + m.cat + (m.cat === 'king' ? '&king=' + m.linea : '');
 
-function pagina(m) {
+function pagina(m, opt) {
+  opt = opt || {};
   const p = D.PRODUCTS[m.idx];
   const url = '/camas-box/' + m.slug + '/';
   const fotos = [{ rel: p.img, alt: m.titulo + ' en el showroom de ProMuebles' }]
@@ -232,10 +233,21 @@ function pagina(m) {
       <h2>Tocá la cama y mirá cómo es por dentro</h2>
       <p class="m-sub">Tocá cualquier cajón, zapatero o baulera. Se abre y te cuenta sus medidas.</p>
       <div class="m-explore-grid">
-        <div class="m-plan-wrap">
+        ${opt.tres_d ? `<div class="m-plan-wrap m-3d-wrap">
+          <div class="cz-escena" id="cz-escena" aria-label="Cama ${esc(m.corto)} en 3D. Arrastrá para girarla, tocá un cajón o una baulera para abrirlo.">
+            <div class="m-3d-poster" id="m-3d-poster" style="background-image:url('${webp(p.img, 'm')}')"></div>
+            <button type="button" class="m-3d-start" id="m-3d-start" hidden>Tocá para ver la cama en 3D</button>
+            <div class="cz-ayuda" id="m-3d-ayuda">↔ Arrastrá para girar · tocá un cajón o una baulera para abrirlo</div>
+          </div>
+          <div class="m-3d-botones" id="m-3d-botones" hidden>
+            <button type="button" id="m-3d-abrir" class="btn btn-ghost">Abrir todos los cajones</button>
+            <button type="button" id="m-3d-bau" class="btn btn-ghost">Abrir las bauleras</button>
+          </div>
+          <p class="m-plan-note">Imagen 3D de referencia. La cama se fabrica en blanco; el color se elige en "Armala a tu gusto".</p>
+        </div>` : `<div class="m-plan-wrap">
           <svg id="m-plan" viewBox="0 0 360 470" role="group" aria-label="Plano de la cama vista desde arriba. Tocá un cajón o una baulera."></svg>
           <p class="m-plan-note">Esquema ilustrativo, no está a escala.</p>
-        </div>
+        </div>`}
         <div class="m-card" id="m-card" aria-live="polite">
           <div class="m-card-empty" id="m-card-empty">
             <span class="m-hand" aria-hidden="true">👆</span>
@@ -248,12 +260,12 @@ function pagina(m) {
             <dl id="m-card-dl"></dl>
             <p class="m-card-soft" id="m-card-soft" hidden>Con cierre suave: el cajón se frena solo y cierra sin golpe.</p>
           </div>
-          <div class="m-legend">
+          ${opt.tres_d ? '' : `<div class="m-legend">
             <span><i class="lg lg-c"></i> Cajón</span>
             <span><i class="lg lg-b"></i> Baulera</span>
             ${m.zapateros.length ? '<span><i class="lg lg-z"></i> Zapatero</span>' : ''}
             ${m.estantes ? '<span><i class="lg lg-e"></i> Estantes</span>' : ''}
-          </div>
+          </div>`}
         </div>
       </div>
     </section>
@@ -315,7 +327,9 @@ function pagina(m) {
   </div>
 </main>
 <script type="application/json" id="m-data">${JSON.stringify(datos)}</script>
-` + pie('<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261045"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
+` + pie(opt.tres_d
+    ? '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261064"></script>\n<script type="module" src="/js/ficha3d.js?v=20261064"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>'
+    : '<script src="/js/modelos.js?v=20261045"></script>\n<script src="/js/zonas-envio.js?v=20261045"></script>\n<script src="/js/plano.js?v=20261045"></script>\n<script src="/js/modelo.js?v=20261064"></script>\n<script src="/js/carrusel.js?v=20261045"></script>\n<script src="/js/pestanas.js?v=20261045"></script>');
 }
 
 // ---------- catálogo ----------
@@ -346,6 +360,10 @@ function catalogo() { // el catálogo aparte se eliminó: Productos es la única
 
 // ---------- ejecutar ----------
 PM.MODELOS.forEach(m => escribir('camas-box/' + m.slug + '/index.html', pagina(m)));
+// Prueba oculta (sin enlazar, noindex): ficha del 8 Vip 2 Plazas con la cama en 3D en lugar del esquema
+escribir('prueba-ficha-3d.html', pagina(PM.MODELOS.find(x => x.slug === '8-vip-2-plazas'), { tres_d: true })
+  .replace('/css/modelo.css?v=20261045', '/css/modelo.css?v=20261064')
+  .replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<meta name="robots" content="noindex, nofollow">'));
 escribir('camas-box/index.html', catalogo());
 
 // Contenido: preguntas frecuentes y artículos

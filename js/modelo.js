@@ -74,24 +74,26 @@
   }
   sw.addEventListener('click', function () { cierreSuave = !cierreSuave; actualizar(true); });
 
-  // ---------- Plano ----------
+  // ---------- Plano (la ficha con la cama en 3D no lo lleva) ----------
   var svg = document.getElementById('m-plan');
-  var cardEmpty = document.getElementById('m-card-empty'), cardBody = document.getElementById('m-card-body');
-  var res = PM.dibujarPlano(svg, m, function (it) {
-    seleccion = it;
-    document.getElementById('m-card-kind').textContent = it.kind;
-    document.getElementById('m-card-title').textContent = it.titulo;
-    var dl = document.getElementById('m-card-dl');
-    dl.innerHTML = '';
-    it.filas.forEach(function (f) {
-      var row = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
-      dt.textContent = f[0]; dd.textContent = f[1]; row.appendChild(dt); row.appendChild(dd); dl.appendChild(row);
+  if (svg) {
+    var cardEmpty = document.getElementById('m-card-empty'), cardBody = document.getElementById('m-card-body');
+    var res = PM.dibujarPlano(svg, m, function (it) {
+      seleccion = it;
+      document.getElementById('m-card-kind').textContent = it.kind;
+      document.getElementById('m-card-title').textContent = it.titulo;
+      var dl = document.getElementById('m-card-dl');
+      dl.innerHTML = '';
+      it.filas.forEach(function (f) {
+        var row = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
+        dt.textContent = f[0]; dd.textContent = f[1]; row.appendChild(dt); row.appendChild(dd); dl.appendChild(row);
+      });
+      softNote.hidden = !(it.tipo === 'c' && cierreSuave);
+      cardEmpty.hidden = true; cardBody.hidden = false;
     });
-    softNote.hidden = !(it.tipo === 'c' && cierreSuave);
-    cardEmpty.hidden = true; cardBody.hidden = false;
-  });
-  if (res.hayApilados) document.querySelector('.m-plan-note').textContent = 'Esquema ilustrativo, no está a escala. Los cajones apilados se dibujan juntos: el 1 va arriba del 2.';
-  svg.addEventListener('click', function () { if (res.primero) res.primero.classList.remove('pulse'); }, { once: true });
+    if (res.hayApilados) document.querySelector('.m-plan-note').textContent = 'Esquema ilustrativo, no está a escala. Los cajones apilados se dibujan juntos: el 1 va arriba del 2.';
+    svg.addEventListener('click', function () { if (res.primero) res.primero.classList.remove('pulse'); }, { once: true });
+  }
 
   // ---------- Zona de envío ----------
   PM.zonas.montar({ input: document.getElementById('m-zona'), lista: document.getElementById('m-zona-lista'), resultado: document.getElementById('m-zona-res'), producto: 'la ' + m.titulo.replace(/ \(.*\)$/, '') });
