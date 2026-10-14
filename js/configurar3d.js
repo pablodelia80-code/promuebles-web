@@ -50,6 +50,16 @@ function lineaLat(lado) {
   return t.join(' y ');
 }
 
+// Precio de la cama armada: el del modelo del catálogo si es igual a uno, o el calculado desde el modelo con el que se empezó.
+// El cierre suave suma por cada cajón que quede en la cama; en pantalla se muestra solo el total.
+function calcularPrecio() {
+  const m = api.modelo, eq = equivalente(), ref = PM.MODELOS.find(x => x.slug === m.slug) || m;
+  const cama = eq ? PM.venta(eq).precio : PM.precioArmado(ref, api.estadoDe(ref), api.estado);
+  if (cama == null) return null;
+  const color = st.color ? PM.COLOR_ADICIONAL : 0, soft = st.soft ? totalCajones() * PM.CIERRE_SUAVE_POR_CAJON : 0;
+  return { eq, ref, cama, color, soft, total: cama + color + soft };
+}
+
 // ---------- ficha de la parte tocada ----------
 function ficha(info) {
   const m = api.modelo, e = api.estado, lat = m.laterales, cfg = api.PIE_CFG[m.linea], soft = st.soft ? ' con cierre suave' : '';
@@ -150,6 +160,7 @@ function paneles() {
     cols.appendChild(b);
   });
   el('cz-soft').setAttribute('aria-checked', st.soft ? 'true' : 'false');
+  el('cz-soft').querySelector('small').textContent = 'El cajón se frena solo y cierra sin golpe. Suma ' + PM.pesos(totalCajones() * PM.CIERRE_SUAVE_POR_CAJON) + ' a tu cama.';
 }
 function cambiarModelo(m) {
   api.elegirModelo(m); cerrarFicha(); todo();
@@ -158,10 +169,10 @@ function cambiarModelo(m) {
 
 // ---------- resumen ----------
 function resumen() {
-  const m = api.modelo, col = COL[st.color], eq = equivalente(), tot = totalCajones();
+  const m = api.modelo, col = COL[st.color], tot = totalCajones();
   const izq = lineaLat('izq'), der = lineaLat('der'), solo = m.laterales.der === 0, pieTxt = etiquetaPie();
-  let precio = null;
-  if (eq) precio = PM.venta(eq).precio + (st.color ? PM.COLOR_ADICIONAL : 0) + (st.soft ? tot * PM.CIERRE_SUAVE_POR_CAJON : 0);
+  const c = calcularPrecio(), eq = c && c.eq, precio = c && c.total;
+  st.calc = c;
   const notas = el('cz-notas').value.trim();
   const msg = 'Hola! Quiero pedir una cama a medida.\n' +
     'Medida: ' + m.lineaNombre + ' (colchón ' + m.colchon + ')\n' +
@@ -172,7 +183,8 @@ function resumen() {
     'Color: ' + col.n + '\n' +
     'Cierre suave: ' + (st.soft ? 'sí' : 'no') + '\n' +
     (notas ? 'Pedido especial: ' + notas + '\n' : '') +
-    (precio ? 'Es igual al modelo ' + eq.corto + '. Precio: ' + PM.pesos(precio) + '.' : 'Quedo a la espera de que me confirmen si se puede fabricar, el precio y el plazo.');
+    (eq ? 'Es igual al modelo ' + eq.corto + '. Precio: ' + PM.pesos(precio) + '.' :
+      (precio ? 'Precio calculado en la web para este diseño: ' + PM.pesos(precio) + '. Quedo a la espera de que me confirmen si se puede fabricar y el plazo.' : 'Quedo a la espera de que me confirmen si se puede fabricar, el precio y el plazo.'));
   let h = '<h2>Tu cama</h2><ul class="f-lista">' +
     '<li><span>Medida</span><b>' + m.lineaNombre + ' · ' + m.colchon + '</b></li>' +
     (solo ? '<li><span>Lateral</span><b>' + izq + '</b></li>' : '<li><span>Izquierdo</span><b>' + izq + '</b></li><li><span>Derecho</span><b>' + der + '</b></li>') +
@@ -180,8 +192,13 @@ function resumen() {
     '<li><span>Total de cajones</span><b>' + tot + '</b></li>' +
     '<li><span>Color</span><b>' + col.n + '</b></li>' +
     '<li><span>Correderas</span><b>' + (st.soft ? 'Con cierre suave' : 'Telescópicas reforzadas') + '</b></li></ul>';
-  if (precio) h += '<p class="f-total"><span>Precio final</span><b>' + PM.pesos(precio) + '</b></p><p class="h-nota">Es igual al modelo ' + eq.corto + ': ' + (st.color ? 'incluye el adicional por color. ' : '') + 'El precio incluye envío, subida y armado según tu zona.</p>';
-  else h += '<p class="cz-cotizar"><b>Precio a confirmar</b><span>Es una cama a medida: la revisamos y te confirmamos el precio y el plazo.</span></p>';
+  if (precio) {
+    h += '<ul class="f-lista cz-desglose"><li><span>' + (eq ? 'Cama ' + eq.corto : 'Tu cama a medida') + '</span><b>' + PM.pesos(c.cama) + '</b></li>' +
+      (c.color ? '<li><span>Color ' + col.n + '</span><b>+ ' + PM.pesos(c.color) + '</b></li>' : '') +
+      (c.soft ? '<li><span>Cierre suave</span><b>+ ' + PM.pesos(c.soft) + '</b></li>' : '') + '</ul>' +
+      '<p class="f-total"><span>Precio final</span><b>' + PM.pesos(precio) + '</b></p>' +
+      '<p class="h-nota">' + (eq ? 'Es igual al modelo ' + eq.corto + '. ' : 'Es una cama a medida: el precio está calculado a partir del modelo ' + c.ref.corto + ' y lo confirmamos al revisar que se pueda fabricar. ') + 'El precio incluye envío, subida y armado según tu zona.</p>';
+  } else h += '<p class="cz-cotizar"><b>Precio a confirmar</b><span>Es una cama a medida: la revisamos y te confirmamos el precio y el plazo.</span></p>';
   h += '<a class="btn-whatsapp m-cta" target="_blank" rel="noopener" href="https://wa.me/5491168767075?text=' + encodeURIComponent(msg) + '">Enviar mi diseño por WhatsApp</a>' +
     '<p class="h-nota" style="margin:0">Esto es una solicitud, no una compra. Revisamos que se pueda fabricar y te respondemos con el precio y el plazo.</p>';
   el('cz-resumen').innerHTML = h;
@@ -232,7 +249,23 @@ function pintarMuestra() {
   const cc = COL[st.color], mu = el('cz-muestra'); if (!mu) return;
   mu.innerHTML = '<i style="background:' + (cc.tex ? 'url(' + cc.tex + ') center/cover' : cc.sw) + '"></i><span><small>Color elegido</small><b>' + cc.n + '</b></span>';
 }
-function todo() { paneles(); resumen(); resumenesPasos(); botones(); pintarMuestra(); }
+// Precio siempre a la vista (tarjeta en la compu, barra de abajo en el celular) y aviso de cuánto cambió con la última elección
+let tAviso = 0;
+function pintarPrecio() {
+  const c = st.calc, m = api.modelo; if (!c) return;
+  el('cz-precio-monto').textContent = st.precioTxt;
+  el('cz-precio-nota').textContent = c.eq ? 'Precio final. Incluye envío, subida y armado según tu zona.' : 'Precio calculado para tu diseño. Lo confirmamos al revisar que se pueda fabricar.';
+  const p = st.prev; st.prev = { total: c.total, soft: st.soft, color: st.color, linea: m.linea };
+  if (!p || p.total === c.total) return;
+  const d = c.total - p.total, motivo = p.linea !== m.linea ? 'la medida' : (p.soft !== st.soft ? 'el cierre suave' : (p.color !== st.color ? 'el color' : 'los cajones'));
+  const txt = (d > 0 ? '+ ' : '− ') + PM.pesos(Math.abs(d)) + ' por ' + motivo;
+  const v = el('cz-precio-var'), pas = el('cz-barra-paso');
+  v.textContent = txt; v.hidden = false; v.className = 'cz-precio-var ' + (d > 0 ? 'sube' : 'baja'); void v.offsetWidth; v.classList.add('on');
+  pas.textContent = txt; pas.classList.add('cz-aviso');
+  clearTimeout(tAviso);
+  tAviso = setTimeout(() => { v.classList.remove('on'); pas.classList.remove('cz-aviso'); pas.textContent = 'Paso ' + paso + ' de ' + TOT; }, 4500);
+}
+function todo() { paneles(); resumen(); resumenesPasos(); botones(); pintarMuestra(); pintarPrecio(); }
 const inicial = PM.MODELOS.find(x => x.slug === new URLSearchParams(location.search).get('m')) || PM.MODELOS.find(x => x.slug === '6-vip-2-plazas');
 api.elegirModelo(inicial); todo(); irPaso(1, false);
 window.__cfg3d = api; window.__ficha = ficha;
