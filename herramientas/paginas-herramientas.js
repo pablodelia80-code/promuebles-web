@@ -182,12 +182,18 @@ module.exports['configurar.html'] = (h) => {
           <button type="button" id="cz-abrir" class="btn btn-ghost">Abrir todos los cajones</button>
           <button type="button" id="cz-bau" class="btn btn-ghost">Abrir las bauleras</button>
         </div>
+        <div class="cz-precio" id="cz-precio" aria-live="polite">
+          <div class="cz-precio-fila"><span>Precio de tu cama</span><b id="cz-precio-monto"></b></div>
+          <span class="cz-precio-var" id="cz-precio-var" hidden></span>
+          <small id="cz-precio-nota"></small>
+        </div>
         <p class="h-nota" style="margin:8px 0 0">Imagen 3D de referencia: el color y los detalles reales pueden variar levemente. La tapa de la cama y el interior de los cajones van siempre en blanco.</p>
       </div>
       `;
   s = s.slice(0, a) + izq + s.slice(b);
   s = s.replace(/<script src="\/js\/productos-data\.js/, '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/productos-data.js');
-  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261065"></script>');
-  s = s.replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261048');
+  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261070"></script>');
+  s = s.replace('/js/modelos.js?v=20261045', '/js/modelos.js?v=20261070');
+  s = s.replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261070');
   return s;
 };

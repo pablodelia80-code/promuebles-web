@@ -201,7 +201,33 @@
     });
   }
 
-  var api = { porPrecio: porPrecio, webp: webp, pesos: pesos, venta: venta, fmt: fmt, especificaciones: especificaciones, textoCajones: textoCajones, textoZapateros: textoZapateros, textoBauleras: textoBauleras, totalBauleras: totalBauleras, lateralesTotal: lateralesTotal, frontalesTotal: frontalesTotal, agrupar: agrupar,  MODELOS: MODELOS, LINEAS: LINEAS, CIERRE_SUAVE_POR_CAJON: CIERRE_SUAVE_POR_CAJON, COLOR_ADICIONAL: COLOR_ADICIONAL };
+  // Precio de una cama armada a medida en el configurador. No hay un precio por cajón: las diferencias salen de comparar los
+  // modelos del catálogo entre sí (siempre con el precio regular, sin oferta). Con 2 Plazas y Queen los precios del catálogo cierran exactos.
+  // En 1 Plaza y 1 Plaza y Media el catálogo no tiene cajones grandes, así que ahí el lugar del costado se estima igual que en 2 Plazas.
+  var AJUSTE_PRECIO = {
+    lateralNormal: 15000,                  // un lugar del costado con 2 cajones normales vale esto más que con 1 grande
+    pie: { G: 10000, N: 20000 },           // cada columna del pie con cajones, sobre el precio con zapateros
+    estantes: -10000,                      // los estantes en el pie valen esto menos que los zapateros
+    pieLinea: { '1-plaza': { G: 5000, N: 10000 }, '1-plaza-y-media': { G: 5000, N: 10000 } }
+  };
+  function valorPie(est, linea) {
+    if (est.pie.tipo === 'estantes') return AJUSTE_PRECIO.estantes;
+    if (est.pie.tipo !== 'cajones') return 0;
+    var t = AJUSTE_PRECIO.pieLinea[linea] || AJUSTE_PRECIO.pie;
+    return est.pie.lados.reduce(function (a, l) { return a + t[l]; }, 0);
+  }
+  function lugaresNormales(est) { return est.izq.concat(est.der).filter(function (s) { return s === 'N'; }).length; }
+  // ref: modelo del catálogo con el que se empezó; estRef y est: estado (izq, der, pie) de ese modelo y de la cama armada.
+  function precioArmado(ref, estRef, est) {
+    var v = venta(ref); if (!v) return null;
+    var dif = AJUSTE_PRECIO.lateralNormal * (lugaresNormales(est) - lugaresNormales(estRef)) + valorPie(est, ref.linea) - valorPie(estRef, ref.linea);
+    var p = (v.viejo || v.precio) + dif;
+    // Si el modelo de partida está en oferta y la cama armada no le suma valor, nunca cuesta más que ese modelo en oferta.
+    if (v.viejo && dif <= 0 && p > v.precio) p = v.precio;
+    return p;
+  }
+
+  var api = { precioArmado: precioArmado, AJUSTE_PRECIO: AJUSTE_PRECIO, porPrecio: porPrecio, webp: webp, pesos: pesos, venta: venta, fmt: fmt, especificaciones: especificaciones, textoCajones: textoCajones, textoZapateros: textoZapateros, textoBauleras: textoBauleras, totalBauleras: totalBauleras, lateralesTotal: lateralesTotal, frontalesTotal: frontalesTotal, agrupar: agrupar,  MODELOS: MODELOS, LINEAS: LINEAS, CIERRE_SUAVE_POR_CAJON: CIERRE_SUAVE_POR_CAJON, COLOR_ADICIONAL: COLOR_ADICIONAL };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.PM = api;
 })(typeof window !== 'undefined' ? window : this);
