@@ -29,6 +29,35 @@ function firma(m, e) {
   return [m.linea, m.alto, JSON.stringify(m.bauleras), e.izq.slice().sort().join(''), e.der.slice().sort().join(''), pie].join('|');
 }
 function equivalente() { const f = firma(api.modelo, api.estado); return PM.MODELOS.find(x => firma(x, api.estadoDe(x)) === f) || null; }
+
+// ---------- precio: se ve en todo momento y viaja en el mensaje a Pedro ----------
+// El precio sale de la lista de modelos de la misma medida. Si lo armado coincide con un modelo, es el precio de ese modelo.
+// Si no, se cuenta por cajones: entre dos modelos vecinos cada cajón vale la diferencia de precio dividida por la diferencia de cajones;
+// por debajo del modelo más chico se sigue con el valor por cajón del primer tramo.
+const CAJON_REF = 10000;   // solo para medidas con un único modelo (1 plaza): es lo que sube la lista de 2 plazas y Queen entre 4, 6, 10 y 12 cajones
+function precioBase(linea, n) {
+  const pts = [];
+  PM.MODELOS.filter(x => x.linea === linea).forEach(x => { const v = PM.venta(x); if (v && !pts.some(p => p[0] === x.cajones)) pts.push([x.cajones, v.precio]); });
+  pts.sort((a, b) => a[0] - b[0]);
+  if (!pts.length) return null;
+  const exacto = pts.find(q => q[0] === n);
+  let p;
+  if (exacto) p = exacto[1];
+  else if (pts.length === 1) p = pts[0][1] + (n - pts[0][0]) * CAJON_REF;
+  else {
+    let i = 0; while (i < pts.length - 2 && n > pts[i + 1][0]) i++;
+    const a = pts[i], b = pts[i + 1];
+    p = a[1] + (n - a[0]) * (b[1] - a[1]) / (b[0] - a[0]);
+  }
+  return Math.round(p / 1000) * 1000;
+}
+function precio() {
+  const m = api.modelo, eq = equivalente(), n = totalCajones();
+  const v = eq ? PM.venta(eq) : null, base = v ? v.precio : precioBase(m.linea, n);
+  if (base == null) return null;
+  const color = st.color ? PM.COLOR_ADICIONAL : 0, soft = st.soft ? n * PM.CIERRE_SUAVE_POR_CAJON : 0;
+  return { n, base, color, soft, total: base + color + soft, eq };
+}
 function textoLados(lados) {
   const c = api.PIE_CFG[api.modelo.linea], nG = lados.filter(s => s === 'G').length, nN = lados.length - nG, t = [];
   if (nG) t.push((nG === 1 ? '1 cajón grande' : nG + ' cajones grandes') + ' (' + c.g + ' × 40 × 30 cm)');
@@ -106,7 +135,8 @@ function paneles() {
   const lista = el('cz-modelo'); lista.innerHTML = '';
   PM.porPrecio(PM.MODELOS.filter(x => x.linea === m.linea)).forEach(x => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'f-chip' + (x.slug === m.slug ? ' on' : ''); b.setAttribute('aria-pressed', x.slug === m.slug ? 'true' : 'false');
-    b.innerHTML = '<b>' + nombreCorto(x) + '</b><span>' + x.cajones + ' cajones</span>';
+    b.innerHTML = x.estantes ? '<b>Estantes</b><span>' + x.cajones + ' cajones y ' + x.estantes.n + ' estantes</span>'
+      : '<b>' + x.cajones + ' cajones</b>' + (/esquinero/.test(x.slug) ? '<span>Esquinero</span>' : '');
     b.addEventListener('click', () => cambiarModelo(x));
     lista.appendChild(b);
   });
@@ -150,6 +180,7 @@ function paneles() {
     cols.appendChild(b);
   });
   el('cz-soft').setAttribute('aria-checked', st.soft ? 'true' : 'false');
+  el('cz-soft-precio').textContent = '+ ' + PM.pesos(totalCajones() * PM.CIERRE_SUAVE_POR_CAJON);
 }
 function cambiarModelo(m) {
   api.elegirModelo(m); cerrarFicha(); todo();
@@ -160,9 +191,8 @@ function cambiarModelo(m) {
 function resumen() {
   const m = api.modelo, col = COL[st.color], eq = equivalente(), tot = totalCajones();
   const izq = lineaLat('izq'), der = lineaLat('der'), solo = m.laterales.der === 0, pieTxt = etiquetaPie();
-  let precio = null;
-  if (eq) precio = PM.venta(eq).precio + (st.color ? PM.COLOR_ADICIONAL : 0) + (st.soft ? tot * PM.CIERRE_SUAVE_POR_CAJON : 0);
-  const notas = el('cz-notas').value.trim();
+  const p = precio(), notas = el('cz-notas').value.trim();
+  const desglose = p ? ['Cama de ' + tot + ' cajones: ' + PM.pesos(p.base)].concat(p.color ? ['Color ' + col.n + ': + ' + PM.pesos(p.color)] : [], p.soft ? ['Cierre suave: + ' + PM.pesos(p.soft)] : []) : [];
   const msg = 'Hola! Quiero pedir una cama a medida.\n' +
     'Medida: ' + m.lineaNombre + ' (colchón ' + m.colchon + ')\n' +
     'Modelo de partida: ' + m.corto + '\n' +
@@ -172,7 +202,9 @@ function resumen() {
     'Color: ' + col.n + '\n' +
     'Cierre suave: ' + (st.soft ? 'sí' : 'no') + '\n' +
     (notas ? 'Pedido especial: ' + notas + '\n' : '') +
-    (precio ? 'Es igual al modelo ' + eq.corto + '. Precio: ' + PM.pesos(precio) + '.' : 'Quedo a la espera de que me confirmen si se puede fabricar, el precio y el plazo.');
+    (eq ? 'Coincide con el modelo ' + eq.corto + ' de la web.\n' : '') +
+    (p ? 'Precio que vi en la web: ' + PM.pesos(p.total) + '\n' + desglose.join('\n') + '\n' : '') +
+    'Quedo a la espera de que me confirmen si se puede fabricar y el plazo.';
   let h = '<h2>Tu cama</h2><ul class="f-lista">' +
     '<li><span>Medida</span><b>' + m.lineaNombre + ' · ' + m.colchon + '</b></li>' +
     (solo ? '<li><span>Lateral</span><b>' + izq + '</b></li>' : '<li><span>Izquierdo</span><b>' + izq + '</b></li><li><span>Derecho</span><b>' + der + '</b></li>') +
@@ -180,22 +212,35 @@ function resumen() {
     '<li><span>Total de cajones</span><b>' + tot + '</b></li>' +
     '<li><span>Color</span><b>' + col.n + '</b></li>' +
     '<li><span>Correderas</span><b>' + (st.soft ? 'Con cierre suave' : 'Telescópicas reforzadas') + '</b></li></ul>';
-  if (precio) h += '<p class="f-total"><span>Precio final</span><b>' + PM.pesos(precio) + '</b></p><p class="h-nota">Es igual al modelo ' + eq.corto + ': ' + (st.color ? 'incluye el adicional por color. ' : '') + 'El precio incluye envío, subida y armado según tu zona.</p>';
+  if (p) h += '<ul class="f-lista">' + desglose.map(d => { const i = d.lastIndexOf(': '); return '<li><span>' + d.slice(0, i) + '</span><b>' + d.slice(i + 2) + '</b></li>'; }).join('') + '</ul>' +
+    '<p class="f-total"><span>Precio</span><b>' + PM.pesos(p.total) + '</b></p><p class="h-nota">El precio incluye envío, subida y armado según tu zona.</p>';
   else h += '<p class="cz-cotizar"><b>Precio a confirmar</b><span>Es una cama a medida: la revisamos y te confirmamos el precio y el plazo.</span></p>';
   h += '<a class="btn-whatsapp m-cta" target="_blank" rel="noopener" href="https://wa.me/5491168767075?text=' + encodeURIComponent(msg) + '">Enviar mi diseño por WhatsApp</a>' +
-    '<p class="h-nota" style="margin:0">Esto es una solicitud, no una compra. Revisamos que se pueda fabricar y te respondemos con el precio y el plazo.</p>';
+    '<p class="h-nota" style="margin:0">Esto es una solicitud, no una compra. Revisamos que se pueda fabricar y te confirmamos el plazo.</p>';
   el('cz-resumen').innerHTML = h;
-  st.precioTxt = precio ? PM.pesos(precio) : 'Precio a confirmar';
+  st.precioTxt = p ? PM.pesos(p.total) : 'Precio a confirmar';
   st.waHref = 'https://wa.me/5491168767075?text=' + encodeURIComponent(msg);
 }
 function resumenesPasos() {
   const m = api.modelo, col = COL[st.color], notas = el('cz-notas').value.trim();
   el('res-1').textContent = m.lineaNombre + ' · ' + m.colchon;
-  el('res-2').textContent = nombreCorto(m) + ' · ' + totalCajones() + ' cajones';
+  el('res-2').textContent = totalCajones() + ' cajones' + (api.estado.pie.tipo === 'estantes' ? ' y estantes' : '');
   el('res-3').textContent = col.n + (st.color ? ' (+' + PM.pesos(PM.COLOR_ADICIONAL) + ')' : '') + ' · ' + (st.soft ? 'con cierre suave' : 'sin cierre suave');
   el('res-4').textContent = notas ? (notas.length > 28 ? notas.slice(0, 28) + '…' : notas) : 'Sin notas';
   el('res-5').textContent = st.precioTxt;
-  el('cz-barra-precio').textContent = st.precioTxt;
+  pintarPrecio();
+}
+// El precio aparece desde el paso 2 (cuando ya eligió algo) y queda visible hasta el final: tarjeta bajo el 3D en la compu, barra de abajo en el celular.
+function pintarPrecio() {
+  const p = precio(), ver = paso >= 2 && !!p, card = el('cz-precio');
+  card.hidden = !ver;
+  el('cz-barra-precio').textContent = paso >= 2 ? st.precioTxt : '';
+  if (!ver) return;
+  el('cz-precio-total').textContent = PM.pesos(p.total);
+  const filas = [['Tu cama de ' + p.n + ' cajones', PM.pesos(p.base)]];
+  if (p.color) filas.push(['Color ' + COL[st.color].n, '+ ' + PM.pesos(p.color)]);
+  if (p.soft) filas.push(['Cierre suave', '+ ' + PM.pesos(p.soft)]);
+  el('cz-precio-det').innerHTML = filas.map(f => '<li><span>' + f[0] + '</span><b>' + f[1] + '</b></li>').join('');
 }
 
 // ---------- pasos guiados ----------
@@ -216,6 +261,7 @@ function irPaso(n, desplazar) {
   el('cz-prog-fill').style.width = (paso / TOT * 100) + '%';
   el('cz-barra-paso').textContent = 'Paso ' + paso + ' de ' + TOT;
   el('cz-barra-sig').textContent = paso < TOT ? 'Continuar →' : 'Enviar por WhatsApp';
+  pintarPrecio();
   if (desplazar) window.scrollTo({ top: Math.max(0, secs[paso - 1].getBoundingClientRect().top + window.scrollY - alturaFija() - 14), behavior: 'smooth' });
 }
 secs.forEach(sec => { sec.querySelector('.cz-paso-btn').addEventListener('click', () => irPaso(+sec.getAttribute('data-p'), true)); });

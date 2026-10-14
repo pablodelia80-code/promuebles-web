@@ -138,7 +138,7 @@ module.exports = {
               <h3 class="cz-sub">Correderas</h3>
               <button class="m-switch" id="cz-soft" role="switch" aria-checked="false" style="animation:none">
                 <span class="m-switch-track"><span class="m-switch-knob"></span></span>
-                <span class="m-switch-text"><b>Con cierre suave</b><small>El cajón se frena solo y cierra sin golpe</small></span>
+                <span class="m-switch-text"><b>Con cierre suave <span class="cz-soft-precio" id="cz-soft-precio"></span></b><small>El cajón se frena solo y cierra sin golpe</small></span>
               </button>
               <button type="button" class="btn btn-nogal cz-sig" data-sig="4">Continuar →</button>
             </div>
@@ -178,6 +178,10 @@ module.exports['configurar.html'] = (h) => {
           <div class="cz-muestra" id="cz-muestra" aria-live="polite"></div>
           <div class="cz-ayuda" id="cz-ayuda">↔ Arrastrá para girar · tocá un cajón o una tapa para abrirlo</div>
         </div>
+        <div class="cz-precio" id="cz-precio" hidden aria-live="polite">
+          <div class="cz-precio-top"><span>Precio de tu cama</span><b id="cz-precio-total"></b></div>
+          <ul class="cz-precio-det" id="cz-precio-det"></ul>
+        </div>
         <div class="cz-botones">
           <button type="button" id="cz-abrir" class="btn btn-ghost">Abrir todos los cajones</button>
           <button type="button" id="cz-bau" class="btn btn-ghost">Abrir las bauleras</button>
@@ -187,7 +191,7 @@ module.exports['configurar.html'] = (h) => {
       `;
   s = s.slice(0, a) + izq + s.slice(b);
   s = s.replace(/<script src="\/js\/productos-data\.js/, '<script type="importmap">{ "imports": { "three": "/js/vendor/three.module.min.js", "three/addons/": "/js/vendor/addons/" } }</script>\n<script src="/js/productos-data.js');
-  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261065"></script>');
-  s = s.replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261048');
+  s = s.replace(/<script src="\/js\/configurar\.js(\?v=\d+)"><\/script>/, '<script type="module" src="/js/configurar3d.js?v=20261070"></script>');
+  s = s.replace('/css/herramientas.css?v=20261045', '/css/herramientas.css?v=20261070');
   return s;
 };

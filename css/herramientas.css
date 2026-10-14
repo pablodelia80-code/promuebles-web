@@ -269,3 +269,14 @@
 .cz-par{display:flex;gap:8px;flex-wrap:wrap}
 @media (min-width:901px){.cz-escena{height:clamp(340px,56vh,560px)}}
 @media (max-width:900px){.cfg-page .cz-izq>.h-nota{display:none}}
+/* Precio siempre visible en el armador (desde el paso 2): tarjeta bajo el 3D en la compu; en el celular lo muestra la barra de abajo */
+.cz-precio{margin-top:12px;border:1.5px solid var(--gold);background:#fbf4dc;border-radius:18px;padding:12px 16px;display:grid;gap:8px}
+.cz-precio[hidden]{display:none}
+.cz-precio-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.cz-precio-top span{font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--madera)}
+.cz-precio-top b{font:800 28px 'Poppins',sans-serif;color:var(--nogal);letter-spacing:-.02em}
+.cz-precio-det{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:13.5px}
+.cz-precio-det li{display:flex;justify-content:space-between;gap:12px}
+.cz-precio-det span{color:var(--madera);font-weight:600}
+.cz-soft-precio{margin-left:6px;color:var(--nogal)}
+@media (max-width:900px){.cz-precio,.cz-precio[hidden]{display:none}}
