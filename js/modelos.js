@@ -220,7 +220,11 @@
   // ref: modelo del catálogo con el que se empezó; estRef y est: estado (izq, der, pie) de ese modelo y de la cama armada.
   function precioArmado(ref, estRef, est) {
     var v = venta(ref); if (!v) return null;
-    return (v.viejo || v.precio) + AJUSTE_PRECIO.lateralNormal * (lugaresNormales(est) - lugaresNormales(estRef)) + valorPie(est, ref.linea) - valorPie(estRef, ref.linea);
+    var dif = AJUSTE_PRECIO.lateralNormal * (lugaresNormales(est) - lugaresNormales(estRef)) + valorPie(est, ref.linea) - valorPie(estRef, ref.linea);
+    var p = (v.viejo || v.precio) + dif;
+    // Si el modelo de partida está en oferta y la cama armada no le suma valor, nunca cuesta más que ese modelo en oferta.
+    if (v.viejo && dif <= 0 && p > v.precio) p = v.precio;
+    return p;
   }
 
   var api = { precioArmado: precioArmado, AJUSTE_PRECIO: AJUSTE_PRECIO, porPrecio: porPrecio, webp: webp, pesos: pesos, venta: venta, fmt: fmt, especificaciones: especificaciones, textoCajones: textoCajones, textoZapateros: textoZapateros, textoBauleras: textoBauleras, totalBauleras: totalBauleras, lateralesTotal: lateralesTotal, frontalesTotal: frontalesTotal, agrupar: agrupar,  MODELOS: MODELOS, LINEAS: LINEAS, CIERRE_SUAVE_POR_CAJON: CIERRE_SUAVE_POR_CAJON, COLOR_ADICIONAL: COLOR_ADICIONAL };
